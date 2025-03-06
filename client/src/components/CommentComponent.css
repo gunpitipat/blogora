@@ -1,0 +1,275 @@
+/* Comment Section */
+.comment-container{
+}
+.comment-container .comment{
+    padding: 1rem 1.75rem 1rem 1rem;
+    border-radius: 0.25rem;
+    background-color: #f1f1f1;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+    border: 1px solid #dddddd;
+    position: relative;
+}
+.comment-container .comment .content{
+    opacity: 0.9;
+    font-size: 1rem;
+    color: #1f1f1f;
+    margin: 0.25rem 0;
+    /* limit height and make it scrollable in case of too long content */
+    max-height: 172px; /* shows only 8 lines */
+    overflow-y: auto;
+    padding-right: 0.5rem; /* prevent scroll bar from overlapping content */
+}
+.comment-container .comment .reference-author{
+    color: #775144;
+    font-size: 0.95rem;
+}
+/* Softly deleted comment */
+.comment-container .comment .content.isDeleted{
+    font-style: italic;
+    opacity: 0.5;
+    user-select: none;
+}
+.comment small{
+    display: flex;
+    align-items: center;
+}
+.comment small a.author{
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    color:#5c5552;
+}
+.comment small .authorComment{
+    color: #5c5552;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+}
+.comment small .timestamp{
+    opacity: 0.7;
+    color: #463f3a;
+    cursor: default;
+    position: relative;
+}
+.comment small .timestamp .tooltip{
+    position: absolute;
+    white-space: nowrap;
+    top: 50%;
+    left: 110%;
+    transform: translateX(-10px) translateY(-50%);
+    background: rgba(70, 63, 58, 0.8);
+    color: white;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Prevents accidental interaction when hidden */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease;
+}
+.comment small .timestamp .tooltip.show{
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) translateY(-50%); /* Moves back to normal position */
+}
+
+/* Reply Input Section */
+.comment-footer{
+    display: flex;
+    padding: 0.5rem 1rem 1rem 2rem;
+    flex-direction: column;
+    position: relative;
+}
+.vertical-line{ /* vertical connecting line */
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    border-left: 1px solid #aaaaaa;
+    height: 100%;
+}
+.reply-button{
+    display: flex;
+    align-items: flex-start;
+    width: fit-content;
+}
+.reply-button label{
+    font-size: 0.85rem;
+    color: #463f3a;
+    margin: 0 0.15rem;
+    opacity: 0.7;
+    cursor: pointer;
+}
+.reply-button .reply-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.reply-button .reply-icon svg{ /* reply icon */
+    color: #463f3a;
+    opacity: 0.5;
+}
+.reply-button:hover label{
+    opacity: 1;
+}
+.reply-button:hover .reply-icon svg{
+    opacity: 0.7;
+}
+/* For not logged in users */
+.reply-button.disable label, .reply-button.disable .reply-icon{
+    cursor: not-allowed;
+}
+.reply-button.disable:hover label{
+    opacity: 0.7;
+}
+.reply-button.disable:hover .reply-icon svg{
+    opacity: 0.5;
+}
+/* Deleted comment cannot be replied */
+.reply-button.isDeleted label, .reply-button.isDeleted .reply-icon{
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+.reply-button.isDeleted .reply-icon svg, .reply-button.isDeleted:hover .reply-icon svg{  
+    opacity: 0.35;
+}
+
+
+/* ViewReply Button */
+.footer-utilities{
+    display: flex;
+}
+.viewReply-button{
+    margin-left: 0.6rem;
+    background: transparent;
+    border: none;
+    font-size: 0.85rem;
+    color: #463f3a;
+    opacity: 0.7;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+}
+.viewReply-button .viewReply-icon{ /* view-reply icon */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 0.95rem;
+    margin: 0 0.15rem;
+}
+.viewReply-button:hover{
+    opacity: 1;
+}
+/* When replies are shown, hightlight their parent */
+.comment.parent{
+    border: 1px solid #aaaaaa;
+}
+
+/* Reply Section */
+.replies{
+    margin-left: 2rem; /* Indentation */
+}
+    /* Limit Indentation Depth for the comments-replies deeper than level 4 */
+    /* .replies.level-4{
+        margin-left: 0rem;
+    } */
+    /* Hide unnecessary connecting line */
+    /* .replies.level-4 .reply-connector::after{
+        border: none;
+    }
+    .replies.level-4 .reply-connector::before{
+        border: none;
+    } */
+    
+.reply-wrapper{
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+}
+.reply-wrapper .comment-container{ /* Nested comment */
+    flex: 1;
+}
+/* Vertical connecting line */
+.reply-connector::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -1rem;
+    height: 100%; /* it extends further the last reply, erase it with the same background color */
+    border-left: 1px solid #aaa;
+    /* border-bottom-left-radius: 0.25rem; */
+}
+/* Horizontal connecting line */
+.reply-connector::after{
+    content: "";
+    position: absolute;
+    top: 1.5rem;
+    left: -1rem;
+    height: 1rem;
+    width: 0.95rem; /* just not make it completey attached to reply */
+    border-bottom: 1px solid #aaaaaa;
+    border-left: 1px solid #aaaaaa;
+    border-bottom-left-radius: 0.25rem;
+    z-index: 2; /* set z-index higher than erase line */
+}
+
+/* Erase the excessive vertical connecting line by creating vertical line using the page background color overlapping on it */
+.reply-wrapper.last-reply{
+    position: relative;
+}
+.reply-wrapper.last-reply::before{
+    content: "";
+    position: absolute;
+    top: 2rem; /* far away from top of .reply-wrapper.last-reply = bottom border of horizontal connecting line (actually it has to be 2.25rem but horizontal line has border radius of 0.25rem which is aligned vertically */
+    left: -1rem;
+    width: 1px;
+    height: calc(100% - 2rem); /* excessive vertical line distance where 100% is calculated from .replies and 2.25 is distance used to move this pseudo element downward */
+    border-left: 1px solid #fafafa;
+    z-index: 1;
+}
+
+/* Delete Button */
+.comment .setting{
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.comment .setting svg:not(.trash){
+    font-size: 1.1rem;
+    opacity: 0.7;
+    color: #1f1f1f;
+}
+.comment .setting .options{
+    list-style: none;
+    z-index: 3;
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%)
+}
+.comment .setting .options li{
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    background-color: #fafafa;
+    font-size: 0.85rem;
+    color: #463f3a;
+    border: 1px solid #463f3a;
+}
+.comment .setting .options li:hover{
+    background: #8a817c;
+    color: #fafafa;
+}
+
+
+/* Responsive Design */
+

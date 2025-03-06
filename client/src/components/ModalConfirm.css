@@ -1,0 +1,89 @@
+.Delete-Modal .Modal{
+    background: rgba(0,0,0,0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1000;
+}
+.Delete-Modal .confirm-container{
+    background: #e8e8e8;
+    width: 75vw;
+    max-width: 500px;
+    /* height: 30vh;
+    max-height: 225px; */
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-80%);
+    padding: 1rem;
+}
+/* Icon */
+.Delete-Modal .trash-background{
+    background: #fafafa;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.Delete-Modal .trash-background svg{
+    color: #463f3a;
+    transform: scale(0.95);
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+.Delete-Modal .confirm-container p{
+    margin: 0.5rem 0 1.5rem;
+    text-align: center;
+}
+.Delete-Modal .confirm-container .btn-container{
+    /* align-self: flex-end; */
+    width: 50%;
+    max-width: 148px;
+    display: flex;
+    justify-content: space-between;
+}
+.Delete-Modal .btn-container .btn{
+    font-size: 1rem;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.Delete-Modal .btn-container .btn.del{
+    background: #463f3a;
+    color: #fafafa;
+}
+.Delete-Modal .btn-container .btn:hover{
+    opacity: 0.75;
+}
+.Delete-Modal .btn-container .btn.cancel{
+    background: #fafafa;
+}
+.Delete-Modal .Modal.active{
+    pointer-events: all;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .Delete-Modal .confirm-container{
+        width: 80vw;
+    }
+}
+@media (max-width: 390px) {
+    .Delete-Modal .confirm-container{
+        width: 85vw;
+    }
+    .Delete-Modal .confirm-container .btn-container{
+        width: 75%;
+    }
+}

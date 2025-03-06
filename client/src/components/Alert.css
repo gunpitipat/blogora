@@ -1,0 +1,33 @@
+.Alert{
+    position: fixed;
+    bottom: 2.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+}
+.Alert .message{
+    padding: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 350px;
+    border-radius: 0.25rem;
+}
+.Alert .message.success{
+    background-color: #d9e0d3;
+}
+.Alert .message.success svg{
+    color: #3a5a40;
+}
+.Alert .message.error{
+    background-color: #f2e9e4;
+}
+.Alert .message.error svg{
+    color: #9e2a2b;
+    transform: scale(1.15);
+}
+.Alert svg{
+    align-self: center;
+    margin-left: 0.3rem;
+}

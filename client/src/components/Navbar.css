@@ -1,0 +1,170 @@
+.Navbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: #bcb8b1;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    z-index: 999;
+}
+.Navbar ul{
+    list-style: none;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.Navbar ul .menu-group{
+    display: flex;
+}
+.Navbar li{
+    margin: 0 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.Navbar a{
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    color:#282828;
+    user-select: none;
+}
+.Navbar li:hover a{
+    font-weight: 900;
+}
+
+/* Log Out */
+.Navbar .menu-group .logout-btn{
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    /* ปุ่ม logout ไม่ต้องกำหนด padding หรอก ให้เล็กๆกดยากๆดีแล้ว จะได้ไม่เผลอคลิกโดน */
+    opacity: 0.7;
+    /* ทำให้มันไม่เด่นเท่าเมนูอื่น */
+}
+.Navbar .menu-group .logout-btn:hover{
+    /* font-weight: 900; */
+    opacity: 1;
+}
+
+/* Selected Menu */
+.Navbar li.selected a{
+    font-weight: 900;
+    font-size: 1.35rem;
+}
+
+/* Deactivate Create Menu when not login */
+.Navbar li span.disable-menu{
+    position: relative;
+}
+.Navbar li span.disable-menu label{
+    color:#282828;
+    opacity: 0.5;
+    font-weight: 600;
+    font-size: 1.2rem;
+    pointer-events: auto;
+    cursor: not-allowed;
+    user-select: none;
+}
+/* ToolTip for not logged in users */
+.Navbar li span.disable-menu .tooltip{
+    position: absolute;
+    white-space: nowrap;
+    top: 135%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: rgba(70, 63, 58, 0.7);
+    color: white;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Prevents accidental interaction when hidden */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease;
+}
+.Navbar li span.disable-menu .tooltip.show{
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0); /* Moves back to normal position */
+}
+
+
+/* Mobile Screen */
+@media (max-width: 768px) {
+    .menu-icon{
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 0.85rem;
+        left: 0.85rem;
+        cursor: pointer;
+        z-index: 1000;
+    }
+    .menu-icon svg{
+        font-size: 1.4rem;
+        color:#282828;
+    }
+    .Navbar{
+        left: -220px; /* Initially hidden */
+        width: 220px;
+        height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        transition: left 0.2s ease-in-out;
+    }
+    .Navbar.show-sidebar{
+        left: 0; /* Show sidebar when open */
+    }
+    .sidebar-overlay{
+        position: fixed;
+        top: 0;
+        left: 220px;
+        width: calc(100vw - 220px);
+        height: 100vh;
+        z-index: 998; /* Under sidebar navbar */
+    }
+    .Navbar ul{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .Navbar .menu-group{
+        display: flex;
+        flex-direction: column;
+        margin: 1rem 0;
+    }
+    .Navbar .menu-group:first-of-type li:first-child{
+        margin-top: 1.85rem;
+    }
+    .Navbar .menu-group:last-of-type li:last-child{
+        margin-bottom: 0.85rem;
+    }
+    .Navbar li{
+        margin-bottom: 0.85rem;
+        padding: 0.5rem 1.35rem;
+    }
+    .Navbar li.selected{
+        background: #ada9a3;
+    }
+    .Navbar a{
+        width: 100%;
+    }
+    .Navbar li span.disable-menu .tooltip{
+        top: 120%;
+        left: 1rem;
+        transform: translateX(0) translateY(-8px);
+    }
+    .Navbar li span.disable-menu .tooltip.show{
+        transform: translateX(0) translateY(0); /* Moves back to normal position */
+    }
+}

@@ -1,0 +1,42 @@
+.SearchFilter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 0 2.5rem 0;
+}
+.SearchFilter .container{
+    position: relative;
+    width: fit-content;
+}
+.SearchFilter .container input{
+    font-size: 1.1rem;
+    padding: 0.5rem 2.5rem 0.5rem 1.2rem;
+    border: 1px solid #aaaaaa;
+    border-radius: 50px;
+    outline: none;
+    background-color: #fff;
+    width: 40vw;
+}
+.SearchFilter .container .search-icon{
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translate(0,-50%);
+    cursor: pointer;
+}
+.SearchFilter .container .search-icon svg{
+    font-size: 1.1rem;
+}
+
+/* Responsive SearchFilter Design */
+@media (max-width: 768px) {
+    .SearchFilter .container input{
+        width: 65vw;
+    }
+}
+@media (min-width: 1280px) {
+    .SearchFilter .container input{
+        width: 30vw;
+    }
+}
+

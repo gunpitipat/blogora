@@ -1,0 +1,229 @@
+.BlogComponent{
+    padding: 2.5rem 4rem 6rem;
+    overflow-x: hidden;
+    min-height: calc(100vh - 80px + 40px); /* to hide copyright footer in case short content blog */
+}
+.BlogComponent header{
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #aaaaaa;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.BlogComponent header .goback-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 0.85rem;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: none; /* Show only on small screen */
+}
+.BlogComponent header .setting{
+    margin: 0 0.5rem;
+    position: relative;
+}
+.BlogComponent header .setting svg:not(.trash){
+    font-size: 1.5rem;
+    position: relative;
+    top: 0.2rem;
+    cursor: pointer;
+    opacity: 0.8;
+}
+.BlogComponent header .title.overlay{
+    opacity: 0.14;
+    transition: opacity 0.14s ease-in-out;
+}
+.BlogComponent main{
+    font-size: 1.1rem;
+    line-height: 2rem;
+}
+.BlogComponent footer{
+    margin: 2rem 0 0;
+    padding-bottom: 1.75rem;
+    /* border-bottom: 1px solid #aaaaaa; */
+    margin-bottom: 1rem;
+}
+.BlogComponent footer .author{
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 800;
+    color:#5c5552;
+    display: inline-block;
+}
+.BlogComponent footer .timestamp{
+    opacity: 0.7;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    cursor: default;
+    position: relative;
+    display: block;
+    width: fit-content;
+}
+/* Full date and time tooltip */
+.BlogComponent footer .timestamp .tooltip{
+    position: absolute;
+    white-space: nowrap;
+    top: 50%;
+    left: 110%;
+    transform: translateX(-10px) translateY(-50%);
+    background: rgba(70, 63, 58, 0.8);
+    color: white;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Prevents accidental interaction when hidden */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease;
+}
+.BlogComponent footer .timestamp .tooltip.show{
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) translateY(-50%); /* Moves back to normal position */
+}
+
+
+.BlogComponent header .setting .options{
+    list-style: none;
+    z-index: 5;
+    position: absolute;
+    right: 1.5rem;
+    top: 0;
+    display: flex;
+
+/* setting buttons */
+}
+.BlogComponent header .setting .options>*{
+    margin: 0 0.5rem;
+    padding: 0.25rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    background-color: #fafafa;
+    font-size: 1rem;
+}
+.BlogComponent header .setting .options .delete{
+    color: #463f3a;
+    border: 1px solid #463f3a;
+}
+.BlogComponent header .setting .options .delete:hover{
+    background: #8a817c;
+    color: #fafafa;
+}
+.BlogComponent header .setting .options a.edit{
+    text-decoration: none;
+    color: #463f3a;
+    border: 1px solid #463f3a;
+}
+.BlogComponent header .setting .options a.edit:hover{ /* for edit button which contains Link inside */
+    background: #8a817c;
+    color: #fafafa;
+}
+
+/* content */
+.TipTap-Result :first-child{
+    margin-top: 0;
+}
+.TipTap-Result h1{
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+.TipTap-Result ol, .TipTap-Result ul{
+    padding: 0 2rem;
+    margin: 0.5rem 0;
+}
+
+/* Comment */
+section.blog-comment{
+    /* display: flex;
+    justify-content: center; */
+}
+/* button */
+section.blog-comment .comment-button{
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #463f3a;
+    border: 1px solid #aaaaaa;
+    border-radius: 17px; /* circular shaped corner => (height / 2) px */
+    background-color: #fafafa;
+    display: flex;
+    align-items: center;
+}
+section.blog-comment .comment-button:hover{
+    background-color: #f1f0ea;
+}
+section.blog-comment .comment-button.active{
+    border-radius: 17px 17px 0 0;
+    border-bottom: none;
+}
+section.blog-comment .comment-button span:first-child{ /* icon */
+    display: flex;
+    align-items: center;
+    margin-right: 0.25rem;
+}
+/* For not logged in users */
+section.blog-comment .comment-button.disable{
+    cursor: not-allowed;
+}
+section.blog-comment .comment-button.disable:hover{
+    background-color: #fafafa;
+}
+/* ToolTip */
+section.blog-comment .comment-button{
+    position: relative;
+}  
+section.blog-comment .comment-button .tooltip{
+    position: absolute;
+    white-space: nowrap;
+    top: 50%;
+    left: 110%;
+    transform: translateX(-8px) translateY(-50%);
+    background: rgba(187, 148, 87, 0.85);
+    color: white;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Prevents accidental interaction when hidden */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease;
+}
+section.blog-comment .comment-button .tooltip.show{
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) translateY(-50%); /* Moves back to normal position */
+}
+
+/* comments */
+section.comments{
+    padding: 2rem 1rem 0.5rem;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .BlogComponent header .goback-icon{
+        display: flex;
+    }
+    .BlogComponent{
+        min-height: calc(100vh - 20px + 40px); /* to hide copyright footer in case short content blog */
+    }
+}
+@media (max-width: 520px) {
+    .BlogComponent{
+        padding: 2.5rem 2.5rem 6rem;
+    }
+    .BlogComponent header .title{
+        padding-left: 0.25rem;
+    }
+}
+@media (max-width: 425px) {
+    section.comments{
+        padding: 2rem 0rem 0.5rem;
+    }
+}

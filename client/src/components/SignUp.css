@@ -1,0 +1,154 @@
+.SignUp{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: calc(100vh - 80px);
+    justify-content: center;
+    align-items: center;
+}
+.SignUp .bg{
+    border: 1px solid rgba(170,170,170,0.5);
+    width: 70vw;
+    max-width: 425px;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.25rem;
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    background-color: #f1f1f1;
+}
+.SignUp h2{
+    font-weight: 700;
+    text-align: center;
+    margin: 2rem 0; /*40px*/
+}
+.SignUp form{
+    /* display: flex;
+    flex-direction: column;
+    align-items: center; */
+    width: 65vw;
+    max-width: 400px;
+    margin: 1rem auto;
+    padding: 0rem 2rem;
+}
+.SignUp form>div{
+    margin: 0rem 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+.SignUp form label{
+    margin-bottom: 0.5rem;
+    user-select: none;
+}
+.SignUp form input{
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #aaaaaa;
+    border-radius: 0.25rem;
+    outline: none;
+    /* background-color: #fff; */
+    background: linear-gradient(to bottom, #fff, #fafafa);
+    width: 55vw;
+    max-width: 100%;
+}
+.SignUp .btn{
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%,0);
+    width: 90px;
+    border-radius: 0.25rem;
+    border: 1px solid #463f3a;
+    background-color: #8a817c;
+    color: #fff;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    user-select: none;
+}
+.SignUp .btn:hover{
+    background-color: #463f3a;
+    font-weight: 500;
+    border: 1px solid #463f3a;
+}
+.SignUp form label{
+    opacity: 0.7;
+    display: flex;
+}
+
+/* validation success */
+.SignUp form div.success input{
+    border: 1.5px solid green;
+}
+.SignUp form div.error input{
+    border: 1px solid red;
+}
+.SignUp form div.error small{
+    color: red;
+    /* border: 1px solid black; */
+    padding-top: 0.1rem;
+}
+
+/* Show and Hide password */
+.SignUp .bg form .password-frame{
+    width: fit-content;
+    max-width: 100%;
+    height: fit-content;
+    position: relative;
+}
+.SignUp .bg form .password-frame .password-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translate(0, -50%);
+    cursor: pointer;
+}
+.SignUp .bg form .password-frame .password-icon svg{
+    font-size: 1.1rem;
+    color: #5e503f;
+}
+.SignUp .bg form #password, .SignUp .bg form #cfpassword{
+    padding-right: calc(1rem + 1.1rem + 0.5rem);
+}
+.SignUp .bg form div small{
+    user-select: none; /* when clicking eye icons sometimes it hightlighted texts in small tags in case error message exists*/
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .SignUp .bg{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .SignUp{
+        min-height: calc(100vh - 20px);
+    }
+}
+@media (max-width: 480px) {
+    .SignUp .bg{
+        width: 80vw;
+    }
+    .SignUp form{
+        padding: 0rem;
+    }
+    .SignUp form input{
+        width: 100%;
+    }
+    .SignUp .bg form .password-frame{
+        width: 100%;
+    }
+}
+@media (max-width: 370px) {
+    .SignUp .bg{
+        width: 85vw;
+    }
+    .SignUp form{
+        margin: 1rem;
+        width: fit-content;
+    }
+}
+

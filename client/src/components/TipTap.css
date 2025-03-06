@@ -1,0 +1,90 @@
+/* Basic editor styles */
+.tiptap {
+    :first-child {
+      margin-top: 0;
+    }
+    
+    /* List styles */
+    ul, 
+    ol {
+      padding: 0 1rem;
+      margin: 0.75rem 1rem 0.75rem 0.4rem;
+      
+      li p {
+        margin-top: 0.25em;
+        margin-bottom: 0.25em;
+      }
+    }
+  
+    /* Heading styles */  
+    h1{
+      margin-top: 1rem;
+      margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+    }
+    
+    hr {
+      border: none;
+      border-top: 1px solid var(--gray-2);
+      margin: 2rem 0;
+    }
+  }
+
+
+.text-editor{
+    border: 1px solid #aaaaaa;
+    border-radius: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.tiptap{
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid #aaaaaa;
+    outline: none;
+    background-color: #fff;
+    height: 40vh;
+    width: 100% ;
+    transition: height 150ms ease-out;
+    overflow: scroll;
+}
+.MenuBar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem;
+}
+.MenuBar .button-group button{
+    font-size: 1rem;
+    padding: 0.25rem 0.25rem;
+    outline: none;
+    border: none;
+    background: none;
+    cursor: pointer; 
+    margin: 0 0.4rem;
+}
+.MenuBar .button-group button.is-active{
+    background-color: rgba(138, 129, 124, 0.25);
+    border-radius: 0.25rem;
+}
+.MenuBar .button-group button svg{ /* make icons center in button */
+    display: flex;
+    color: #5c5552;
+}
+
+.MenuBar .button-group button.paragraph svg{
+  color: #463f3a;
+  transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 491px) {
+  .MenuBar .button-group button{
+    margin: 0 0.25rem;
+  }
+}
+@media (max-width: 402px) {
+  .MenuBar .button-group:first-child{
+    width: 70%;
+  }
+}

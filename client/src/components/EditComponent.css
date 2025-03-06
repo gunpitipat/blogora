@@ -1,0 +1,119 @@
+.EditComponent{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+.EditComponent h2{
+    font-weight: 600;
+    text-align: center;
+    margin-top: 2.5rem; /*40px*/
+}
+.EditComponent form{
+    /* display: flex;
+    flex-direction: column;
+    align-items: center; */
+    width: 90vw;
+    max-width: 800px;
+    margin: 0 auto 2.5rem;
+    padding: 0rem 2rem 1rem;
+}
+.EditComponent form>div{
+    margin: 1rem 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+}
+.EditComponent form input, .EditComponent form textarea{
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.5rem;
+    border: 1px solid #aaaaaa;
+    border-radius: 0.25rem;
+    outline: none;
+    background-color: #fff;
+}
+.EditComponent form textarea{
+    height: 180px;
+    resize: none;
+    width: 100%;
+    transition: height 150ms ease-out;
+}
+/* resize textarea */
+.EditComponent form .textarea-container{
+    position: relative;
+}
+.EditComponent form .textarea-container .sizing svg{
+    position: absolute;
+    bottom: 0.7rem;
+    right: 0.35rem;
+    z-index: 5;
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 0.9rem;
+}
+.EditComponent form .textarea-container svg:hover{
+    opacity: 1;
+}
+.EditComponent form textarea.extend{
+    height: 450px;
+    transition: height 150ms ease-out;
+}
+.EditComponent form .textarea-container.extend #text-editor{
+    /* height: 450px; */
+    height: calc(100vh - 200px);
+    transition: height 150ms ease-out;
+}
+
+
+.EditComponent .btn{
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%,0);
+    width: 30vw;
+    max-width: 150px;
+    border-radius: 0.25rem;
+    border: 1px solid #5e5e5e;
+    background-color: #f1f0ea;
+}
+.EditComponent .btn:hover{
+    background-color: #8a817c;
+    color: #fefefe;
+    font-weight: 500;
+}
+.EditComponent form label{
+    opacity: 0.7;
+    display: flex;
+}
+.EditComponent form label.bold{
+    opacity: 1;
+    font-weight: 450;
+}
+.EditComponent form label svg{
+    color: #463f3a;
+    transform: scale(0.6);
+    opacity: 0.7;
+    align-self: center;
+    margin-left: 0.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 450px) {
+    .EditComponent form{
+        padding: 0rem 1rem 1rem;
+    }
+}
+@media (max-width: 402px) {
+    .EditComponent{
+        align-items: center;
+    }
+    .EditComponent form{
+        margin: 0 1rem 2.5rem;
+    }
+}
+@media (max-width: 380px) {
+    .EditComponent form{
+        padding: 0rem 0.5rem 1rem;
+    }
+}

@@ -1,0 +1,27 @@
+.NotFound{
+    text-align: center;
+    padding: 1.5rem 1.5rem 6rem;
+}
+.NotFound h2{
+    margin: 1rem 0;
+}
+.NotFound p{
+    padding: 1.5rem;
+    opacity: 0.9;
+    font-size: 1rem;
+    color: #463f3a;
+}
+.NotFound a{
+    text-decoration: none;
+    cursor: pointer;
+    color:#5c5552;
+    font-size: 1.1rem;
+}
+.NotFound .overlay{
+    padding: 1rem;
+    border-radius: 0.25rem;
+    background-color: #f1f1f1;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+    width: 200px;
+    margin: 0 auto;
+}
