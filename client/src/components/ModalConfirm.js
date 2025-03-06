@@ -22,3 +22,5 @@ const ModalConfirm = (props) => {
 }
 
 export default ModalConfirm
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

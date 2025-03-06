@@ -9,3 +9,5 @@ const LoadingScreen = () => {
 }
 
 export default LoadingScreen
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

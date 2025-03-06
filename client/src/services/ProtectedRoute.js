@@ -18,3 +18,5 @@ const ProtectedRoute = () => {
 }
 
 export default ProtectedRoute
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

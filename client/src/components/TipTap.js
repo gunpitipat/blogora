@@ -199,3 +199,5 @@ const TipTap = (props) => {
 }
 
 export default TipTap
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

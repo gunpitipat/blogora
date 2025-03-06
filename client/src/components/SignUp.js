@@ -115,3 +115,5 @@ const SignUp = () => {
 }
 
 export default SignUp
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

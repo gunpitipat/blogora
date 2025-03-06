@@ -46,3 +46,5 @@ const ReplyInput = (props) => {
 }
 
 export default ReplyInput
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

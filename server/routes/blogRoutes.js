@@ -11,3 +11,5 @@ router.delete("/blog/:slug", authenticateUser, deleteBlog)
 router.put("/blog/:slug", authenticateUser, updateBlog)
 
 module.exports = router
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

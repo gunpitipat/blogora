@@ -22,3 +22,5 @@ const ModalComment = (props) => {
 }
 
 export default ModalComment
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

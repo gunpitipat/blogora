@@ -16,3 +16,5 @@ const SearchFilter = (props) => {
 }
 
 export default SearchFilter
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

@@ -18,3 +18,5 @@ const Layout = ({ children }) => {
 }
 
 export default Layout
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

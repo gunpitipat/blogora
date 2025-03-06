@@ -478,3 +478,5 @@ const BlogComponent = () => {
 }
 
 export default BlogComponent
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

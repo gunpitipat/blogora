@@ -159,3 +159,5 @@ const Profile = () => {
 }
 
 export default Profile
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

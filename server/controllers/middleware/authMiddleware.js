@@ -20,3 +20,5 @@ module.exports = authenticateUser
 // this authMiddleware always attach userId to the request. It was designed to comment feature which requires userId
 // other protected routes which just need only token verification can use this authMiddleware because attaching it doesn't cause any harm
 // attaching userId to req in all protected routes is not necessarily bad
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

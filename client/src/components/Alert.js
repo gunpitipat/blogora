@@ -19,3 +19,5 @@ const Alert = ()=>{
 }
 
 export default Alert
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

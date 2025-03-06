@@ -10,3 +10,5 @@ router.delete("/blog/comment/:commentId", authenticateUser, deleteComment)
 router.get("/blog/:slug/comments", getComments)
 
 module.exports = router
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

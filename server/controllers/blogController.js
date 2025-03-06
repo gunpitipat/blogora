@@ -106,3 +106,5 @@ exports.updateBlog = (req,res) => {
         res.status(500).json({ message: "Error updating data" })
     })
 }
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

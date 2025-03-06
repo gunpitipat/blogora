@@ -132,3 +132,5 @@ function App() {
 }
 
 export default App;
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

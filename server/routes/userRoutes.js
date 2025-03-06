@@ -16,3 +16,5 @@ router.get("/profile/:username/blogs", getProfileBlogs)
 router.get("/check-auth", authStatusCheck)
 
 module.exports = router
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

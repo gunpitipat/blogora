@@ -46,3 +46,5 @@ const CommentInput = (props) => {
 }
 
 export default CommentInput
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

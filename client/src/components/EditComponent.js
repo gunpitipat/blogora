@@ -184,3 +184,5 @@ const EditComponent = () => {
 }
 
 export default EditComponent
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

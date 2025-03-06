@@ -38,3 +38,5 @@ const commentSchema = mongoose.Schema({
 })
 
 module.exports = mongoose.model("Comments", commentSchema)
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

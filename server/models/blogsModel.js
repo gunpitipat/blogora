@@ -28,3 +28,5 @@ const blogSchema = mongoose.Schema({
 }, { timestamps: true })
 
 module.exports = mongoose.model("Blogs",blogSchema)
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

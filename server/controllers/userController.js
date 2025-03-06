@@ -188,3 +188,5 @@ exports.getProfileBlogs = (req,res) => {
         res.status(500).json({ message: "Error retrieving data from server" })
     })
 }
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

@@ -29,3 +29,5 @@ const AlertProvider = ({ children }) => {
 }
 
 export { AlertProvider, useAlertContext }
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

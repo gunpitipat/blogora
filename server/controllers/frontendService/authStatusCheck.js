@@ -15,3 +15,5 @@ const authStatusCheck = (req,res) => {
 // Frontend only needs isAuthenticated as a boolean, then actually respond only JSON is enough. No need status code if frontend doesn't handle errors.
 
 module.exports = authStatusCheck
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

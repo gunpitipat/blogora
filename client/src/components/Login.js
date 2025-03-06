@@ -83,3 +83,5 @@ const Login = () => {
 }
 
 export default Login
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

@@ -29,3 +29,5 @@ export const ViewReplyProvider = ({ children }) => {
 // This cause re-rendering comment component which initialize viewReply state = false by default, making the user to re-open the nested comments all the way again, so we have to use context for that state.
 // In BlogComponent, works with useEffect by setting default value for all fetched comments once.
 // In CommentComponent, acts like individual state for each comment
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

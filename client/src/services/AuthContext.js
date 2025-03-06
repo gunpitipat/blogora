@@ -47,3 +47,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     )
 }
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

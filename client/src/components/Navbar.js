@@ -123,3 +123,5 @@ const Navbar = () => {
 }
 
 export default Navbar
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

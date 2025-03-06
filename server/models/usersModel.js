@@ -26,3 +26,5 @@ const userSchema = mongoose.Schema({
 })
 
 module.exports = mongoose.model("Users",userSchema)
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

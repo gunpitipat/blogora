@@ -13,3 +13,5 @@ export const LoadingProvider = ({ children }) => {
         </LoadingContext.Provider>
     )
 }
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

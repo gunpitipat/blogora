@@ -227,3 +227,5 @@ const CommentComponent = (props) => {
 }
 
 export default CommentComponent
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

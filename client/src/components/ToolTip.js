@@ -16,3 +16,5 @@ const ToolTip = (props) => {
 }
 
 export default ToolTip
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

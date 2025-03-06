@@ -48,3 +48,5 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 8080 // ให้ port มีค่าตาม PORT ที่ตั้งค่าในไฟล์ .env แต่หากไม่ได้นิยาม PORT ใน .env ก็ให้มีค่า 8080 ในตอนเริ่มต้น
 app.listen(port,() => console.log(`Server listening on port ${port}`))
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

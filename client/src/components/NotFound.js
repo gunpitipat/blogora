@@ -14,3 +14,5 @@ const NotFound = () => {
 }
 
 export default NotFound
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

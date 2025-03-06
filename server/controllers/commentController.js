@@ -118,3 +118,5 @@ exports.deleteComment = async (req,res) => {
         res.status(500).json({ message: "Error deleteing comment", error })
     }
 }
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.

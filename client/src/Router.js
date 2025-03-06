@@ -48,3 +48,5 @@ const Router = () => {
 }
 
 export default Router
+
+// © 2025 Pitipat Pattamawilai. All Rights Reserved.
