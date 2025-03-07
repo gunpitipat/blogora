@@ -3,7 +3,7 @@ import "./CommentComponent.css"
 import { formatCommentTime, showFullDateTime } from "../services/serviceFunctions"
 import { useState, useEffect, useRef } from "react"
 import ReplyInput from "./ReplyInput";
-import { FaReply } from "react-icons/fa";
+import { FaReply, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { FaUserPen } from "react-icons/fa6";
 import { BiSolidMessageRounded } from "react-icons/bi";
 import { useViewReplyContext } from "../services/ViewReplyContext";
@@ -48,6 +48,8 @@ const CommentComponent = (props) => {
     const { setAlertState } = useAlertContext()
 
     const contentRef = useRef(null)
+    const [isOverflowing, setIsOverflowing] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(false)
 
     // const MAX_INDENT_LEVEL = 4; // prevents excessive indentation for a clean UI. Indentation is set by .replies applying margin-left: 2rem; in CSS. We want maximum indentation depth of 4 levels which starts counting at the top-level comment.
                                 // We will add class level-1,2,3,4 to div.replies. Reply and comment is rendered together meaning the 2nd level comment is indented from the upper level comment. 
@@ -99,8 +101,47 @@ const CommentComponent = (props) => {
         }
     }
 
-    // Limit comment's content height. If content lines are over limit, make it scrollable and show subtle hint.
-    
+    // Limit comment's content height. Check if content overflows (scrollHeight > clientHeight). If it does, show a Show-more button
+    useEffect(() => {
+        const checkOverflowing = () => {
+            if (contentRef.current) {       
+                setTimeout(() => {                 // Check if total content height of an element is greater than its visible height
+                    setIsOverflowing(isExpanded || contentRef.current.scrollHeight > contentRef.current.clientHeight) 
+                }, 50) // Add a slight delay before updating isOverflowing to prevent the show-more/less button from disappearing when expanding then collapsing it back. This happened because setIsExpanded(!isExpanded) in toggleExpand run asynchronously triggering useEffect to update isOverflowing while max-height was still "none" and had not been reset to "150px" yet. This caused isOverflowing to be false.
+            }                   
+            // Before fixing, when screen resizes to mobile while the content is expanded (isExpanded = true), the "Show less" button will disappear because at that state, max-height: none; making condition of checkOverflowing to false,
+            // so we have to keep isOverflowing true when expanding. That's why we add isExpanded in setIsOverflowing
+        }
+        checkOverflowing()
+        window.addEventListener("resize", checkOverflowing) // Update the check on window resize, since screen size affects content width, resulting in changes in height
+
+        return () => window.removeEventListener("resize", checkOverflowing)
+    }, [comment.content, isExpanded]) // Add isExpanded as a dependency to make sure useEffect doesn't capture only its intial value of false
+
+    // Content toggle transition. Previously, when expanding, we apply CSS rule of max-height: none; to allow the whole content to show but the browser doesn't know how to animate from an explicit value to none, so we use Javascript to make transition smoothly as expected.
+    const toggleExpand = () => {
+        if (contentRef.current) {
+            // Expanding (isExpanded: false -> true)
+            if (!isExpanded) {
+                contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`
+
+                // After transition, remove max-height so it adjusts dynamically (use max-height: none as we did earlier before fixing)
+                setTimeout(() => {
+                    contentRef.current.style.maxHeight = "none"
+                }, 300) // transition duration
+            }
+            // Collapsing (true -> false)
+            else {
+                contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px` // Assign a starting value instead of "none" for animating transition
+
+                // Small delay to let the browser recognize a current height first and detect a height change to prevent it from ignoring the transition
+                setTimeout(() => {
+                    contentRef.current.style.maxHeight = "150px" // as a default max-height set in CSS file
+                }, 10)
+            }
+        }
+        setIsExpanded(!isExpanded)
+    }
 
     // Styling connecting line between parent comment and their replies works on 1. div.vertical-line 2. div.reply-connector
     return (
@@ -108,12 +149,19 @@ const CommentComponent = (props) => {
             {loading && <LoadingScreen />}
             {/* Comment Section */}
             <div className={`comment ${individualViewReply ? "parent" : ""}`}>
-                <p className={`content ${comment.isDeleted ? "isDeleted" : ""}`}
+                <p className={`content ${comment.isDeleted ? "isDeleted" : ""} ${isExpanded ? "expanded" : ""}`}
                     ref={contentRef}
                 >
                     {!comment.isDeleted && parentAuthor && <strong className="reference-author">@{parentAuthor} :&nbsp;</strong>}
                     {comment.content}
                 </p>
+                { isOverflowing && 
+                    <div className="content-expand-icon" onClick={toggleExpand}>
+                        { !isExpanded 
+                            ? <span>Show more <FaChevronDown /></span> 
+                            : <span>Show less <FaChevronUp /></span>}
+                    </div>
+                }
                 { !comment.isDeleted &&
                     <small>
                         <Link to={`/profile/${comment.user.username}`} className="author">

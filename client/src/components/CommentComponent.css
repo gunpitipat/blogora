@@ -9,15 +9,34 @@
     border: 1px solid #dddddd;
     position: relative;
 }
+/* Content */
 .comment-container .comment .content{
     opacity: 0.9;
     font-size: 1rem;
     color: #1f1f1f;
-    margin: 0.25rem 0;
-    /* limit height and make it scrollable in case of too long content */
-    max-height: 172px; /* shows only 8 lines */
-    overflow-y: auto;
-    padding-right: 0.5rem; /* prevent scroll bar from overlapping content */
+    margin: 0.25rem 0 0.5rem;
+    /* limit height */
+    max-height: 150px; /* shows only 7 lines */
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+.comment-container .comment .content-expand-icon{ /* content expand icon */
+    color: #463f3a;
+    opacity: 0.5;
+    position: absolute;
+    right: 1.75rem;
+    bottom: 0.8rem;
+    cursor: pointer;
+}
+.comment-container .comment .content-expand-icon span{
+    display: flex;
+    align-items: center;
+}
+.comment-container .comment .content-expand-icon span svg{
+    margin-left: 0.3rem;
+}
+.comment-container .comment .content.expanded{
+    max-height: none;
 }
 .comment-container .comment .reference-author{
     color: #775144;
