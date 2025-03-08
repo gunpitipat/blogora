@@ -51,10 +51,12 @@ const CommentComponent = (props) => {
     const [isOverflowing, setIsOverflowing] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
-    // const MAX_INDENT_LEVEL = 4; // prevents excessive indentation for a clean UI. Indentation is set by .replies applying margin-left: 2rem; in CSS. We want maximum indentation depth of 4 levels which starts counting at the top-level comment.
-                                // We will add class level-1,2,3,4 to div.replies. Reply and comment is rendered together meaning the 2nd level comment is indented from the upper level comment. 
-                                // So, if we want maximum indentation depth of 4 levels, we have to stop indenting at the 5th level comment which is div.replies of the 4th level comment.
-
+    // Limit indentation depth
+        // We have 3 different margin-left bar colors for comments in each level where contains level-1, level-2, level-3.
+        // We apply maximum indent depth to prevent UI from breaking or content from overflowing.
+        // We want to display comments in different 3 indented levels meaning comments can be indented 2 times from the top level. maxIndent state will be 2.
+        // At max level, all deeper comments remain at the same level and are grouped together under the same viewReply button.
+    const [maxIndent] = useState(2) // prevents excessive indentation for a clean UI. Indentation is set by .replies applying margin-left: 2rem; in CSS.
 
     // Create a reply using shared comment creation function from BlogComponent
     const onSendReply = (replyContent) => {
@@ -149,7 +151,7 @@ const CommentComponent = (props) => {
         <div className="comment-container">
             {loading && <LoadingScreen />}
             {/* Comment Section */}
-            <div className={`comment ${individualViewReply ? "parent" : ""} level-${level}`}>
+            <div className={`comment ${individualViewReply ? "parent" : ""} level-${level > maxIndent ? maxIndent+1 : level}`}>
                 <p className={`content ${comment.isDeleted ? "isDeleted" : ""} ${isExpanded ? "expanded" : ""}`}
                     ref={contentRef}
                 >
@@ -195,7 +197,7 @@ const CommentComponent = (props) => {
                 }
             </div>
             {/* Reply Input Section */}
-            <div className="comment-footer">
+            <div className={`comment-footer ${level > maxIndent ? "hidden" : ""}`}>
                 <div className="footer-utilities">
                     {((user && isAuthenticated) && !comment.isDeleted)
                     ?   <div className="reply-button" onClick={()=>showReplyInput(comment._id)}>

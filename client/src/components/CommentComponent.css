@@ -16,9 +16,9 @@
 .comment-container .comment.level-3{
     border-left: 4px solid #a9a29c;
 }
-.comment-container .comment.level-4{
+/* .comment-container .comment.level-4{
     border-left: 4px solid #8a817c;
-}
+} */
 
 /* Content */
 .comment-container .comment .content{
@@ -112,6 +112,11 @@
     flex-direction: column;
     position: relative;
 }
+    /* Comment deeper than max level  */
+.comment-footer.hidden .footer-utilities{
+    display: none;
+}
+
 .vertical-line{ /* vertical connecting line */
     position: absolute;
     top: 0;

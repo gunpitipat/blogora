@@ -375,15 +375,11 @@ const BlogComponent = () => {
             }
         })
     }
-    if (comments) {
-        console.log(hierarchyLevel(organizeComments(comments), 1))
-    }
 
     // ToolTip for not logged in users when hovering add comment button
     const toggleCommentToolTip = (section) => {
         setShowCommentToolTip(section)
     }
-
 
     if (blogExists === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
