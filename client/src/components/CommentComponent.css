@@ -9,6 +9,17 @@
     border: 1px solid #dddddd;
     position: relative;
 }
+/* Make each comment distinguish heirarchically */
+.comment-container .comment.level-2{
+    border-left: 4px solid #cbc5c0;
+}
+.comment-container .comment.level-3{
+    border-left: 4px solid #a9a29c;
+}
+.comment-container .comment.level-4{
+    border-left: 4px solid #8a817c;
+}
+
 /* Content */
 .comment-container .comment .content{
     opacity: 0.9;
@@ -288,7 +299,6 @@
     background: #8a817c;
     color: #fafafa;
 }
-
 
 /* Responsive Design */
 

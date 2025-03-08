@@ -182,7 +182,7 @@ section.blog-comment .comment-button .tooltip{
     top: 50%;
     left: 110%;
     transform: translateX(-8px) translateY(-50%);
-    background: rgba(187, 148, 87, 0.85);
+    background: rgba(70, 63, 58, 0.7);
     color: white;
     font-weight: 600;
     padding: 0.25rem 0.5rem;

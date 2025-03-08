@@ -33,7 +33,7 @@ const CommentComponent = (props) => {
         setShowCommentModal,
         setCommentTrigger,
         parentAuthor, // a reference for the parent comment's author like @gunpitipat
-        // level = 1 // level defaults to 1 if not provided
+        level,
     } = props
 
     const [ showDateToolTip, setShowDateToolTip ] = useState(false)
@@ -101,6 +101,7 @@ const CommentComponent = (props) => {
         }
     }
 
+    // * Expandable comment content with smooth transition
     // Limit comment's content height. Check if content overflows (scrollHeight > clientHeight). If it does, show a Show-more button
     useEffect(() => {
         const checkOverflowing = () => {
@@ -148,7 +149,7 @@ const CommentComponent = (props) => {
         <div className="comment-container">
             {loading && <LoadingScreen />}
             {/* Comment Section */}
-            <div className={`comment ${individualViewReply ? "parent" : ""}`}>
+            <div className={`comment ${individualViewReply ? "parent" : ""} level-${level}`}>
                 <p className={`content ${comment.isDeleted ? "isDeleted" : ""} ${isExpanded ? "expanded" : ""}`}
                     ref={contentRef}
                 >
@@ -263,7 +264,7 @@ const CommentComponent = (props) => {
                                     parentAuthor={comment.user.username}
 
                                     // Level for limiting indentation depth for clean UI
-                                    // level={level + 1}
+                                    level={reply.level}
                                 />
                             </div>
                         )

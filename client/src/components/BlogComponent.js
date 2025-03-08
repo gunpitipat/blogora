@@ -359,6 +359,26 @@ const BlogComponent = () => {
         return result
     }
 
+    // Recursive Function (mark hierarchy level to each comment)
+    const hierarchyLevel = (nestedStructure, level = 1) => {
+        return nestedStructure.map(comment => {
+            // If comment has no replies
+            if (comment.replies.length === 0) {
+                return { ...comment, level: level }
+            }
+            // If comment has replies array
+            else {
+                return { ...comment,
+                        level: level,
+                        replies: hierarchyLevel(comment.replies, level+1)
+                }
+            }
+        })
+    }
+    if (comments) {
+        console.log(hierarchyLevel(organizeComments(comments), 1))
+    }
+
     // ToolTip for not logged in users when hovering add comment button
     const toggleCommentToolTip = (section) => {
         setShowCommentToolTip(section)
@@ -439,7 +459,9 @@ const BlogComponent = () => {
                         }
                     </section>
                     <section className="comments" id="comments">
-                            {organizeComments(comments).map((comment)=>{
+                            {/* organizeComments(comments).map works well but I want to attach hierarchy level to each comment to distinguish comments' UI. */}
+                            {/* hierarchyLevel(organizeComments(comments), 1) returns nested comment structure like organizeComments(comments) does but it adds one more level field */}
+                            {hierarchyLevel(organizeComments(comments), 1).map(comment => {
                                 // filter to get individual reply status as { id, showReply } then map to get only showReply returning in an array, so destructuring to get boolean
                                 const [ individualReplyStatus ] = replyStatus.filter(element => element.id === comment._id).map(element => element.showReply)
                                 return <CommentComponent key={comment._id} 
@@ -464,6 +486,9 @@ const BlogComponent = () => {
                                             showCommentModal={showCommentModal}
                                             setShowCommentModal={setShowCommentModal}
                                             setCommentTrigger={setCommentTrigger}
+
+                                            // Hierarchy level for UI design
+                                            level={comment.level}
                                         />
                             })}
                     </section>
