@@ -18,6 +18,11 @@
     border-left: 4px solid #8a817c;
 } */
 
+/* Fade comment when option(deleting) is activated */
+.comment.fade .content, .comment.fade small, .comment.fade .content-expand-icon{
+    opacity: 0.25 !important;
+}
+
 /* Content */
 .comment-container .comment .content{
     opacity: 0.9;

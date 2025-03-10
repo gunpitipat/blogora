@@ -167,7 +167,7 @@ const CommentComponent = (props) => {
         <div className="comment-container">
             {loading && <LoadingScreen />}
             {/* Comment Section */}
-            <div className={`comment ${individualViewReply ? "parent" : ""} level-${level > maxIndent ? maxIndent+1 : level}`}>
+            <div className={`comment ${individualViewReply ? "parent" : ""} level-${level > maxIndent ? maxIndent+1 : level} ${showCommentOption === comment._id ? "fade" : ""}`}>
                 <p className={`content ${comment.isDeleted ? "isDeleted" : ""} ${isExpanded ? "expanded" : ""}`}
                     ref={contentRef}
                 >

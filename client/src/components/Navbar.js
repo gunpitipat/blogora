@@ -53,8 +53,10 @@ const Navbar = () => {
         <>
             {/* Show menu icon only on mobile screen */}
             { isMobile &&
-                <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
-                    <FiMenu />
+                <div className="menu-icon-overlay">
+                    <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
+                        <FiMenu />
+                    </div>
                 </div>
             }
             {/* Overlay to close sidebar when clicking outside */}
