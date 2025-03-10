@@ -1,6 +1,4 @@
 /* Comment Section */
-.comment-container{
-}
 .comment-container .comment{
     padding: 1rem 1.75rem 1rem 1rem;
     border-radius: 0.25rem;
@@ -36,7 +34,7 @@
     opacity: 0.5;
     position: absolute;
     right: 1.75rem;
-    bottom: 0.8rem;
+    bottom: 0.9rem;
     cursor: pointer;
 }
 .comment-container .comment .content-expand-icon span{
@@ -70,6 +68,8 @@
     text-decoration: none;
     cursor: pointer;
     color:#5c5552;
+    display: flex;
+    align-items: center;
 }
 .comment small .authorComment{
     color: #5c5552;
@@ -308,6 +308,82 @@
 }
 
 /* Responsive Design */
+/* Tablet */
+@media (max-width: 700px) {
+    .comment .content-expand-icon{ /* content expand icon */
+        bottom: calc(0.9rem + 18.5px + 0.5rem) !important; /* 0.9rem of default + 18.5px of height of small tag + 0.5rem of offset distance (equal to margin-bottom of content) */
+        left: 1rem;
+        width: fit-content;
+        font-weight: 600;
+    }
+    .comment small.isTablet-overflowing, .comment small.isMobile-overflowing{
+        margin-top: calc(21px + 0.5rem); /* space as much as the height of expand-icon (21px) + 0.5rem for not too closed */
+    }
+}
+/* fix timestamp tooltip for level-3 comments */
+@media (max-width: 660px) {
+    .comment.level-3 small .timestamp .tooltip{
+        left: 0;
+        top: 108%;
+        transform: translate(0, -10px);
+    }
+    .comment.level-3 small .timestamp .tooltip.show{
+        transform: translateX(0) translateY(0);
+    }
+}
+/* fix timestamp tooltip for level-2 comments */
+@media (max-width: 615px) {
+    .comment.level-2 small .timestamp .tooltip{
+        left: 0;
+        top: 108%;
+        transform: translate(0, -10px);
+    }
+    .comment.level-2 small .timestamp .tooltip.show{
+        transform: translateX(0) translateY(0);
+    }
+    .comment-footer.level-2{
+        padding-top: 0.75rem;
+    }
+}
+/* Mobile */
+@media (max-width: 575px) {
+    .comment small{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .comment .content-expand-icon{ /* content expand icon */
+        bottom: calc(0.9rem + 18.5px + 0.5rem + 17.5px) !important; /* add another 17.5px of timestamp height */
+    }
+    .comment small .timestamp .tooltip{
+        left: 0;
+        top: 108%;
+        transform: translate(0, -10px);
+    }
+    .comment small .timestamp .tooltip.show{
+        transform: translateX(0) translateY(0);
+    }
+    .comment-footer.level-1{
+        padding-top: 0.75rem;
+    }
+    .comment .reference-author{
+        word-break: break-word;
+        overflow-wrap: break-word; /* Ensures wrapping in older browsers */
+    }
+}
+@media (max-width: 425px) {
+    .comment-footer{
+        padding-right: 0;
+    }
+}
+@media (max-width: 355px) {
+    .ReplyInput-container{
+        margin-left: 0 !important;
+    }
+    .comment-container{
+        overflow-x: auto;
+    }
+}
+
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */
 

@@ -14,6 +14,7 @@ import axios from "axios";
 import { useLoadingContext } from "../services/LoadingContext";
 import LoadingScreen from "./LoadingScreen";
 import { useAlertContext } from "../services/AlertContext";
+import { debounce } from "lodash"
 
 // Recursive Comment Component
 const CommentComponent = (props) => {
@@ -57,6 +58,21 @@ const CommentComponent = (props) => {
         // We want to display comments in different 3 indented levels meaning comments can be indented 2 times from the top level. maxIndent state will be 2.
         // At max level, all deeper comments remain at the same level and are grouped together under the same viewReply button.
     const [maxIndent] = useState(2) // prevents excessive indentation for a clean UI. Indentation is set by .replies applying margin-left: 2rem; in CSS.
+
+    // Responsive Design
+    const [isTablet, setIsTablet] = useState(window.innerWidth <= 700 && window.innerWidth > 575)
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 575)
+
+    useEffect(() => {
+        const handleResize = debounce(() => { // debounce ensures that the state updates only after the user stops resizing for a short period (100ms in this case), avoiding unnecessary renders.
+            setIsTablet(window.innerWidth <= 700 & window.innerWidth > 575)
+            setIsMobile(window.innerWidth <= 575)
+        }, 100)
+
+        window.addEventListener("resize", handleResize)
+
+        return () => window.removeEventListener("resize", handleResize)
+    }, [comment]) // prevent it from running before content is available
 
     // Create a reply using shared comment creation function from BlogComponent
     const onSendReply = (replyContent) => {
@@ -166,12 +182,12 @@ const CommentComponent = (props) => {
                     </div>
                 }
                 { !comment.isDeleted &&
-                    <small>
+                    <small className={`${(isTablet && isOverflowing) ? "isTablet-overflowing" : ""} ${isMobile && isOverflowing ? "isMobile-overflowing" : ""}`}>
                         <Link to={`/profile/${comment.user.username}`} className="author">
                             { comment.user.username }
+                            <span className="authorComment">&nbsp;{blogAuthor === comment.user.username ? <FaUserPen /> : null }</span>
                         </Link>
-                        <span className="authorComment">&nbsp;{blogAuthor === comment.user.username ? <FaUserPen /> : null }</span>
-                        &nbsp;&bull;&nbsp;
+                        {!isMobile && <span>&nbsp;&bull;&nbsp;</span>}
                         <span className="timestamp"
                             onMouseEnter={() => setShowDateToolTip(true)}
                             onMouseLeave={() => setShowDateToolTip(false)}
@@ -197,7 +213,7 @@ const CommentComponent = (props) => {
                 }
             </div>
             {/* Reply Input Section */}
-            <div className={`comment-footer ${level > maxIndent ? "hidden" : ""}`}>
+            <div className={`comment-footer ${level > maxIndent ? "hidden" : ""} level-${level}`}>
                 <div className="footer-utilities">
                     {((user && isAuthenticated) && !comment.isDeleted)
                     ?   <div className="reply-button" onClick={()=>showReplyInput(comment._id)}>

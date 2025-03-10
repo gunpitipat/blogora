@@ -17,6 +17,7 @@
     border: none;
     overflow-y: auto;
     max-height: 80px;
+    padding-right: 0.75rem; /* prevent scroll bar from overlapping content */
 }
 .ReplyInput-container .send-button{
     color: #463f3a;
