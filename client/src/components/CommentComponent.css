@@ -58,6 +58,8 @@
     font-style: italic;
     opacity: 0.5;
     user-select: none;
+    margin-bottom: 0.25rem;
+    padding: 0.35rem 0;
 }
 .comment small{
     display: flex;

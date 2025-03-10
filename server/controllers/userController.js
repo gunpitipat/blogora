@@ -34,16 +34,23 @@ exports.signup = async (req,res) => {
     const validateUsername = async (username) => {
         if (!username || username.trim().length < 5) {
             addError("username", "Username must have at least 5 characters.");
-        } else if (username.includes(" ")) {
+            return
+        }
+        if (username.includes(" ")) {
             addError("username", "Username cannot contain a space character.");
+            return
+        }
+        if (username.trim().length > 20) {
+            addError("username", "Username cannot be longer than 20 characters.")
+            return
         } else {
             // Check if username is already registered
             const existingUser = await Users.findOne({ username_lowercase: username.toLowerCase() });
             if (existingUser) {
                 addError("username", "Your username has been used.");
-            } else {
-                indication.success.push("username");
+                return
             }
+            indication.success.push("username");
         }
     };
 
