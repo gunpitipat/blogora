@@ -49,7 +49,7 @@ const Login = () => {
     }
 
     if (loading) return <LoadingScreen />
-    if (isAuthenticated && user) return <Navigate to="/" />
+    if (isAuthenticated && user?.username) return <Navigate to="/" />
 
     return(
         <div className="Login">

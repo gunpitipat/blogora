@@ -116,7 +116,7 @@ const Form = ()=>{
             setExtendTextarea(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
             localStorage.removeItem("save_draft")
-            navigate(`/profile/${user}`)
+            navigate(`/profile/${user.username}`)
         })
         .catch(error => {
             console.error(error)

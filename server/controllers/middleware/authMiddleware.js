@@ -9,6 +9,7 @@ const authenticateUser = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET) // return payload in token
         req.userId = decoded.userId // Attach userId to the request object
         req.username = decoded.username
+        req.userRole = decoded.role
         next()
     } catch (error) {
         res.status(403).json({ message: "Forbidden" }) // 

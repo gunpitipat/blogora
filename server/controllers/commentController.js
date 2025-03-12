@@ -69,12 +69,15 @@ exports.deleteComment = async (req,res) => {
     try {
         const { commentId } = req.params
         const userId = req.userId
+        const isAdmin = req.userRole === "admin" // allow admin to override delete comment
         
         // Find the comment
         const comment = await Comments.findById(commentId)
         if (!comment) return res.status(404).json({ message: "Comment not found" })
 
-        if (userId !== comment.user.toString()) return res.status(401).json({ message: "Unauthorized" })
+        if (userId !== comment.user.toString() && !isAdmin) {
+            return res.status(401).json({ message: "Unauthorized" })
+        }
         
         // Check if the comment has replies
         const hasReplies = await Comments.exists({ parentComment: commentId }) // Comments.exists checks whether at least one document matching the given condition exists in the database and returns document's id (truthy value) or null (falsy value)

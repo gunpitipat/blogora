@@ -249,7 +249,7 @@ const BlogComponent = () => {
         axios.delete(`${process.env.REACT_APP_API}/blog/${slug}`, { withCredentials: true })
         .then(response => {
             setAlertState({ display: true, type: "success", message: response.data.message })
-            navigate(`/profile/${user}`)
+            navigate(`/profile/${user.username}`)
         })
         .catch(err => {
             console.error(err)
@@ -394,7 +394,7 @@ const BlogComponent = () => {
                                 <IoChevronBackOutline />
                             </div>
                             <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>
-                            { user === blog.author ?
+                            { ((user?.username === blog.author) || (user?.role === "admin" )) &&
                                 <div className="setting">
                                     <BiDotsHorizontalRounded onClick={()=>setShowOptions(!showOptions)}/>
                                     {showOptions && 
@@ -406,7 +406,6 @@ const BlogComponent = () => {
                                     {showModal && <ModalConfirm showModal={showModal} setShowModal={setShowModal} title={blog.title}
                                     deleteBlog={deleteBlog} slug={slug}/>}
                                 </div>
-                                : null
                             }
                         </header>
                         <main className="TipTap-Result">
@@ -428,7 +427,7 @@ const BlogComponent = () => {
                         </footer>       
                     </div>}
                     <section className="blog-comment">
-                        { (user && isAuthenticated)
+                        { (user?.username && isAuthenticated)
                         ?   <div>
                                 <button className={showCommentInput ? "comment-button active" : "comment-button"} onClick={showComment}>
                                     <span className="comment-icon">
@@ -482,6 +481,7 @@ const BlogComponent = () => {
                                             showCommentModal={showCommentModal}
                                             setShowCommentModal={setShowCommentModal}
                                             setCommentTrigger={setCommentTrigger}
+                                            setShowCommentOption={setShowCommentOption}
 
                                             // Hierarchy level for UI design
                                             level={comment.level}

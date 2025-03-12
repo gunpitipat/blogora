@@ -173,7 +173,7 @@ const EditComponent = () => {
 
     if (blogExists === null || author === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
-    if (user !== author) return <Navigate to={`/blog/${slug}`} /> // prevent other users from modifying someone else's blog by directly accessing url path (at initially rendering, user might !== author because request hasn't finished yet so we add condition of author === null and return it above)
+    if (user?.username !== author) return <Navigate to={`/blog/${slug}`} /> // prevent other users from modifying someone else's blog by directly accessing url path (at initially rendering, user might !== author because request hasn't finished yet so we add condition of author === null and return it above)
 
     return(
         <div className="EditComponent" onClick={outOfFocus}>

@@ -75,13 +75,21 @@ exports.deleteBlog = async (req,res) => {
     try {
         const { slug } = req.params
         const username = req.username
+        const isAdmin = req.userRole === "admin" // allow admin to override delete blog
         
+        // Find the blog
+        const blog = await Blogs.findOne({ slug })
+        if (!blog) return res.status(404).json({ message: "Blog not found" })
+        // Check permission: only the author or an admin can delete
+        if (blog.author !== username && !isAdmin) {
+            return res.status(401).json({ message: "Unauthorized" })
+        }
+
         // Delete the blog
-        const deletedBlog = await Blogs.findOneAndDelete({ slug, author: username })
-        if (!deletedBlog) return res.status(404).json({ message: "Blog not found" })
-        
+        await Blogs.deleteOne({ slug })
+
         // Delete all comments associated with the blog
-        await Comments.deleteMany({ blog: deletedBlog._id })
+        await Comments.deleteMany({ blog: blog._id })
 
         res.json({ message: "Deleted successfully" })
     } catch (error) {

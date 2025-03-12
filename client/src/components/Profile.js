@@ -112,7 +112,7 @@ const Profile = () => {
                             <p>{userData.email}</p>
                         </header>
                         <main> 
-                            { user === userData.username
+                            { user?.username === userData.username
                             ?   <div>
                                     <p>You do not have any blogs.</p>
                                     <Link to="/create"><h4>Create Your Blog</h4></Link>

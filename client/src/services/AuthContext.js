@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
             })
             if (res.status === 200) {
                 setIsAuthenticated(res.data.isAuthenticated)
-                setUser(res.data.username)
+                setUser({ username: res.data.username, role: res.data.role })
             } else {
                 setIsAuthenticated(res.data.isAuthenticated) // or setIsAuthenticated(false)
                 setUser(null)
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, checkAuth }}>
             {children}
         </AuthContext.Provider>
-    )
+    ) // When using user.username as condition for rendering UI, use optional chaining like user?.username to prevent errors in cases where user might be null initially
 }
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

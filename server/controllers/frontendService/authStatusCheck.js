@@ -7,7 +7,7 @@ const authStatusCheck = (req,res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        res.status(200).json({ isAuthenticated: true, username: decoded.username })
+        res.status(200).json({ isAuthenticated: true, username: decoded.username, role: decoded.role })
     } catch (error) {
         res.status(403).json({ isAuthenticated: false }) // Invalid or expired token
     }

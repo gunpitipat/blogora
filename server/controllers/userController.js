@@ -126,7 +126,7 @@ exports.login = async (req,res) => {
         }
         
         // Validation passed => Create token
-        const payload = { username: result.success.user.username, userId: result.success.user._id }
+        const payload = { username: result.success.user.username, userId: result.success.user._id, role: result.success.user.role }
         const token = jwt.sign( payload, process.env.JWT_SECRET, { expiresIn: "1d" })
         // Set HttpOnly Cookie
         res.cookie("token", token, {

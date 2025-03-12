@@ -30,6 +30,7 @@ const CommentComponent = (props) => {
         getAllRelatedReplies,
         showCommentOption,
         toggleCommentOption,
+        setShowCommentOption,
         showCommentModal,
         setShowCommentModal,
         setCommentTrigger,
@@ -112,6 +113,7 @@ const CommentComponent = (props) => {
             setShowCommentModal(null)
             setCommentTrigger(prev => !prev)
             setAlertState({ display: true, type: "success", message: response.data.message })
+            setShowCommentOption(null)
         } catch (error) {
             console.error("Error deleting comment:", error)
         } finally {
@@ -199,8 +201,8 @@ const CommentComponent = (props) => {
                         </span>
                     </small>
                 }
-                { !comment.isDeleted && user === comment.user.username
-                ?   <div className="setting">
+                { ((!comment.isDeleted && user?.username === comment.user.username) || (!comment.isDeleted && user?.role === "admin")) &&
+                   <div className="setting">
                     <BiDotsHorizontalRounded className="setting-icon" onClick={()=>toggleCommentOption(comment._id)} />
                     { showCommentOption === comment._id &&
                         <ul className="options">
@@ -209,13 +211,12 @@ const CommentComponent = (props) => {
                     }
                     { showCommentModal === comment._id && <ModalComment commentId={comment._id} showModal={showCommentModal} setShowModal={setShowCommentModal} deleteComment={deleteComment} />}
                     </div>
-                :   null
                 }
             </div>
             {/* Reply Input Section */}
             <div className={`comment-footer ${level > maxIndent ? "hidden" : ""} level-${level}`}>
                 <div className="footer-utilities">
-                    {((user && isAuthenticated) && !comment.isDeleted)
+                    {((user?.username && isAuthenticated) && !comment.isDeleted)
                     ?   <div className="reply-button" onClick={()=>showReplyInput(comment._id)}>
                             <span className="reply-icon">
                                 <FaReply style={{ transform: "scale(-1, -1)" }}/>

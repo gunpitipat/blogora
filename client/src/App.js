@@ -119,7 +119,7 @@ function App() {
               </small>
             </div>
         )))}
-        { !(isAuthenticated && user) && blogs.length > 0 && (showToolTip && <ToolTip closeToolTip={closeToolTip}/>)} {/* tips for new users having not loged in yet */}
+        { !(isAuthenticated && user?.username) && blogs.length > 0 && (showToolTip && <ToolTip closeToolTip={closeToolTip}/>)} {/* tips for new users having not loged in yet */}
         <div className={`back-to-top-button ${showBackToTop ? "show" : ""}`} onClick={backToTop}>
           <LuArrowUpToLine />
         </div>

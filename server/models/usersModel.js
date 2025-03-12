@@ -22,6 +22,11 @@ const userSchema = mongoose.Schema({
         required: true,
         // unique: true
         index: false // Ensure no index is created on password
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin'], // ensures that the value can only be either one of the predefined options.
+        default: 'user'
     }
 })
 

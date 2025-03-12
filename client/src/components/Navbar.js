@@ -72,7 +72,7 @@ const Navbar = () => {
                             <Link to="/" onClick={() => setIsOpen(false)}>Community</Link>
                         </li>
                         <li className={ pathname === "/create" ? "selected" : null }>
-                            { (isAuthenticated && user) ? (
+                            { (isAuthenticated && user?.username) ? (
                                 <Link to="/create" onClick={() => setIsOpen(false)}>Create Blog</Link>
                             ) : (
                                 <span className="disable-menu"
@@ -87,8 +87,8 @@ const Navbar = () => {
                             )}                    
                         </li>
                         <li className={ pathname.includes("/profile") ? "selected" : null }>
-                            { (isAuthenticated && user) ? (
-                                <Link to={`/profile/${user}`} onClick={() => setIsOpen(false)}>Profile</Link>
+                            { (isAuthenticated && user?.username) ? (
+                                <Link to={`/profile/${user.username}`} onClick={() => setIsOpen(false)}>Profile</Link>
                             ) : (
                                 <span className="disable-menu"
                                     onMouseEnter={() => toggleToolTip("Profile")}
@@ -102,13 +102,13 @@ const Navbar = () => {
                             )}
                         </li>
                     </div>
-                    { !(isAuthenticated && user) && (
+                    { !(isAuthenticated && user?.username) && (
                     <div className="menu-group">
                         <li className={ pathname === "/login" ? "selected" : null }>
                             <Link to="/login" onClick={() => setIsOpen(false)}>Log In</Link>
                         </li>
                     </div>)}
-                    { (isAuthenticated && user) && (
+                    { (isAuthenticated && user?.username) && (
                     <div className="menu-group">
                         <li>
                             <Link to="/" onClick={() => setIsOpen(false)}>
