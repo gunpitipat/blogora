@@ -131,10 +131,9 @@ exports.login = async (req,res) => {
         // Set HttpOnly Cookie
         res.cookie("token", token, {
             httpOnly: true, // prevent javascript access (XSS attacks)
-            secure: false, // ensure it's sent over HTTPS // set false for local development because http://localhost runs on http not https, so the browser ignores the cookie.
-            sameSite: "lax", // "strict" => prevent CSRF attacks / "lax" => to allow cross-site/origin requests
+            secure: true, // ensure it's sent over HTTPS // set false for local development because http://localhost runs on http not https, so the browser ignores the cookie.
+            sameSite: "none", // "strict" => prevent CSRF attacks / "lax" => to allow cross-site/origin requests
             maxAge: 1000 * 60 * 60 * 24, // 1 day expiration
-            domain: "localhost", // Explicitly set the cookie to be stored under localhost rather than localhost:3000 (in case different frontend and backend domains)
             path: "/"
         })
         res.status(200).json({
