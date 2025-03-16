@@ -70,7 +70,7 @@ const Navbar = () => {
                 <ul>
                     <div className="menu-group">
                         <li className={ pathname === "/" ? "selected" : null }>
-                            <Link to="/" onClick={() => setIsOpen(false)}>Community</Link>
+                            <Link to="/" onClick={() => setIsOpen(false)}>Explore</Link>
                         </li>
                         <li className={ pathname === "/create" ? "selected" : null }>
                             { (isAuthenticated && user?.username) ? (
