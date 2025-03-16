@@ -1,7 +1,7 @@
 export const formatDayMonth = (value) => {
-    let date = new Date(value) // convert value to a Date object
+    let date = new Date(value) // Convert value to a Date object
     let day = date.getDate().toString().padStart(2, '0')
-    let month = (date.getMonth() + 1).toString().padStart(2, '0') // getMonth() method returns the month index which starts at 0 (JAN), 1 (FEB)
+    let month = (date.getMonth() + 1).toString().padStart(2, '0') // getMonth() method returns the month index which starts at 0 (JAN), then 1 (FEB)
     let year = String(date.getFullYear())
     return `${day}/${month}/${year}`
 }

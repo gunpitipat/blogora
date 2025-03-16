@@ -39,29 +39,29 @@
     font-weight: 900;
 }
 
-/* Log Out */
+/* Log out */
 .Navbar .menu-group .logout-btn{
     font-size: 1.2rem;
     font-weight: 600;
     border: none;
     background: transparent;
     cursor: pointer;
-    /* ปุ่ม logout ไม่ต้องกำหนด padding หรอก ให้เล็กๆกดยากๆดีแล้ว จะได้ไม่เผลอคลิกโดน */
+    /* No need to set padding. Make it small to prevent accidental click */
     opacity: 0.7;
-    /* ทำให้มันไม่เด่นเท่าเมนูอื่น */
+    /* Make it less prominent than the other menus */
 }
 .Navbar .menu-group .logout-btn:hover{
     /* font-weight: 900; */
     opacity: 1;
 }
 
-/* Selected Menu */
+/* Selected menu */
 .Navbar li.selected a{
     font-weight: 900;
     font-size: 1.35rem;
 }
 
-/* Deactivate Create Menu when not login */
+/* Deactivate Create menu when not loggin */
 .Navbar li span.disable-menu{
     position: relative;
 }
@@ -74,7 +74,7 @@
     cursor: not-allowed;
     user-select: none;
 }
-/* ToolTip for not logged in users */
+/* ToolTip for not logged-in users */
 .Navbar li span.disable-menu .tooltip{
     position: absolute;
     white-space: nowrap;

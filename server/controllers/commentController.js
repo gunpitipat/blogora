@@ -19,7 +19,7 @@ exports.createComment = async (req,res) => {
         if (parentCommentId) {
             const parentComment = await Comments.findById(parentCommentId)
             if (!parentComment) return res.status(404).json({ message: "Parent comment not found" })
-            // and ensure parent comment belongs to the same blog (In Mongoose, we cannot compare ObjectId values directly using !== or !=, so use toSting() to compare)
+            // and ensure parent comment belongs to the same blog (In Mongoose, cannot compare ObjectId values directly using !==)
             if (parentComment.blog.toString() !== blog._id.toString()) {
                 return res.status(400).json({ message: "Parent comment does not belong to this blog." })
             }
@@ -29,7 +29,7 @@ exports.createComment = async (req,res) => {
             user: userId,
             blog: blog._id,
             content: content.trim(),
-            parentComment: parentCommentId || null // if req.body doesn't contain parentCommentId, set it null (top-level comment)
+            parentComment: parentCommentId || null // If req.body doesn't contain parentCommentId, set it null (top-level comment)
         })
         await comment.save()
         await Blogs.findByIdAndUpdate(blog._id, { $push: { comments: comment._id } })
@@ -62,14 +62,11 @@ exports.getComments = async (req,res) => {
 }
 
 // Delete comment with conditional soft/hard deletion 
-        // if the comment has replies, soft delete by replacing its content with a placeholder message.
-        // if the comment has no replies, hard delete by removing both comment document from comments collection and referenced comment id from blog's comments array.
-            // if the lowest comment is deleted, while its parent comment was earlier deleted by soft deletion then now it has no more replies. Automatically hard delete it.
 exports.deleteComment = async (req,res) => {
     try {
         const { commentId } = req.params
         const userId = req.userId
-        const isAdmin = req.userRole === "admin" // allow admin to override delete comment
+        const isAdmin = req.userRole === "admin" // Allow admin to override delete comment
         
         // Find the comment
         const comment = await Comments.findById(commentId)
@@ -80,17 +77,17 @@ exports.deleteComment = async (req,res) => {
         }
         
         // Check if the comment has replies
-        const hasReplies = await Comments.exists({ parentComment: commentId }) // Comments.exists checks whether at least one document matching the given condition exists in the database and returns document's id (truthy value) or null (falsy value)
+        const hasReplies = await Comments.exists({ parentComment: commentId }) // Return document's id (truthy value) or null (falsy value)
         
         if (hasReplies) {
-            // Soft delete
+            // Soft delete by replacing its content with a placeholder message
             await Comments.findByIdAndUpdate(commentId, {
                 content: "This comment has been deleted.",
                 isDeleted: true
             })
             return res.json({ message: "Comment has been deleted." })
         } else {
-            // Hard delete
+            // Hard delete by removing both comment document from comments collection and referenced comment id from blog's comments array
             const deletedComment = await Comments.findByIdAndDelete(commentId)
             if (deletedComment) { // Ensure findByIdAndDelete was successful and avoid unnecessary blog update
                 await Blogs.updateOne({ _id: comment.blog }, { $pull: { comments: commentId } })
@@ -100,7 +97,7 @@ exports.deleteComment = async (req,res) => {
                 let parentId = deletedComment.parentComment
                 while (parentId) {
                     const parent = await Comments.findById(parentId)
-                    if (!parent || !parent.isDeleted) break // stop if parent doesn't exist or isn't soft deleted
+                    if (!parent || !parent.isDeleted) break // Stop if parent doesn't exist or isn't soft deleted
 
                     const stillHasReplies = await Comments.exists({ parentComment: parent._id })
 
@@ -109,7 +106,7 @@ exports.deleteComment = async (req,res) => {
                         await Blogs.updateOne({ _id: comment.blog }, { $pull: { comments: parent._id } })
                         parentId = parent.parentComment // Move up to the next ancestor
                     } else {
-                        break // stop if parent still has replies
+                        break // Stop if parent still has replies
                     }
                 }
             }

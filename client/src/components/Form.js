@@ -18,7 +18,8 @@ const Form = ()=>{
         const data = localStorage.getItem("save_draft")
         return data ? JSON.parse(data).content : ""
     })
-    // prop to TipTap component to clear content after submitting form
+    
+    // Prop to TipTap component to clear content after submitting form
     const [ submit, setSubmit ] = useState(false)
         
     const { setLoading } = useLoadingContext()
@@ -33,7 +34,7 @@ const Form = ()=>{
     }
 
     useEffect(() => {
-        // in case saving draft
+        // In case of saving draft
         if (localStorage.getItem("save_draft")) { // { title: "your title", content: "your content" }
             const saveDraft = JSON.parse(localStorage.getItem("save_draft"))
             setTitle(saveDraft.title)
@@ -41,31 +42,28 @@ const Form = ()=>{
         }
         // eslint-disable-next-line
     }, [])
-    
-// _____________________  Styles  _____________________
 
-    // focusing on input/textarea making their label bolder
+    // Style: Making label bolder when focusing on input/textarea 
     let initialLabels = { titleLabel: false, contentLabel: false }
     const [ labels, setLabels ] = useState(initialLabels)   
     const focusLabelFunc = (label) => {
         initialLabels = { ...initialLabels, [label]: true }
-        setLabels(initialLabels) // พอ state labels มีการ assign ค่าลงไป component นี้มันจะ re-render ส่งผลให้ ตัวแปร initialLabels กลับไปเป็นค่าเริ่มต้นตอนที่นิยาม
+        setLabels(initialLabels) // Updating labels causes a re-render, resetting initialLabels to its initial value
     }
-    // click anywhere to stop focusing on text field
+    // Style: Click anywhere to stop focusing on text field
     const outOfFocus = (e) => {
-        // if(e.target.nodeName !== "INPUT" && e.target.nodeName !== "TEXTAREA"){
         if (e.target.nodeName !== "INPUT") {
             setLabels(initialLabels)
         }
     }
 
-    // alert popup
+    // Alert popup
     const { setAlertState } = useAlertContext()
 
-    // extend textarea
+    // Extend textarea
     const [ extendTextarea, setExtendTextarea ] = useState(false)
     
-    // distance from the top of webpage
+    // Distance from the top of the page
     function getTotalOffsetTop(element) {
         let offset = 0;
         while (element) {
@@ -75,25 +73,25 @@ const Form = ()=>{
         return offset;
       }
 
-    // Perform scrolling after extendTextarea set to true (the DOM updates). Textarea has transition duration 150ms to extend its height.
+    // Perform scrolling after extendTextarea set to true (the DOM updates)
     useEffect(() => {
         if (extendTextarea) {
             const contentElement = document.getElementById("content")
             const editorElement = document.getElementById("text-editor")
                 
-            if (contentElement && editorElement) { // ensure contentElement not null and valid for calling other function to prevent Reference Error
+            if (contentElement && editorElement) { // Ensure contentElement not null and valid to prevent Reference Error
                 const handleTransitionEnd = ()=> {    
-                    const targetScrollY = getTotalOffsetTop(contentElement) - 80 - 16 // 80 px of fixed navbar height and 16 px of 1 rem space
+                    const targetScrollY = getTotalOffsetTop(contentElement) - 80 - 16 // 80px (fixed navbar height), 16px (1rem spacing)
                     window.scrollTo({
                         top: targetScrollY,
                         behavior: "smooth"
                     })
                 }
 
-                // attach transitionend event listener to text editor
+                // Textarea (text editor) has height-transition duration of 150ms
                 editorElement.addEventListener("transitionend",handleTransitionEnd)
 
-                // Cleanup: Remove the listener to prevent multiple stack up attaching event listener
+                // Cleanup: Remove the listener to prevent multiple event listeners from stacking up
                 return () => {
                     editorElement.removeEventListener("transitionend", handleTransitionEnd);
                 };
@@ -101,10 +99,7 @@ const Form = ()=>{
         }
     }, [extendTextarea])
 
-
-// _______________________________________________________________
-
-    // submitting form data
+    // Submit form data
     const submitForm = (e) => {
         e.preventDefault()
         setLoading(true)
@@ -146,7 +141,7 @@ const Form = ()=>{
                         <div onClick={()=>focusLabelFunc("contentLabel")}>
                             <TipTap content={content} setContent={setContent} submit={submit} setSubmit={setSubmit} contentLabel={labels.contentLabel}/>                 
                             <div className="sizing" onClick={()=>setExtendTextarea(!extendTextarea)}>
-                                { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{transform:"scaleX(-1)"}}/>} {/* icon มันไม่มีให้เลือกเยอะ ได้อันที่กลับด้านมา เลยกำหนด style */}
+                                { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{transform:"scaleX(-1)"}}/>}
                             </div>
                         </div>
                     </div>

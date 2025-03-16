@@ -25,13 +25,13 @@ const Profile = () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}`,{
                 withCredentials: true,
-                signal: abortSignal // passes abortController signal to link the request with abortController
+                signal: abortSignal // Passes abortController signal to link the request with abortController
             })
                 return response.data // User exists => { email ?, username }
         } catch (error) {
-            if (!axios.isCancel(error)) { // If the error is due to request cancellation, it will be ignored, preventing unnecessary error logs.
+            if (!axios.isCancel(error)) { // Ignore request cancellation errors to avoid unnecessary logs
                 console.error("Error fetching user data:", error)
-                throw error // rethrow caught error so that it can be handled at a higher level (Promise.allSetled() in this case)
+                throw error // Rethrow caught error to be handled by a higher level handler (e.g., Promise.allSetled())
             }
         }
     }
@@ -54,7 +54,7 @@ const Profile = () => {
     useEffect(() => {
         if (!usernameParam) return // Prevent fetching when username is undefined initially
 
-        const controller = new AbortController() // for cleanup (request cancellation) when component unmounted
+        const controller = new AbortController() // For cleanup (request cancellation) when component unmountes
         const { signal } = controller
 
         const fetchData = async () => {
@@ -64,13 +64,13 @@ const Profile = () => {
             setUserBlogs([])
 
             try {
-                const [userDataResult, userBlogsResult] = await Promise.allSettled([ // making both API requests start at the same time (Promise.allSettled() ensures both promises run to completion, even if one fails)
+                const [userDataResult, userBlogsResult] = await Promise.allSettled([ // Run both API requests concurrently, ensuring both promises run to completion, even if one fails
                     getUserData(signal), 
                     getUserBlogs(signal)
                 ]) 
 
-                // Check if getUserData is successful before using its return value
-                if (userDataResult.status === "fulfilled" && userDataResult.value) { // ensure userDataResult.value exists before accessing its property like email and username
+                // Check if getUserData is successful before using its result
+                if (userDataResult.status === "fulfilled" && userDataResult.value) { // Ensure userDataResult.value exists before accessing its properties
                     setUserData({ email: userDataResult.value.email || null, username: userDataResult.value.username })
                     setProfileExists(true)
                 } else {
@@ -82,7 +82,7 @@ const Profile = () => {
                 }
             } catch (error) {
                     console.error("Error occurred in fetchData:", error)
-                    setProfileExists(false) // Only set profileExists(false) if error isn't from request cancellation
+                    setProfileExists(false) // Set to false only if error isn't from request cancellation
             } finally {
                 setLoading(false)
             }
@@ -117,7 +117,7 @@ const Profile = () => {
                                     <p>You do not have any blogs.</p>
                                     <Link to="/create"><h4>Create Your Blog</h4></Link>
                                 </div>
-                            // when users visit other's profile whose blog hasn't been created yet
+                            // When users visit other's profile whose blog hasn't been created yet
                             :   <div>
                                     <p>No blogs here yet!</p>
                                     <Link to="/"><h4>Explore other blogs instead?</h4></Link>
@@ -129,7 +129,7 @@ const Profile = () => {
             )
         }
 
-        // Users have their own blogs
+        // User has their own blogs
         else {
             return(
                 <div className="Profile">

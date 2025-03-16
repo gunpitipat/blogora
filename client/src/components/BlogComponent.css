@@ -1,7 +1,7 @@
 .BlogComponent{
     padding: 2.5rem 4rem 6rem;
     overflow-x: hidden;
-    min-height: calc(100vh - 80px + 40px); /* to hide copyright footer in case short content blog */
+    min-height: calc(100vh - 80px + 40px); /* Make copyright footer overflow on short content pages */
 }
 .BlogComponent header{
     padding-bottom: 1rem;
@@ -19,7 +19,7 @@
     left: 0.85rem;
     font-size: 1.4rem;
     cursor: pointer;
-    display: none; /* Show only on small screen */
+    display: none; /* Show only on a small device's screen */
 }
 .BlogComponent header .setting{
     margin: 0 0.5rem;
@@ -95,7 +95,7 @@
     top: 0;
     display: flex;
 
-/* setting buttons */
+/* Setting buttons */
 }
 .BlogComponent header .setting .options>*{
     margin: 0 0.5rem;
@@ -118,12 +118,12 @@
     color: #463f3a;
     border: 1px solid #463f3a;
 }
-.BlogComponent header .setting .options a.edit:hover{ /* for edit button which contains Link inside */
+.BlogComponent header .setting .options a.edit:hover{
     background: #8a817c;
     color: #fafafa;
 }
 
-/* content */
+/* Content */
 .TipTap-Result :first-child{
     margin-top: 0;
 }
@@ -141,14 +141,14 @@ section.blog-comment{
     /* display: flex;
     justify-content: center; */
 }
-/* button */
+/* Button */
 section.blog-comment .comment-button{
     padding: 0.35rem 0.7rem;
     cursor: pointer;
     font-size: 1rem;
     color: #463f3a;
     border: 1px solid #aaaaaa;
-    border-radius: 17px; /* circular shaped corner => (height / 2) px */
+    border-radius: 17px; /* Circular shaped corner => (height / 2) px */
     background-color: #fafafa;
     display: flex;
     align-items: center;
@@ -160,12 +160,12 @@ section.blog-comment .comment-button.active{
     border-radius: 17px 17px 0 0;
     border-bottom: none;
 }
-section.blog-comment .comment-button span:first-child{ /* icon */
+section.blog-comment .comment-button span:first-child{ /* Icon */
     display: flex;
     align-items: center;
     margin-right: 0.25rem;
 }
-/* For not logged in users */
+/* For not logged-in users */
 section.blog-comment .comment-button.disable{
     cursor: not-allowed;
 }
@@ -199,7 +199,7 @@ section.blog-comment .comment-button .tooltip.show{
     transform: translateX(0) translateY(-50%); /* Moves back to normal position */
 }
 
-/* comments */
+/* Comments */
 section.comments{
     padding: 2rem 1rem 0.5rem;
 }
@@ -211,7 +211,7 @@ section.comments{
         display: flex;
     }
     .BlogComponent{
-        min-height: calc(100vh - 20px + 40px); /* to hide copyright footer in case short content blog */
+        min-height: calc(100vh - 20px + 40px); /* Make copyright footer overflow on short content pages */
     }
 }
 @media (max-width: 520px) {

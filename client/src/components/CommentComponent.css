@@ -1,3 +1,5 @@
+/* Indentation controlled by .replies with margin-left: 2rem; */
+
 /* Comment Section */
 .comment-container .comment{
     padding: 1rem 1.75rem 1rem 1rem;
@@ -7,7 +9,7 @@
     border: 1px solid #dddddd;
     position: relative;
 }
-/* Make each comment distinguish heirarchically */
+/* Make each comment distinguish heirarchically by applying different margin-left bar colors */
 .comment-container .comment.level-2{
     border-left: 4px solid #cbc5c0;
 }
@@ -29,12 +31,12 @@
     font-size: 1rem;
     color: #1f1f1f;
     margin: 0.25rem 0 0.5rem;
-    /* limit height */
-    max-height: 150px; /* shows only 7 lines */
+    /* Limit height */
+    max-height: 150px; /* Shows only 7 lines */
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
 }
-.comment-container .comment .content-expand-icon{ /* content expand icon */
+.comment-container .comment .content-expand-icon{ /* Content expand icon */
     color: #463f3a;
     opacity: 0.5;
     position: absolute;
@@ -123,8 +125,8 @@
 .comment-footer.hidden .footer-utilities{
     display: none;
 }
-
-.vertical-line{ /* vertical connecting line */
+/* Vertical connecting line */
+.vertical-line{
     position: absolute;
     top: 0;
     left: 1rem;
@@ -149,7 +151,7 @@
     align-items: center;
     cursor: pointer;
 }
-.reply-button .reply-icon svg{ /* reply icon */
+.reply-button .reply-icon svg{ /* Reply icon */
     color: #463f3a;
     opacity: 0.5;
 }
@@ -159,7 +161,7 @@
 .reply-button:hover .reply-icon svg{
     opacity: 0.7;
 }
-/* For not logged in users */
+/* For not logged-in users */
 .reply-button.disable label, .reply-button.disable .reply-icon{
     cursor: not-allowed;
 }
@@ -169,7 +171,7 @@
 .reply-button.disable:hover .reply-icon svg{
     opacity: 0.5;
 }
-/* Deleted comment cannot be replied */
+/* Disable replies on deleted comments */
 .reply-button.isDeleted label, .reply-button.isDeleted .reply-icon{
     cursor: not-allowed;
     opacity: 0.5;
@@ -178,8 +180,7 @@
     opacity: 0.35;
 }
 
-
-/* ViewReply Button */
+/* ViewReply button */
 .footer-utilities{
     display: flex;
 }
@@ -195,7 +196,7 @@
     align-items: center;
     width: fit-content;
 }
-.viewReply-button .viewReply-icon{ /* view-reply icon */
+.viewReply-button .viewReply-icon{ /* View-reply icon */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -207,14 +208,14 @@
 .viewReply-button:hover{
     opacity: 1;
 }
-/* When replies are shown, hightlight their parent */
+/* Hightlight parent when replies are shown */
 .comment.parent{
     border: 1px solid #aaaaaa;
 }
 
 /* Reply Section */
-.replies{
-    margin-left: 2rem; /* Indentation */
+.replies{ /* Indentation Control */
+    margin-left: 2rem;
 }
     /* Limit Indentation Depth for the comments-replies deeper than level 4 */
     /* .replies.level-4{
@@ -227,7 +228,6 @@
     .replies.level-4 .reply-connector::before{
         border: none;
     } */
-    
 .reply-wrapper{
     display: flex;
     align-items: flex-start;
@@ -242,7 +242,7 @@
     position: absolute;
     top: 0;
     left: -1rem;
-    height: 100%; /* it extends further the last reply, erase it with the same background color */
+    height: 100%; /* It extends further the last reply, erase it with the same background color */
     border-left: 1px solid #aaa;
     /* border-bottom-left-radius: 0.25rem; */
 }
@@ -253,29 +253,29 @@
     top: 1.5rem;
     left: -1rem;
     height: 1rem;
-    width: 0.95rem; /* just not make it completey attached to reply */
+    width: 0.95rem; /* Prevent completely attachment to reply */
     border-bottom: 1px solid #aaaaaa;
     border-left: 1px solid #aaaaaa;
     border-bottom-left-radius: 0.25rem;
-    z-index: 2; /* set z-index higher than erase line */
+    z-index: 2; /* Set z-index higher than erasing line */
 }
 
-/* Erase the excessive vertical connecting line by creating vertical line using the page background color overlapping on it */
+/* Remove excess vertical line by overlapping with background color */
 .reply-wrapper.last-reply{
     position: relative;
 }
 .reply-wrapper.last-reply::before{
     content: "";
     position: absolute;
-    top: 2rem; /* far away from top of .reply-wrapper.last-reply = bottom border of horizontal connecting line (actually it has to be 2.25rem but horizontal line has border radius of 0.25rem which is aligned vertically */
+    top: 2rem; /* Starts at bottom border of horizontal line (-0.25rem for border radius adjustment) */
     left: -1rem;
     width: 1px;
-    height: calc(100% - 2rem); /* excessive vertical line distance where 100% is calculated from .replies and 2.25 is distance used to move this pseudo element downward */
+    height: calc(100% - 2rem);
     border-left: 1px solid #fafafa;
     z-index: 1;
 }
 
-/* Delete Button */
+/* Delete button */
 .comment .setting{
     position: absolute;
     right: 0.5rem;
@@ -315,17 +315,17 @@
 /* Responsive Design */
 /* Tablet */
 @media (max-width: 700px) {
-    .comment .content-expand-icon{ /* content expand icon */
-        bottom: calc(0.9rem + 18.5px + 0.5rem) !important; /* 0.9rem of default + 18.5px of height of small tag + 0.5rem of offset distance (equal to margin-bottom of content) */
+    .comment .content-expand-icon{ /* Content expand icon */
+        bottom: calc(0.9rem + 18.5px + 0.5rem) !important; /* Default space + small tag height + offset spacing (content's margin-bottom) */
         left: 1rem;
         width: fit-content;
         font-weight: 600;
     }
     .comment small.isTablet-overflowing, .comment small.isMobile-overflowing{
-        margin-top: calc(21px + 0.5rem); /* space as much as the height of expand-icon (21px) + 0.5rem for not too closed */
+        margin-top: calc(21px + 0.5rem); /* Space for expand-icon height (21px) + 0.5rem spacing */
     }
 }
-/* fix timestamp tooltip for level-3 comments */
+/* Fix timestamp tooltip for level-3 comments */
 @media (max-width: 660px) {
     .comment.level-3 small .timestamp .tooltip{
         left: 0;
@@ -336,7 +336,7 @@
         transform: translateX(0) translateY(0);
     }
 }
-/* fix timestamp tooltip for level-2 comments */
+/* Fix timestamp tooltip for level-2 comments */
 @media (max-width: 615px) {
     .comment.level-2 small .timestamp .tooltip{
         left: 0;
@@ -356,8 +356,8 @@
         flex-direction: column;
         align-items: flex-start;
     }
-    .comment .content-expand-icon{ /* content expand icon */
-        bottom: calc(0.9rem + 18.5px + 0.5rem + 17.5px) !important; /* add another 17.5px of timestamp height */
+    .comment .content-expand-icon{ /* Content expand icon */
+        bottom: calc(0.9rem + 18.5px + 0.5rem + 17.5px) !important; /* Add another 17.5px of timestamp height */
     }
     .comment small .timestamp .tooltip{
         left: 0;
@@ -388,7 +388,6 @@
         overflow-x: auto;
     }
 }
-
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */
 

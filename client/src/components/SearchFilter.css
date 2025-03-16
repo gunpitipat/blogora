@@ -28,7 +28,7 @@
     font-size: 1.1rem;
 }
 
-/* Responsive SearchFilter Design */
+/* Responsive Design */
 @media (max-width: 768px) {
     .SearchFilter .container input{
         width: 65vw;

@@ -7,7 +7,7 @@ const AuthContext = createContext()
 export const useAuthContext = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null) // initially null => shows loading screen in protected routes
+    const [isAuthenticated, setIsAuthenticated] = useState(null) // Initially null -> shows loading screen in protected routes
     const [user, setUser] = useState(null)
 
     const { setLoading } = useLoadingContext()
@@ -16,8 +16,8 @@ export const AuthProvider = ({ children }) => {
         setLoading(true)
         try {
             const res = await axios.get(`${process.env.REACT_APP_API}/check-auth`, {
-                withCredentials: true, // sends cookies with request
-                validateStatus: () => true, // prevents axios from throwing HTTP errors on non-2xx responses (allow all status codes to go to .then() block to manually handle errors)
+                withCredentials: true, // Sends cookies with request
+                validateStatus: () => true, // Prevents axios from throwing HTTP errors on non-2xx responses (allow all status codes to go to .then() block to manually handle errors)
             })
             if (res.status === 200) {
                 setIsAuthenticated(res.data.isAuthenticated)
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
                 setIsAuthenticated(res.data.isAuthenticated) // or setIsAuthenticated(false)
                 setUser(null)
             }
-        } catch (error) { // real network issues where axios never receives a response still go to catch block
+        } catch (error) { // Real network issues where axios never receives a response still go to catch block
             setIsAuthenticated(false)
             setUser(null)
         } finally {
@@ -34,18 +34,17 @@ export const AuthProvider = ({ children }) => {
         }
     }
     
-    // When a user refreshes the page, React state resets, so isAuthenticated and user would be lost.
-    // useEffect ensures that checkAuth() runs once when the app loads, checking if the session is still valid.
+    // Prevent isAuthenticated and user from being lost when refreshing the page
     useEffect(() => {
-        checkAuth()
+        checkAuth() // Checking if the session is still valid once the app loads
         // eslint-disable-next-line
     }, [])
 
-    return (
+    return ( // When using user.username as a condition for rendering UI, use optional chaining (user?.username) to prevent errors where user might be null or undefined initially
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, checkAuth }}>
             {children}
         </AuthContext.Provider>
-    ) // When using user.username as condition for rendering UI, use optional chaining like user?.username to prevent errors in cases where user might be null initially
+    ) 
 }
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

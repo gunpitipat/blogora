@@ -18,7 +18,7 @@
 .Login h2{
     font-weight: 700;
     text-align: center;
-    margin: 2rem 0; /*40px*/
+    margin: 2rem 0;
 }
 .Login form{
     /* display: flex;
@@ -47,7 +47,7 @@
     /* background-color: #fff; */
     background: linear-gradient(to bottom, #fff, #fafafa);
     width: 55vw;
-    max-width: 100%; /* ensure input will not be longer than its container */ 
+    max-width: 100%; /* Prevent input from exceeding container width */ 
 }
 .Login .btn{
     font-size: 1rem;
@@ -88,7 +88,7 @@
     cursor: pointer;
 }
 
-/* show error message */
+/* Show error messages */
 .Login form div small{
     visibility: hidden;
 }
@@ -101,7 +101,7 @@
     border: 1px solid red;
 }
 
-/* Show and Hide password */
+/* Show and hide password */
 .Login .bg form .password-frame{
     width: fit-content;
     max-width: 100%;

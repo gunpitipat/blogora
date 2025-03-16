@@ -10,12 +10,12 @@ const cookieParser = require("cookie-parser")
 
 const app = express()
 
-// connecting to cloud database
+// Connect to cloud database
 mongoose.connect(process.env.DATABASE,{
     // useNewUrlParser:true,
     // useUnifiedTopology:false
 }).then(() => console.log("database connected"))
-.catch((err) => console.error(err))
+.catch((error) => console.error(error))
 
 // Middleware
 app.use(cors({
@@ -24,7 +24,7 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }))
-app.use(express.json()) // Parser JSON requests (ให้ server บริการ REST API (respond json))
+app.use(express.json()) // Parser JSON requests (Allow server to enable REST API (respond json))
 app.use(cookieParser()) // Enable cookie parsing
 app.use(morgan("dev"))
 
@@ -46,7 +46,7 @@ app.use((err, req, res, next) => {
     })
 })
 
-const port = process.env.PORT || 8080 // ให้ port มีค่าตาม PORT ที่ตั้งค่าในไฟล์ .env แต่หากไม่ได้นิยาม PORT ใน .env ก็ให้มีค่า 8080 ในตอนเริ่มต้น
+const port = process.env.PORT || 8080
 app.listen(port,() => console.log(`Server listening on port ${port}`))
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

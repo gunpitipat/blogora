@@ -16,28 +16,32 @@ exports.signup = async (req,res) => {
 
    // Helper function to validate email
     const validateEmail = (email) => {
-        if (
-            !email ||
-            email.trim() === "" ||
-            email.includes(" ") ||
-            !email.includes("@") ||
-            !email.includes(".") ||
-            email.length < 4
-        ) {
-        addError("email", "Email format is not correct.");
-        } else {
-            indication.success.push("email");
+        // Regular expression:   local part   @   domain      .   TLD
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+        if (email.includes(" ")) {
+            addError("email", "Email cannot contain a space character.")
+            return
         }
+        if (!email || email.trim() === "") {
+            addError("email", "Email cannot be empty.")
+            return
+        }
+        if (!emailRegex.test(email) || email.includes("..")) { // Disallow multiple consecutive dots
+            addError("email", "Email format is not correct.");
+            return
+        }
+        indication.success.push("email");
     };
 
     // Helper function to validate username
     const validateUsername = async (username) => {
-        if (!username || username.trim().length < 5) {
-            addError("username", "Username must have at least 5 characters.");
-            return
-        }
         if (username.includes(" ")) {
             addError("username", "Username cannot contain a space character.");
+            return
+        }
+        if (!username || username.trim().length < 5) {
+            addError("username", "Username must have at least 5 characters.");
             return
         }
         if (username.trim().length > 20) {
@@ -56,21 +60,25 @@ exports.signup = async (req,res) => {
 
     // Helper function to validate password
     const validatePassword = (password, cfpassword) => {
+        if (password.includes(" ")) {
+            addError("password", "Password cannot contain a space character.");
+            return
+        } 
         if (!password || password.trim().length < 8) {
             addError("password", "Password must have at least 8 characters.");
-        } else if (password.includes(" ")) {
-            addError("password", "Password cannot contain a space character.");
-        } else {
-            indication.success.push("password");
+            return
         }
+        indication.success.push("password");
 
         if (!cfpassword) { 
             addError("cfpassword", "Confirm Password cannot be blank.")
-        } else if (cfpassword !== password) {
+            return
+        } 
+        if (cfpassword !== password) {
             addError("cfpassword", "Password doesn't match.");
-        } else {
-            indication.success.push("cfpassword");
+            return
         }
+        indication.success.push("cfpassword");
     };
 
     // Perform validations
@@ -100,18 +108,18 @@ exports.signup = async (req,res) => {
     }
 };
 
-// login (create authentication token and cookie)
+// Login (create authentication token and cookie)
 exports.login = async (req,res) => {
     const { username, password } = req.body
 
     const validation = async (username, password) => {
-        // validate username
+        // Validate username
         if (!username) return { message: "Username cannot be blank.", field: "username" }
 
         const existingUser = await Users.findOne({ username })
         if (!existingUser) return { message: "This username has not been registered.", field: "username" }
 
-        // validate password
+        // Validate password
         const isMatch = await bcrypt.compare(password,existingUser.password)
         if (!isMatch) return { message: "Incorrect Password", field: "password" }
 
@@ -130,9 +138,9 @@ exports.login = async (req,res) => {
         const token = jwt.sign( payload, process.env.JWT_SECRET, { expiresIn: "1d" })
         // Set HttpOnly Cookie
         res.cookie("token", token, {
-            httpOnly: true, // prevent javascript access (XSS attacks)
-            secure: true, // ensure it's sent over HTTPS // set false for local development because http://localhost runs on http not https, so the browser ignores the cookie.
-            sameSite: "none", // "strict" => prevent CSRF attacks / "lax" => to allow cross-site/origin requests
+            httpOnly: true, // Prevent javascript access (XSS attacks)
+            secure: true, // Ensure it's sent over HTTPS (set false for local development since http://localhost runs on http not https, so the browser ignores the cookie)
+            sameSite: "none", // Allow cross-site/origin requests (different frontend & backend domains)
             maxAge: 1000 * 60 * 60 * 24, // 1 day expiration
             path: "/"
         })
@@ -146,7 +154,7 @@ exports.login = async (req,res) => {
     }
 }
 
-// logout
+// Logout
 exports.logout = (req,res) => {
     res.cookie("token", "", {
         httpOnly: true,
@@ -168,7 +176,7 @@ exports.getProfile = (req,res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" })
         }
-        const isOwner = username === usernameParam // if request sent from users who don't belong to the document, responding only username not email
+        const isOwner = username === usernameParam // If request is sent from user who doesn't belong to the document, respond only username (not email)
         const userData = isOwner
         ? { email: user.email, username: user.username }
         : { username: user.username }

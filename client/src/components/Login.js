@@ -25,16 +25,16 @@ const Login = () => {
 
     const { isAuthenticated, user, checkAuth } = useAuthContext()
 
-    // submit form
+    // Submit form
     const submitForm = async (e) => {
         e.preventDefault()
         setLoading(true)
         try {
             const response = await axios.post(`${process.env.REACT_APP_API}/login`,
                 { username, password },
-                { withCredentials: true } // need to send the request with credentials to ensure that the cookie can be sent back from the backend and stored by the browser
+                { withCredentials: true } // Send request with credentials to ensure cookie can be sent back from backend and stored by browser
             )
-            await checkAuth() // ensures the token cookie is actually set and valid before updating the state.
+            await checkAuth() // Ensures token cookie is actually set and valid before updating the state
             setUsername("")
             setPassword("")
             setErrorStatus(initialErrorStatus)

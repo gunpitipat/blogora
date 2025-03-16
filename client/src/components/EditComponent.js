@@ -17,40 +17,38 @@ const EditComponent = () => {
 
     const [ title, setTitle ] = useState("")   
     const [ content, setContent ] = useState("")
-    // prop to TipTap component to clear content after submitting form
+
+    // Prop to TipTap component to clear content after submitting form
     const [ submit, setSubmit ] = useState(false)
 
     const [ blogExists, setBlogExists ] = useState(null)
-    const [ author, setAuthor] = useState(null) // if user !== author, user cannot modify other's blog by accessing directly to url path
+    const [ author, setAuthor] = useState(null)
 
     const { setLoading } = useLoadingContext()
 
     const { user } = useAuthContext()
 
-    
-// _____________________  Styles  _____________________
-
-    // focusing on input/textarea making their label bolder
+    // Style: Making label bolder when focusing on input/textarea 
     let initialLabels = { titleLabel: false, contentLabel: false }
     const [ labels, setLabels ] = useState(initialLabels)   
     const focusLabelFunc =(label) => {
         initialLabels = { ...initialLabels, [label]: true }
-        setLabels(initialLabels) // พอ state labels มีการ assign ค่าลงไป component นี้มันจะ re-render ส่งผลให้ ตัวแปร initialLabels กลับไปเป็นค่าเริ่มต้นตอนที่นิยาม
+        setLabels(initialLabels) // Updating labels causes a re-render, resetting initialLabels to its initial value
     }
-    // click anywhere to stop focusing on text field
+    // Style: Click anywhere to stop focusing on text field
     const outOfFocus = (e) => {
         if (e.target.nodeName !== "INPUT") {
             setLabels(initialLabels)
         }
     }
 
-    // alert popup
+    // Alert popup
     const { setAlertState } = useAlertContext()
 
-    // extend textarea
+    // Extend textarea
     const [ extendTextarea, setExtendTextarea ] = useState(false)
     
-    // distance from the top of webpage
+    // Distance from the top of the page
     function getTotalOffsetTop(element) {
         let offset = 0;
         while (element) {
@@ -60,33 +58,31 @@ const EditComponent = () => {
         return offset;
       }
 
-    // Perform scrolling after extendTextarea set to true (the DOM updates). Textarea has transition duration 150ms to extend its height.
+    // Perform scrolling after extendTextarea set to true (the DOM updates)
     useEffect(() => {
         if (extendTextarea) {
             const contentElement = document.getElementById("content")
             const editorElement = document.getElementById("text-editor")
                 
-            if (contentElement && editorElement) { // ensure contentElement not null and valid for calling other function to prevent Reference Error
+            if (contentElement && editorElement) { // Ensure contentElement not null and valid to prevent Reference Error
                 const handleTransitionEnd = ()=> {    
-                    const targetScrollY = getTotalOffsetTop(contentElement) - 80 - 16 // 80 px of fixed navbar height and 16 px of 1 rem space
+                    const targetScrollY = getTotalOffsetTop(contentElement) - 80 - 16 // 80px (fixed navbar height), 16px (1rem spacing)
                     window.scrollTo({
                         top: targetScrollY,
                         behavior: "smooth"
                     })
                 }
 
-                // attach transitionend event listener to text editor
+                // Textarea (text editor) has height-transition duration of 150ms
                 editorElement.addEventListener("transitionend",handleTransitionEnd)
 
-                // Cleanup: Remove the listener to prevent multiple stack up attaching event listener
+                // Cleanup: Remove the listener to prevent multiple event listeners from stacking up
                 return () => {
                     editorElement.removeEventListener("transitionend", handleTransitionEnd);
                 };
             }
         }
-    },[extendTextarea])
-
-// _______________________________________________________________
+    }, [extendTextarea])
 
     useEffect(() => {
         let isMounted = true;
@@ -142,9 +138,9 @@ const EditComponent = () => {
                 </label>
                 <div className={extendTextarea ? "textarea-container extend" : "textarea-container"}>
                     <div onClick={()=>focusLabelFunc("contentLabel")}>
-                        {content && <TipTap content={content} setContent={setContent} submit={submit} setSubmit={setSubmit} contentLabel={labels.contentLabel} />} {/* ตอน render EditComponent ค่าเริ่มต้น state content มันเป็นค่าว่าง มัน prop ไปให้ TipTap แล้ว content ของ TipTap ก็เป็นค่าว่าง ดังนั้นรอให้ state content มีค่าก่อน ค่อยให้ render TipTap */}
+                        {content && <TipTap content={content} setContent={setContent} submit={submit} setSubmit={setSubmit} contentLabel={labels.contentLabel} />} {/* Render TipTap after content update to avoid passing initail content value during the initial render */}
                         <div className="sizing" onClick={()=>setExtendTextarea(!extendTextarea)}>
-                            { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{transform:"scaleX(-1)"}}/>} {/* icon มันไม่มีให้เลือกเยอะ ได้อันที่กลับด้านมา เลยกำหนด style */}
+                            { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{transform:"scaleX(-1)"}}/>}
                         </div>
                     </div>
                 </div>
@@ -153,14 +149,14 @@ const EditComponent = () => {
         </form>
     )
 
-    // submitting form data
+    // Submit form data
     const submitForm = (e) => {
         e.preventDefault()
         setLoading(true)
         axios.put(`${process.env.REACT_APP_API}/blog/${slug}`,{ title, content }, { withCredentials: true })
         .then(response => {
             setAlertState({ display: true, type: "success", message: response.data.message })
-            window.history.back() // go back to BlogComponent
+            window.history.back() // Go back to BlogComponent
         })
         .catch(error => {
             console.error(error)
@@ -173,7 +169,7 @@ const EditComponent = () => {
 
     if (blogExists === null || author === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
-    if (user?.username !== author) return <Navigate to={`/blog/${slug}`} /> // prevent other users from modifying someone else's blog by directly accessing url path (at initially rendering, user might !== author because request hasn't finished yet so we add condition of author === null and return it above)
+    if (user?.username !== author) return <Navigate to={`/blog/${slug}`} /> // Add check for author === null above to handle the case request hasn't finished yet, preventing premature redirection
 
     return(
         <div className="EditComponent" onClick={outOfFocus}>

@@ -10,8 +10,8 @@ const ReplyInput = (props) => {
     // Auto-expand textarea
     useEffect(() => {
         if (textareaRef.current) {
-            textareaRef.current.style.height = "0px" // reset height
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px` // scrollHeight is element's content height including padding (total height needed to display all the content inside the element, even if it's larger than the visible area.), but not margin and border
+            textareaRef.current.style.height = "0px" // Reset height
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
         }
     }, [replyContent])
 
@@ -36,7 +36,6 @@ const ReplyInput = (props) => {
                 value = {replyContent}
                 onChange= {(e)=>setReplyContent(e.target.value)}
                 ref = {textareaRef}
-
             />
             <button className="send-button" onClick={handleSend}>
                 <BsSendFill />

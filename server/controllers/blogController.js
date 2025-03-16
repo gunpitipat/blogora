@@ -1,40 +1,38 @@
-// interact with database
-
 const slugify = require("slugify")
 const Blogs = require("../models/blogsModel")
 const { v4: uuidv4 } = require('uuid');
 const Comments = require("../models/commentsModel")
 
-// create  data
+// Create blog
 exports.createBlog = async (req,res) => {
     const { title, content } = req.body
-    const author = req.username // from token payload in authMiddleware
+    const author = req.username // Extracted from JWT token (authMiddleware)
 
     // Generate a unique slug from title
     const generateUniqueSlug = async (title) => {
-        let slug = slugify(title, { lower: true, strict: true }) || uuidv4() // if title contains only non-Latin characters
+        let slug = slugify(title, { lower: true, strict: true }) || uuidv4() // If title contains only non-Latin characters
         let existingBlog = await Blogs.findOne({ slug })
         let identificationNumber = 1
         while (existingBlog) {
             slug = slugify(`${title}-${identificationNumber}`, { lower: true, strict: true })
-            existingBlog = await Blogs.findOne({ slug }) // check again
+            existingBlog = await Blogs.findOne({ slug }) // Check again
             identificationNumber++
         }
         return slug
     }
-    // validate data
+    // Validate data
     switch (true) {
         case title.trim().length === 0:
             return res.status(400).json({ message: "Please fill in your blog's title." })
         case title.trim().length >= 70:
             return res.status(400).json({ message: "Your title is too long." })
-        case content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0: // content มันเก็บเป็น tag html ถ้าใส่ค่าว่างมา มันจะมองเป็น <p>  </p>
+        case content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0: // Content stores html format. Empty character will be <p> </p>, not " "
             return res.status(400).json({ message: "Your content is entirely blank." })
     }
 
     const slug = await generateUniqueSlug(title);
 
-    // create data
+    // Create data
     Blogs.create({ title, content, author, slug })
     .then(blog => {
         res.status(201).json({ blog, message: "Your blog has been posted!" })
@@ -45,7 +43,7 @@ exports.createBlog = async (req,res) => {
     })
 } 
 
-// get all data
+// Get all blogs
 exports.getAllBlogs = (req,res) => {
     Blogs.find({})
     .then(blogs => res.json(blogs))
@@ -55,7 +53,7 @@ exports.getAllBlogs = (req,res) => {
     })
 }
 
-// get single data
+// Get single blog
 exports.getBlog = (req,res) => {
     const { slug } = req.params
     Blogs.findOne({ slug })
@@ -70,12 +68,12 @@ exports.getBlog = (req,res) => {
         res.status(500).json({ message: "Error retrieving data from server" })})
 }
 
-// delete single data
+// Delete single blog
 exports.deleteBlog = async (req,res) => {
     try {
         const { slug } = req.params
         const username = req.username
-        const isAdmin = req.userRole === "admin" // allow admin to override delete blog
+        const isAdmin = req.userRole === "admin" // Allow admin to override delete blog
         
         // Find the blog
         const blog = await Blogs.findOne({ slug })
@@ -98,7 +96,7 @@ exports.deleteBlog = async (req,res) => {
     }
 }
 
-// update data
+// Update blog
 exports.updateBlog = (req,res) => {
     const { slug } = req.params
     const { title, content } = req.body

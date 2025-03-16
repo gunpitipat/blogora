@@ -30,7 +30,6 @@
     }
   }
 
-
 .text-editor{
     border: 1px solid #aaaaaa;
     border-radius: 0.25rem;
@@ -67,7 +66,7 @@
     background-color: rgba(138, 129, 124, 0.25);
     border-radius: 0.25rem;
 }
-.MenuBar .button-group button svg{ /* make icons center in button */
+.MenuBar .button-group button svg{ /* Make icons center in button */
     display: flex;
     color: #5c5552;
 }

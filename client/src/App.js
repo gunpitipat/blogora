@@ -39,9 +39,9 @@ function App() {
     // eslint-disable-next-line
   },[])
 
-  // Showing ToopTip Once When Opening Browser
+  // Showing ToopTip once when opening browser
   useEffect(() => {
-    const hasSeenToolTip = sessionStorage.getItem("tooltip_shown") // Check if "tooltip_show" exists in sessionStorage, if not it will return null
+    const hasSeenToolTip = sessionStorage.getItem("tooltip_shown") // If "tooltip_show" doesn't exist in sessionStorage, it returns null
     if (!hasSeenToolTip) {
       setShowToolTip(true) // Show tooltip only if it hasn’t been seen
     }
@@ -50,7 +50,7 @@ function App() {
 
   const closeToolTip = () => {
     setShowToolTip(false)
-    sessionStorage.setItem("tooltip_shown","true") // set a flag to ensure it will only be shown once per each session
+    sessionStorage.setItem("tooltip_shown","true") // Set a flag to ensure it will only be shown once per each session
   }
 
   const searchingBlogs = (target) => {
@@ -84,7 +84,7 @@ function App() {
           window.scrollTo(0, parseFloat(storedScroll))
         }
       }
-    }, 50) // Small delay to ensure both blogs is updated and UI fully rendered. (blogs could be updated while UI might not yet fully rendered)
+    }, 50) // Small delay to ensure both blogs is updated and UI is "fully" rendered
   }, [blogs])
 
   // Show/hide back-to-top button
@@ -119,7 +119,7 @@ function App() {
               </small>
             </div>
         )))}
-        { !(isAuthenticated && user?.username) && blogs.length > 0 && (showToolTip && <ToolTip closeToolTip={closeToolTip}/>)} {/* tips for new users having not loged in yet */}
+        { !(isAuthenticated && user?.username) && blogs.length > 0 && (showToolTip && <ToolTip closeToolTip={closeToolTip}/>)} {/* For new users who have not logged in yet */}
         <div className={`back-to-top-button ${showBackToTop ? "show" : ""}`} onClick={backToTop}>
           <LuArrowUpToLine />
         </div>

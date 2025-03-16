@@ -5,17 +5,14 @@ import React, {useEffect} from 'react'
 import Underline from "@tiptap/extension-underline"
 import { IoText } from "react-icons/io5";
 import Heading from "@tiptap/extension-heading";
-
-
-//icons
+// Icons
 import { FaBold, FaItalic, FaStrikethrough, FaHeading, FaListUl, FaListOl, FaUndoAlt, FaRedoAlt, FaUnderline } from "react-icons/fa";
 
 export const MenuBar = (props) => {
   const { editor } = useCurrentEditor()
 
-  const {submit, contentLabel } = props // from Form.js
-  // contentLabel is state from Form.js or EditComponent.js for focus label of selected input field
-  // this component uses contentLabel for styling button of paragraph by set its className to is-active
+  const {submit, contentLabel } = props
+  // contentLabel is for styling (focusing label and hightlighting paragraph button)
 
   if (!editor) {
     return null
@@ -24,9 +21,9 @@ export const MenuBar = (props) => {
   return (
     <div className="MenuBar">
       <div className="button-group">
-      <button type="button"
+        {/* Paragraph button */}
+        <button type="button"
           onClick={() => editor.chain().focus().setParagraph().run()}
-          // className={editor.isActive('paragraph') ? 'paragraph is-active' : 'paragraph'}
           className={ (contentLabel && editor.isActive('paragraph')) ? "paragraph is-active" : "paragraph" }
         >
           <IoText />

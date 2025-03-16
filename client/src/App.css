@@ -10,7 +10,7 @@
 body{
   padding-top: 80px;
   background-color: #fafafa;
-  position: relative; /* reference for copyright positioning */
+  position: relative; /* Reference for copyright positioning */
 }
 .copyright{
   padding: 3px 0;
@@ -31,7 +31,7 @@ body{
 
 .App{
   padding: 2rem 8rem 6rem;
-  min-height: 100vh; /* to hide copyright footer in case short content page (the actual total page height will be 100vh + 80px of navbar, so copyright will overflow or cannot see at the first render)*/
+  min-height: 100vh; /* Make copyright footer overflow on short content pages */
 }
 .App .blog{
   padding: 1.5rem 1.5rem;
@@ -39,7 +39,7 @@ body{
   border-radius: 0.25rem 0.25rem 0 0;
 }
 .App .blog a h2{
-  display: inline-block; /* เวลาแสดงใน desktop บางทีชื่อ title สั้นๆ แต่คลิกเข้าไปอ่านบทความได้ แม้กระทั่งพื้นที่ว่างในบรรทัดนั้น เอาง่ายๆคือพื้นที่ให้คลิก link มันยาวเกิน */
+  display: inline-block; /* Prevent excessive clickable area */
 }
 .App .blog p{
   margin: 0.5rem 0 0.25rem;

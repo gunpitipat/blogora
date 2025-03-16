@@ -5,6 +5,7 @@ import { useAuthContext } from "../services/AuthContext"
 import axios from "axios"
 import { useAlertContext } from "../services/AlertContext"
 import { FiMenu } from "react-icons/fi";
+import { debounce } from "lodash"
 
 const Navbar = () => {
     const location = useLocation()
@@ -14,18 +15,18 @@ const Navbar = () => {
 
     const { setAlertState } = useAlertContext()
 
-    // ToolTip for not logged in users
+    // ToolTip for not logged-in users
     const [ showToolTip, setShowToopTip ] = useState(null)
 
     // Responsive navbar on mobile
     const [ isOpen, setIsOpen ] = useState(false)
     const [ isMobile, setIsMobile ] = useState(window.innerWidth <= 768)
     useEffect(() => {
-        const handleResize = () => {
+        const handleResize = debounce(() => {
             setIsMobile(window.innerWidth <= 768)
-        }
+        }, 100) 
 
-        window.addEventListener("resize", handleResize) // listens for window resize events and updates isMobile dynamically
+        window.addEventListener("resize", handleResize) // Updates isMobile dynamically on resize
         return () => window.removeEventListener("resize", handleResize)
     }, [])
 
@@ -51,7 +52,7 @@ const Navbar = () => {
 
     return(
         <>
-            {/* Show menu icon only on mobile screen */}
+            {/* Show menu icon only on mobile and tablet */}
             { isMobile &&
                 <div className="menu-icon-overlay">
                     <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>

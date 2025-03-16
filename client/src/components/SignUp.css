@@ -18,7 +18,7 @@
 .SignUp h2{
     font-weight: 700;
     text-align: center;
-    margin: 2rem 0; /*40px*/
+    margin: 2rem 0;
 }
 .SignUp form{
     /* display: flex;
@@ -75,7 +75,7 @@
     display: flex;
 }
 
-/* validation success */
+/* Validation success */
 .SignUp form div.success input{
     border: 1.5px solid green;
 }
@@ -88,7 +88,7 @@
     padding-top: 0.1rem;
 }
 
-/* Show and Hide password */
+/* Show and hide password */
 .SignUp .bg form .password-frame{
     width: fit-content;
     max-width: 100%;
@@ -113,7 +113,7 @@
     padding-right: calc(1rem + 1.1rem + 0.5rem);
 }
 .SignUp .bg form div small{
-    user-select: none; /* when clicking eye icons sometimes it hightlighted texts in small tags in case error message exists*/
+    user-select: none; /* Prevent accidentally selecting texts when clicking the icon */
 }
 
 

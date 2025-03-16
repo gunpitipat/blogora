@@ -31,15 +31,15 @@ const SignUp = () => {
 
     const { setLoading } = useLoadingContext()
 
-    // set input values to state
+    // Set input values to state
     const inputValues = inputName => event => {
         setSignUpInfo({ ...signUpInfo, [inputName]: event.target.value })
     }
 
-    // alert popup
+    // Alert popup
     const { setAlertState } = useAlertContext()
 
-    // submit form 
+    // Submit form 
     const submitForm = (e) => {
         e.preventDefault()
         setLoading(true)
@@ -52,22 +52,33 @@ const SignUp = () => {
             navigate("/login")
         })
         .catch(err => {
-            const { success, error } = err.response.data
-            if (success && success.length > 0) {
-                // กรณีทุก field กรอกข้อมูลถูกหมด แต่ชื่อ user ซ้ำ err.response.data จะมีแค่ error ไม่มี success จึงต้องเพิ่มเงื่อนไข if(success) เข้าไป และ error จะมี value ค่าเดียวเป็น string ดูจาก userController.js ซึ่ง error.forEach จะใช้ไม่ได้กับ string
-                success.forEach(element => {
-                    initialInfoStatus[element] = { type: "success" }
-                });
+            // If the request completely fails (e.g., no internet, backend is unreachable)
+            if (!err.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+                return
+            } else if (err.response.status === 500) {
+                setAlertState({ display: true, type: "error", message: err.response.data.message || "Server error. Please try again later." })
+                return
+            } else {
+                const { success, error } = err.response.data
+            
+                setInfoStatus(prevState => {
+                    let updatedStatus = { ...prevState } // Create a new object instead of directly modifying initialInfoStatus variable
+    
+                    if (success && success.length > 0) {
+                        success.forEach(element => {
+                            updatedStatus[element] = { type: "success" }
+                        });
+                    }
+                    if (error && error.length > 0) {
+                        error.forEach(element => {
+                            updatedStatus[element.field] = { type: "error", message: element.message }
+                        })
+                    }
+    
+                    return updatedStatus // New object reference ensures React detects change
+                })     
             }
-            if (typeof error !== "string") {
-                error.forEach(element => {
-                initialInfoStatus[element.field] = { type: "error", message: element.message }
-                })
-            }
-            if(typeof error === "string"){// in case username has been used (more info at userController.js)
-                setAlertState({ display: true, type: "error", message: error })
-            }
-            setInfoStatus(initialInfoStatus)
             setLoading(false)
         })
     }

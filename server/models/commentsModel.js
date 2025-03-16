@@ -1,9 +1,9 @@
-// comments and replies (nested comments)
-    // key fields
+// Comments and replies (nested comments)
+    // Key fields
         // user => The user who made the comment
         // blog => The blog post the comment belongs to
         // content => The comment text
-        // parentComment => If null, it’s a top-level comment. If it contains an ObjectId, it’s a reply to another comment.
+        // parentComment => If null, it’s a top-level comment. If it contains an ObjectId, it’s a reply to another comment
 
 const mongoose = require("mongoose")
 
@@ -31,7 +31,7 @@ const commentSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    isDeleted: { // for softly deleting comment
+    isDeleted: { // For soft deleting comment
         type: Boolean,
         default: false
     }

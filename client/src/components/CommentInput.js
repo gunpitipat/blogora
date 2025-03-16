@@ -9,9 +9,9 @@ const CommentInput = (props) => {
 
     // Auto-expand textarea
     useEffect(() => {
-        if (textareaRef.current) { // ensure textarea element exists in the DOM before accessing and modifying it
-            textareaRef.current.style.height = "auto" // reset height
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px` // scrollHeight is element's content height including padding, but not margin and border
+        if (textareaRef.current) { // Ensure textarea element exists in the DOM before accessing and modifying it
+            textareaRef.current.style.height = "auto" // Reset height
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
         }
     }, [commentContent])
 
@@ -28,7 +28,6 @@ const CommentInput = (props) => {
         onSendComment(commentContent.trim())
         setCommentContent("")
     }
-
 
     return (
         <div className="CommentInput-container">

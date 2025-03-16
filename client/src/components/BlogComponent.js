@@ -25,13 +25,13 @@ const BlogComponent = () => {
     const [ blogExists, setBlogExists ] = useState(null)
     const [ showDateToolTip, setShowDateToolTip ] = useState(false)
 
-    // comment
+    // Comment
     const [ showCommentInput, setShowCommentInput ] = useState(false)
     const [ comments ,setComments ] = useState([])
     const [ replyStatus, setReplyStatus ] = useState([])
     const [ commentTrigger, setCommentTrigger ] = useState(false)
-    const [ commentLoading, setCommentLoading ] = useState(false) // If both blog and comments share the same loading state, fetching both at the same time could cause flickering 
-                                                                  // (loading spinner briefly disappearing when one request finishes before the other).  
+    const [ commentLoading, setCommentLoading ] = useState(false) // Isolate comment loading state to avoid flickering with blog loading
+
     const { viewReply, setViewReply } = useViewReplyContext()
     const [ showCommentOption, setShowCommentOption ] = useState(null) // Track which comment's setting button is open
     const [ showCommentModal, setShowCommentModal ] = useState(null)
@@ -70,8 +70,8 @@ const BlogComponent = () => {
 
         const fetchBlog = async () => {
             setLoading(true)
-            setBlogExists(null) // reset blogExists before making a new request (avoid flickering issue when navigating between valid and invalid slugs => if not, blogExists will still be old value until the request completes)
-            setBlog(null) // reset blog data to prevent old content from showing
+            setBlogExists(null) // Reset old value before making a new request to prevent flickering when navigating between valid/invalid slugs
+            setBlog(null) // Reset blog data to prevent old content from showing
             
             try {
                 const blogData = await getBlog(signal)
@@ -79,7 +79,7 @@ const BlogComponent = () => {
                 if (blogData) {
                     setBlog(blogData)
                     setBlogExists(true)
-                } // If use else block and setBlogExists(false), setBlogExists(false) will runs too early, and <NotFound /> will flicker.
+                } // If using else block and setBlogExists(false), it will runs too early, and <NotFound /> will flicker
                 
             } catch (error) {
                 console.error("Error fetching blog:", error)
@@ -95,8 +95,7 @@ const BlogComponent = () => {
         fetchBlog()
         return () => controller.abort()
         // eslint-disable-next-line
-    }, [slug]) // dependency is url parameter ensures if the user navigates to another blog post without a full page reload (from /blog/my-test to /blog/gallery), useEffect re-runs.
-
+    }, [slug]) // Triggers useEffect when navigating between blog posts without a full page reload (from /blog/my-post-1 to /blog/my-post-2)
 
     // Retrieve comments
     const getComments = async (abortSignal) => {
@@ -158,17 +157,17 @@ const BlogComponent = () => {
                     })
                     setReplyStatus(addShowReplyInput)
 
-                    // initialize viewReply at the first render
-                    if (viewReply.length === 0) { // when url changes, viewReply will reset to an empty array
+                    // Initialize viewReply at the first render
+                    if (viewReply.length === 0) { // When url changes, viewReply will reset to an empty array
                         const initialViewReply = commentsData.map(comment => {
                             return { id: comment._id, viewReply: false }
                         })
                         setViewReply(initialViewReply)
                     }
-                    // update viewReply with current status
+                    // Update viewReply with current status
                     if (viewReply.length > 0) {
                         setViewReply(prev => {
-                            const newComment = commentsData[commentsData.length - 1] // the new comment is the last sorted by createdAt in Comments model
+                            const newComment = commentsData[commentsData.length - 1] // The new comment is the last sorted by createdAt in Comments model
                             return [ ...prev, { id: newComment._id, viewReply: false }]
                         })
                     }
@@ -202,7 +201,7 @@ const BlogComponent = () => {
         }, 50)
     }, [comments])
 
-    // click anywhere to close setting tabs
+    // Click anywhere to close setting tabs
     const outOfFocus = (e) => {
         // Blog setting tab
         if (showOptions) {
@@ -222,7 +221,7 @@ const BlogComponent = () => {
         if (!showCommentOption) return // Exit early if no menu is open
 
         // Check if the clicked element is not delete button and not the setting icon where has its own open-close handling
-        if (!e.target.classList.contains("delete") && !e.target.closest(".setting-icon") && !e.target.closest(".ModalComment")) { // exclude ModalComment condition since we will write condition separately below
+        if (!e.target.classList.contains("delete") && !e.target.closest(".setting-icon") && !e.target.closest(".ModalComment")) { // Exclude ModalComment condition since it'll be written separately below
             setShowCommentOption(null)
         }   
         // Handle clicking when modal appears
@@ -266,12 +265,12 @@ const BlogComponent = () => {
         }))
         setShowCommentInput(!showCommentInput)
     }
-    // Show only clicked reply input (fold others which were shown before)
+    // Show only clicked reply input (collapse others which were shown before)
     const showReplyInput = (commentId) => {
-        setShowCommentInput(false) // if comment input still unfolds, fold it
+        setShowCommentInput(false) // If comment input is still unfolding, collapse it
         setReplyStatus(prev => prev.map(comment => {
             if (comment.id === commentId) {
-                if (comment.showReply) return { ...comment, showReply: false} // when clicking the same reply button which already unfolds, then fold it
+                if (comment.showReply) return { ...comment, showReply: false} // When clicking the same reply button which already unfolds, then collapse it
                 return { ...comment, showReply: true }
             }
             return { ...comment, showReply: false }
@@ -306,12 +305,11 @@ const BlogComponent = () => {
             setReplyStatus(prev => prev.map(element => {
                 return { ...element, showReply: false }
             }))
-            // set commentLoading = false in useEffect when the new comment has been loaded successfully
-            // if setCommentLoading(false) inside finally: it will run immediately after the request finishes, there might be a brief moment where the UI updates before the fresh comments are fetched. This could result in flickering or an incorrect UI state where the new comment doesn't appear right away.
+            // setCommentLoading(false) in useEffect after comment loading to avoid flickering and ensure fresh comments are fetched before UI updates
         })
     }
 
-    // Recursive function (find target comment's ID in nested structure)
+    // Recursively find target comment's ID in nested structure
     // eslint-disable-next-line
     const findTargetId = (nestedStructure, targetId) => {
         for (const element of nestedStructure) {
@@ -326,7 +324,7 @@ const BlogComponent = () => {
         return false
     }
 
-    // Recursive Function (get comment's ID and all nested replies)
+    // Recursively get comment's ID and all nested replies
     const getAllRelatedReplies = (nestedStructure, targetId) => {
         let result = [];
         for (const element of nestedStructure) {
@@ -359,7 +357,7 @@ const BlogComponent = () => {
         return result
     }
 
-    // Recursive Function (mark hierarchy level to each comment)
+    // Recursively mark hierarchy level to each comment
     const hierarchyLevel = (nestedStructure, level = 1) => {
         return nestedStructure.map(comment => {
             // If comment has no replies
@@ -376,7 +374,7 @@ const BlogComponent = () => {
         })
     }
 
-    // ToolTip for not logged in users when hovering add comment button
+    // ToolTip for not logged-in users when hovering add comment button
     const toggleCommentToolTip = (section) => {
         setShowCommentToolTip(section)
     }
@@ -390,7 +388,7 @@ const BlogComponent = () => {
                     {blog && 
                     <div>
                         <header>
-                            <div className="goback-icon" onClick={()=>navigate("/")}> {/* display on mobile screen for easily go back without clicking menu icon then community page */}
+                            <div className="goback-icon" onClick={()=>navigate("/")}> {/* display on mobile screen for easily go back */}
                                 <IoChevronBackOutline />
                             </div>
                             <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>
@@ -454,24 +452,24 @@ const BlogComponent = () => {
                         }
                     </section>
                     <section className="comments" id="comments">
-                            {/* organizeComments(comments).map works well but I want to attach hierarchy level to each comment to distinguish comments' UI. */}
-                            {/* hierarchyLevel(organizeComments(comments), 1) returns nested comment structure like organizeComments(comments) does but it adds one more level field */}
+                            {/* organizeComments(comments).map works well but attaching hierarchy level to each comment is to distinguish comments' UI */}
+                            {/* hierarchyLevel(organizeComments(comments), 1) returns nested comment structure like organizeComments(comments) but adding one more level field */}
                             {hierarchyLevel(organizeComments(comments), 1).map(comment => {
-                                // filter to get individual reply status as { id, showReply } then map to get only showReply returning in an array, so destructuring to get boolean
+                                // Filter for { id, showReply }. Map for only showReply. Destructuring to get boolean value from map array
                                 const [ individualReplyStatus ] = replyStatus.filter(element => element.id === comment._id).map(element => element.showReply)
                                 return <CommentComponent key={comment._id} 
                                             // Comment and Reply Content
                                             comment={comment}
                                             replies={comment.replies}
 
-                                            // Show / Hide Reply Input
+                                            // Show/hide Reply Input
                                             showReplyInput={showReplyInput} 
                                             individualReplyStatus={individualReplyStatus}
-                                            replyStatus={replyStatus} // for nested replies}
+                                            replyStatus={replyStatus} // For nested replies
                                             nestedStructure={organizeComments(comments)}
                                             getAllRelatedReplies={getAllRelatedReplies}
 
-                                            blogAuthor={blog.author} // just in case author writes a comment or reply, then show "author" next to username
+                                            blogAuthor={blog.author} // Show "author" next to username if they comment on their own post
                                             // Create a Reply
                                             onSendComment={onSendComment}
 

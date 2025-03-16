@@ -8,11 +8,11 @@ const router = express.Router()
 router.post("/signup", signup)
 router.post("/login", login)
 router.post("/logout", logout)
-router.get("/profile/:username", authenticateUser, getProfile) // making it protected because this route provides user's username and email
+router.get("/profile/:username", authenticateUser, getProfile) // authenticateUser is needed to prevent others' emails from being exposed
 router.get("/profile/:username/blogs", getProfileBlogs)
 
 
-// authentication status check for frontend usage
+// Authentication status check for frontend usage
 router.get("/check-auth", authStatusCheck)
 
 module.exports = router

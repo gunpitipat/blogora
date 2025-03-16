@@ -6,7 +6,7 @@
 .Form h2{
     font-weight: 600;
     text-align: center;
-    margin-top: 2.5rem; /*40px*/
+    margin-top: 2.5rem;
 }
 .Form form{
     /* display: flex;
@@ -37,7 +37,8 @@
     width: 100%;
     transition: height 150ms ease-out;
 } */
-/* resize textarea */
+
+/* Resize textarea */
 .Form form .textarea-container{
     position: relative;
 }
@@ -97,7 +98,6 @@
     align-self: center;
     margin-left: 0.2rem;
 }
-
 .Form form footer.button-group{
     display: flex;
     flex-direction: row;
@@ -140,7 +140,7 @@
 @media (max-width: 380px) {
     .Form form{
         padding: 0rem 0.5rem 1rem;
-        margin: 0 1rem 0.5rem; /* At this breakpoint, rich text editor tools will have 2 lines. Tolal height slightly exceeds 100vh. We will slightly reduce margin-bottom to prevent scroll from showing by default. */
+        margin: 0 1rem 0.5rem; /* Reduce bottom margin to prevent scrollbar from appearing since rich text editor tools have 2 lines, causing page height slightly exceeds 100vh */
     }
     .Form form footer.button-group{
         width: 80vw;

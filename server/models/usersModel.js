@@ -1,5 +1,3 @@
-// email, username, password
-
 const mongoose = require("mongoose")
 
 const userSchema = mongoose.Schema({
@@ -14,18 +12,17 @@ const userSchema = mongoose.Schema({
     username_lowercase: {
         type: String,
         required: true,
-        unique: true, // users freely set their usernames with capital letters but prevent case-sensitive duplicates at the same time
+        unique: true, // User freely sets their username with capital letters but prevent case-sensitive duplicates at the same time
         lowercase: true
     },
-    password: {
+    password: { // unique: false
         type: String,
         required: true,
-        // unique: true
         index: false // Ensure no index is created on password
     },
     role: {
         type: String,
-        enum: ['user', 'admin'], // ensures that the value can only be either one of the predefined options.
+        enum: ['user', 'admin'], // Ensures the value can only be either one of the predefined options
         default: 'user'
     }
 })
