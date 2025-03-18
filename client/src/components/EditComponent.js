@@ -96,11 +96,11 @@ const EditComponent = () => {
         axios.get(`${process.env.REACT_APP_API}/blog/${slug}`)
         .then(response => {
             if (isMounted) {
-                const { title: titleData, content: contentData, author: authorData } = response.data
+                const { title: titleData, content: contentData, author: authorId } = response.data
                 setTitle(titleData)
                 setContent(contentData)
                 setBlogExists(true)
-                setAuthor(authorData)
+                setAuthor(authorId?.username)
             }
         })
         .catch(error => {

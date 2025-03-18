@@ -27,6 +27,7 @@ function App() {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API}/blogs`)
       setBlogs(response.data)
+      console.log(response.data)
     } catch(err) {
       console.error(err)
     } finally {
@@ -59,7 +60,7 @@ function App() {
 
       const titleMatch = blog.title?.toLowerCase().includes(target.toLowerCase()) || false
       const contentMatch = blog.content?.toLowerCase().includes(target.toLowerCase()) || false
-      const authorMatch = blog.author?.toLowerCase().includes(target.toLowerCase()) || false
+      const authorMatch = blog.author?.username?.toLowerCase().includes(target.toLowerCase()) || false
 
       return titleMatch || contentMatch || authorMatch
     })
@@ -114,7 +115,7 @@ function App() {
               <Link to={`/blog/${blog.slug}`} className="title"><h2>{blog.title}</h2></Link>
               <p>{blog.content.replace(/<\/?[^>]+(>|$)/g, " ").substring(0,250)}{blog.content.replace(/<\/?[^>]+(>|$)/g, " ").length > 250 ? " . . ." : null }</p>
               <small>
-                <Link to={`/profile/${blog.author}`} className="author">{blog.author}</Link> &bull;&nbsp;
+                <Link to={`/profile/${blog.author?.username}`} className="author">{blog.author?.username}</Link> &bull;&nbsp;
                 <span>{formatDayMonth(blog.createdAt)}</span>
               </small>
             </div>

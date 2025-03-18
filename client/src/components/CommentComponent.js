@@ -277,7 +277,7 @@ const CommentComponent = (props) => {
                                     setCommentTrigger={setCommentTrigger}
 
                                     // Reference to the parent comment's author
-                                    parentAuthor={comment.user.username}
+                                    parentAuthor={comment.user?.username}
 
                                     // Level for limiting indentation depth
                                     level={reply.level}

@@ -188,19 +188,22 @@ exports.getProfile = (req,res) => {
         res.status(500).json({ message: "Error retrieving data from server" })
     })
 }
-exports.getProfileBlogs = (req,res) => {
-    const { username } = req.params
-    Blogs.find({ author: username })
-    .then(allBlogs => {
-        if (!allBlogs) {
-            res.status(404).json({ message: "User not found" })
-        }
-        res.status(200).json(allBlogs)
-    })
-    .catch(err => {
-        console.error(err)
+exports.getProfileBlogs = async (req,res) => {
+    try {
+        const { username } = req.params
+
+        const user = await Users.findOne({ username_lowercase: username.toLowerCase() })
+        if (!user) return res.status(404).json({ message: "User not found" })
+
+        const blogs = await Blogs.find({ author: user._id }).populate({ path: "author", select: "username" })
+        if (!blogs) return res.status(404).json({ message: "Blog not found" })
+
+        res.status(200).json(blogs)
+
+    } catch (error) {
+        console.error("Error retrieving user's blogs", error)
         res.status(500).json({ message: "Error retrieving data from server" })
-    })
+    }
 }
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

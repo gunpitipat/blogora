@@ -392,7 +392,7 @@ const BlogComponent = () => {
                                 <IoChevronBackOutline />
                             </div>
                             <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>
-                            { ((user?.username === blog.author) || (user?.role === "admin" )) &&
+                            { ((user?.username === blog.author?.username) || (user?.role === "admin" )) &&
                                 <div className="setting">
                                     <BiDotsHorizontalRounded onClick={()=>setShowOptions(!showOptions)}/>
                                     {showOptions && 
@@ -410,8 +410,8 @@ const BlogComponent = () => {
                             {parser(blog.content)}
                         </main>
                         <footer>
-                            <Link to={`/profile/${blog.author}`} className="author">
-                                {blog.author}
+                            <Link to={`/profile/${blog.author?.username}`} className="author">
+                                {blog.author?.username}
                             </Link>
                             <span className="timestamp"
                                 onMouseEnter={() => setShowDateToolTip(true)}
@@ -469,7 +469,7 @@ const BlogComponent = () => {
                                             nestedStructure={organizeComments(comments)}
                                             getAllRelatedReplies={getAllRelatedReplies}
 
-                                            blogAuthor={blog.author} // Show "author" next to username if they comment on their own post
+                                            blogAuthor={blog.author?.username} // Show "author" next to username if they comment on their own post
                                             // Create a Reply
                                             onSendComment={onSendComment}
 

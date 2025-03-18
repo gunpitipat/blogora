@@ -6,7 +6,7 @@ const Comments = require("../models/commentsModel")
 // Create blog
 exports.createBlog = async (req,res) => {
     const { title, content } = req.body
-    const author = req.username // Extracted from JWT token (authMiddleware)
+    const userId = req.userId // Extracted from JWT token (authMiddleware)
 
     // Generate a unique slug from title
     const generateUniqueSlug = async (title) => {
@@ -33,7 +33,7 @@ exports.createBlog = async (req,res) => {
     const slug = await generateUniqueSlug(title);
 
     // Create data
-    Blogs.create({ title, content, author, slug })
+    Blogs.create({ title, content, author: userId, slug })
     .then(blog => {
         res.status(201).json({ blog, message: "Your blog has been posted!" })
     })
@@ -44,42 +44,47 @@ exports.createBlog = async (req,res) => {
 } 
 
 // Get all blogs
-exports.getAllBlogs = (req,res) => {
-    Blogs.find({})
-    .then(blogs => res.json(blogs))
-    .catch(error => {
+exports.getAllBlogs = async (req,res) => {
+    try {
+        const blogs = await Blogs.find({})
+        .populate({ path: "author", select: "username" })
+
+        res.status(200).json(blogs)
+
+    } catch (error) {
         console.error("Error retrieving all blogs", error)
         res.status(500).json({ message: "Error retrieving data from server" })
-    })
+    }
 }
 
 // Get single blog
-exports.getBlog = (req,res) => {
-    const { slug } = req.params
-    Blogs.findOne({ slug })
-    .then(doc => {
-        if (!doc) {
+exports.getBlog = async (req,res) => {
+    try {
+        const { slug } = req.params
+        const blog = await Blogs.findOne({ slug }).populate({ path: "author", select: "username" })
+        if (!blog) {
             return res.status(404).json({ message: "Blog not found" })
         }
-        res.status(200).json(doc)
-    })
-    .catch(error => {
+        res.status(200).json(blog)
+
+    } catch (error) {
         console.error("Error retrieving single blog", error)
-        res.status(500).json({ message: "Error retrieving data from server" })})
+        res.status(500).json({ message: "Error retrieving data from server" })
+    }
 }
 
 // Delete single blog
 exports.deleteBlog = async (req,res) => {
     try {
         const { slug } = req.params
-        const username = req.username
+        const userId = req.userId
         const isAdmin = req.userRole === "admin" // Allow admin to override delete blog
         
         // Find the blog
         const blog = await Blogs.findOne({ slug })
         if (!blog) return res.status(404).json({ message: "Blog not found" })
         // Check permission: only the author or an admin can delete
-        if (blog.author !== username && !isAdmin) {
+        if (blog.author.toString() !== userId && !isAdmin) {
             return res.status(401).json({ message: "Unauthorized" })
         }
 
@@ -90,6 +95,7 @@ exports.deleteBlog = async (req,res) => {
         await Comments.deleteMany({ blog: blog._id })
 
         res.json({ message: "Deleted successfully" })
+
     } catch (error) {
         console.error("Error deleting single data", error)
         res.status(500).json({ message: "Error deleting data" })
@@ -97,20 +103,24 @@ exports.deleteBlog = async (req,res) => {
 }
 
 // Update blog
-exports.updateBlog = (req,res) => {
-    const { slug } = req.params
-    const { title, content } = req.body
-    const username = req.username
-    if(title.trim().length === 0) return res.status(400).json({ message: "Title cannot be blank." })
-    if(title.trim().length >= 70) return res.status(400).json({ message: "Your title is too long." })
-    if(content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0) return res.status(400).json({ message: "Content is entirely blank." })
+exports.updateBlog = async (req,res) => {
+    try {
+        const { slug } = req.params
+        const { title, content } = req.body
+        const userId = req.userId
+        if(title.trim().length === 0) return res.status(400).json({ message: "Title cannot be blank." })
+        if(title.trim().length >= 70) return res.status(400).json({ message: "Your title is too long." })
+        if(content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0) return res.status(400).json({ message: "Content is entirely blank." })
 
-    Blogs.findOneAndUpdate({ slug, author: username }, { title, content }, { new: true })
-    .then(doc => res.status(200).json({ doc, message: "Updated successfully" }))
-    .catch(error => {
+        const blog = await Blogs.findOneAndUpdate({ slug, author: userId }, { title, content }, { new: true })
+        if (!blog) return res.status(404).json({ message: "Blog not found" })
+        
+        res.status(200).json({ blog, message: "Updated successfully" })
+    
+    } catch (error) {
         console.error("Error updating data", error)
         res.status(500).json({ message: "Error updating data" })
-    })
+    }
 }
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

@@ -10,7 +10,8 @@ const blogSchema = mongoose.Schema({
         required: true
     },
     author:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users", // Reference to Users model
         required: true
     },
     slug: {

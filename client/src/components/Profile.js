@@ -77,7 +77,7 @@ const Profile = () => {
                     // setProfileExists(false)
                 }
 
-                if (userBlogsResult.status === "fulfilled") {
+                if (userBlogsResult.status === "fulfilled" && userBlogsResult.value) {
                     setUserBlogs(userBlogsResult.value)
                 }
             } catch (error) {
@@ -139,7 +139,7 @@ const Profile = () => {
                             <p>{userData.email}</p>
                         </header>
                         <main className={userBlogs.length === 1 ? "single-blog" : null}>
-                            {userBlogs.map((blog,index) => {
+                            {userBlogs.map((blog, index) => {
                                 return(
                                     <div className="blog" key={index} onClick={()=>goToBlog(blog.slug)}>
                                         <div>
