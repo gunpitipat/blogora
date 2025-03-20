@@ -6,13 +6,13 @@ import EditComponent from './components/EditComponent'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import Profile from './components/Profile'
-import { AlertProvider } from './services/AlertContext'
+import { AlertProvider } from './utils/AlertContext'
 import Layout from './Layout'
-import { LoadingProvider } from './services/LoadingContext'
-import ProtectedRoute from './services/ProtectedRoute'
-import { AuthProvider } from './services/AuthContext'
+import { LoadingProvider } from './utils/LoadingContext'
+import ProtectedRoute from './utils/ProtectedRoute'
+import { AuthProvider } from './utils/AuthContext'
 import NotFound from './components/NotFound'
-import { ViewReplyProvider } from './services/ViewReplyContext'
+import { ViewReplyProvider } from './utils/ViewReplyContext'
 
 const Router = () => {
     return(
@@ -25,6 +25,7 @@ const Router = () => {
                                 <Routes>
                                     <Route path="/" element={<App />} />
                                     <Route path="/blog/:slug" element={<BlogComponent />} />
+                                    <Route path="/profile/:username" element={<Profile />} />
                                     <Route path="/login" element={<Login />} />
                                     <Route path="/signup" element={<SignUp />} />
 
@@ -32,7 +33,6 @@ const Router = () => {
                                     <Route element={<ProtectedRoute />}>
                                         <Route path="/create" element={<Form />} />
                                         <Route path="/blog/edit/:slug" element={<EditComponent />} />
-                                        <Route path="/profile/:username" element={<Profile />} />
                                     </Route>
 
                                     {/* Catch-all Route for undefined paths */}

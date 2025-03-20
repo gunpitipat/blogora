@@ -4,10 +4,10 @@ import { FaPen } from "react-icons/fa";
 import axios from "axios"
 import { TfiArrowsCorner } from "react-icons/tfi";
 import { BsArrowsAngleContract } from "react-icons/bs";
-import { useAlertContext } from "../services/AlertContext";
+import { useAlertContext } from "../utils/AlertContext";
 import TipTap from "./TipTap";
-import { useLoadingContext } from "../services/LoadingContext"
-import { useAuthContext } from "../services/AuthContext";
+import { useLoadingContext } from "../utils/LoadingContext"
+import { useAuthContext } from "../utils/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Form = ()=>{

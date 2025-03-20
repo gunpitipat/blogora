@@ -168,26 +168,28 @@ exports.logout = (req,res) => {
 }
 
 // User's Profile
-exports.getProfile = (req,res) => {
-    const { username: usernameParam } = req.params // Extract from url
-    const username = req.username // Extract from token payload
-    Users.findOne({ username: usernameParam }).select("email username")
-    .then(user => {
-        if (!user) {
-            return res.status(404).json({ message: "User not found" })
-        }
-        const isOwner = username === usernameParam // If request is sent from user who doesn't belong to the document, respond only username (not email)
-        const userData = isOwner
-        ? { email: user.email, username: user.username }
-        : { username: user.username }
+exports.getProfile = async (req,res) => {
+    try {
+        const { username } = req.params // Extract from URL
+        const userId = req.userId // Extract from token payload if the owner visits
 
-        res.status(200).json(userData)
-    })
-    .catch(error => {
-        console.error("Error retrieving user data", error)
+        const profile = await Users.findOne({ username_lowercase: username.toLowerCase() }).select("_id email username")
+        if (!profile) return res.status(404).json({ message: "User not found" })
+        
+        // Verify if the viewer is the profile owner. If not, respond with only username (excluding email)
+        const isOwner = userId === profile._id.toString()
+        const userProfile = isOwner 
+        ? { email: profile.email, username: profile.username }
+        : { username: profile.username }
+
+        res.status(200).json(userProfile)
+
+    } catch (error) {
+        console.error("Error retrieving user's profile", error)
         res.status(500).json({ message: "Error retrieving data from server" })
-    })
+    }
 }
+
 exports.getProfileBlogs = async (req,res) => {
     try {
         const { username } = req.params

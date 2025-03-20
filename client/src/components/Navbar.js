@@ -1,9 +1,9 @@
 import "./Navbar.css"
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from "react"
-import { useAuthContext } from "../services/AuthContext"
+import { useAuthContext } from "../utils/AuthContext"
 import axios from "axios"
-import { useAlertContext } from "../services/AlertContext"
+import { useAlertContext } from "../utils/AlertContext"
 import { FiMenu } from "react-icons/fi";
 import { debounce } from "lodash"
 
@@ -87,7 +87,7 @@ const Navbar = () => {
                                 </span>
                             )}                    
                         </li>
-                        <li className={ pathname.includes("/profile") ? "selected" : null }>
+                        <li className={ pathname.split("/")[2] === user?.username ? "selected" : null }>
                             { (isAuthenticated && user?.username) ? (
                                 <Link to={`/profile/${user.username}`} onClick={() => setIsOpen(false)}>Profile</Link>
                             ) : (

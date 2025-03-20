@@ -1,19 +1,19 @@
 import { Link } from "react-router-dom"
 import "./CommentComponent.css"
-import { formatCommentTime, showFullDateTime } from "../services/serviceFunctions"
+import { formatCommentTime, showFullDateTime } from "../utils/serviceFunctions"
 import { useState, useEffect, useRef } from "react"
 import ReplyInput from "./ReplyInput";
 import { FaReply, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { FaUserPen } from "react-icons/fa6";
 import { BiSolidMessageRounded } from "react-icons/bi";
-import { useViewReplyContext } from "../services/ViewReplyContext";
-import { useAuthContext } from "../services/AuthContext";
+import { useViewReplyContext } from "../utils/ViewReplyContext";
+import { useAuthContext } from "../utils/AuthContext";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import ModalComment from "./ModalComment";
 import axios from "axios";
-import { useLoadingContext } from "../services/LoadingContext";
+import { useLoadingContext } from "../utils/LoadingContext";
 import LoadingScreen from "./LoadingScreen";
-import { useAlertContext } from "../services/AlertContext";
+import { useAlertContext } from "../utils/AlertContext";
 import { debounce } from "lodash"
 
 // Recursive Comment Component

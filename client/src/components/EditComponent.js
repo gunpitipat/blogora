@@ -2,15 +2,15 @@ import { useState, useEffect } from "react"
 import "./EditComponent.css"
 import { Navigate, useParams } from "react-router-dom"
 import axios from "axios"
-import { useAlertContext } from "../services/AlertContext"
+import { useAlertContext } from "../utils/AlertContext"
 import { FaPen } from "react-icons/fa";
 import { TfiArrowsCorner } from "react-icons/tfi";
 import { BsArrowsAngleContract } from "react-icons/bs";
 import TipTap from "./TipTap"
-import { useLoadingContext } from "../services/LoadingContext" 
+import { useLoadingContext } from "../utils/LoadingContext" 
 import LoadingScreen from "./LoadingScreen"
 import NotFound from "./NotFound"
-import { useAuthContext } from "../services/AuthContext"
+import { useAuthContext } from "../utils/AuthContext"
 
 const EditComponent = () => {
     const { slug } = useParams()

@@ -3,18 +3,18 @@ import axios from "axios"
 import { useState, useEffect, useRef } from "react"
 import "./BlogComponent.css"
 import ModalConfirm from "./ModalConfirm"
-import { useAlertContext } from "../services/AlertContext"
+import { useAlertContext } from "../utils/AlertContext"
 import parser from "html-react-parser"
-import { useLoadingContext } from "../services/LoadingContext"
-import { useAuthContext } from "../services/AuthContext";
+import { useLoadingContext } from "../utils/LoadingContext"
+import { useAuthContext } from "../utils/AuthContext";
 import LoadingScreen from "./LoadingScreen"
 import NotFound from "./NotFound"
 import CommentInput from "./CommentInput"
 import CommentComponent from "./CommentComponent";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
-import { formatCommentTime, showFullDateTime } from "../services/serviceFunctions"
-import { useViewReplyContext } from "../services/ViewReplyContext"
+import { formatCommentTime, showFullDateTime } from "../utils/serviceFunctions"
+import { useViewReplyContext } from "../utils/ViewReplyContext"
 import { IoChevronBackOutline } from "react-icons/io5";
 
 const BlogComponent = () => {

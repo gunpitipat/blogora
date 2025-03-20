@@ -33,9 +33,26 @@ export const AuthProvider = ({ children }) => {
             setLoading(false)
         }
     }
+
+    const attachInterceptors = () => {      
+        axios.defaults.baseURL = process.env.REACT_APP_API
+        axios.defaults.withCredentials = true// Ensures cookies are sent with requests
+      
+        axios.interceptors.response.use(
+          (response) => response, // Allow successful responses to pass through
+          (error) => {
+            if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+              setIsAuthenticated(false)
+              setUser(null)
+            }
+            return Promise.reject(error)
+          }
+        )
+      }
     
     // Prevent isAuthenticated and user from being lost when refreshing the page
     useEffect(() => {
+        attachInterceptors()
         checkAuth() // Checking if the session is still valid once the app loads
         // eslint-disable-next-line
     }, [])

@@ -1,10 +1,10 @@
 import { useState } from "react"
 import "./SignUp.css"
 import axios from "axios"
-import { useAlertContext } from "../services/AlertContext"
+import { useAlertContext } from "../utils/AlertContext"
 import { useNavigate } from "react-router-dom"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useLoadingContext } from "../services/LoadingContext"
+import { useLoadingContext } from "../utils/LoadingContext"
 
 const SignUp = () => {
 

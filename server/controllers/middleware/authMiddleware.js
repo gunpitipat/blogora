@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-const authenticateUser = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
     const token = req.cookies.token // Extract token from cookies
 
     if (!token) return res.status(401).json({ message: "Access Denied" })
@@ -16,6 +16,6 @@ const authenticateUser = (req, res, next) => {
     }
 }
 
-module.exports = authenticateUser
+module.exports = authMiddleware
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

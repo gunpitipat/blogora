@@ -2,10 +2,10 @@ import "./Login.css"
 import { Link, useNavigate, Navigate } from "react-router-dom"
 import { useState } from "react"
 import axios from "axios"
-import { useAlertContext } from "../services/AlertContext"
+import { useAlertContext } from "../utils/AlertContext"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useLoadingContext } from "../services/LoadingContext"
-import { useAuthContext } from "../services/AuthContext"
+import { useLoadingContext } from "../utils/LoadingContext"
+import { useAuthContext } from "../utils/AuthContext"
 import LoadingScreen from "./LoadingScreen"
 
 const Login = () => {

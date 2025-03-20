@@ -2,11 +2,11 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import "./Profile.css"
-import { useLoadingContext } from "../services/LoadingContext"
+import { useLoadingContext } from "../utils/LoadingContext"
 import LoadingScreen from "./LoadingScreen"
 import NotFound from "./NotFound"
-import { useAuthContext } from "../services/AuthContext"
-import { formatDayMonth } from "../services/serviceFunctions"
+import { useAuthContext } from "../utils/AuthContext"
+import { formatDayMonth } from "../utils/serviceFunctions"
 
 const Profile = () => {
 
@@ -27,9 +27,14 @@ const Profile = () => {
                 withCredentials: true,
                 signal: abortSignal // Passes abortController signal to link the request with abortController
             })
-                return response.data // User exists => { email ?, username }
+            return response.data // User exists => { email ?, username }
         } catch (error) {
             if (!axios.isCancel(error)) { // Ignore request cancellation errors to avoid unnecessary logs
+                
+                if (axios.isAxiosError(error) && error.response?.status === 404) {
+                    throw error // Suppress 404 error logging but still throw them so Promise.allSettled() marks as "rejected"
+                }
+
                 console.error("Error fetching user data:", error)
                 throw error // Rethrow caught error to be handled by a higher level handler (e.g., Promise.allSetled())
             }
@@ -45,6 +50,11 @@ const Profile = () => {
             return response.data // [ blog documents ]
         } catch (error) {
             if (!axios.isCancel(error)) {
+
+                if (axios.isAxiosError(error) && error.response?.status === 404) {
+                    throw error
+                }
+
                 console.error("Error fetching user blogs:", error)
                 throw error
             }
@@ -63,26 +73,30 @@ const Profile = () => {
             setUserData({ email: null, username: null })
             setUserBlogs([])
 
+            // Promise.allSettled() never rejects. It returns an array. catch block in fetchData() will never run
+            // The rejected promise inside will store the error in reason instead of throwing it
             try {
                 const [userDataResult, userBlogsResult] = await Promise.allSettled([ // Run both API requests concurrently, ensuring both promises run to completion, even if one fails
                     getUserData(signal), 
                     getUserBlogs(signal)
                 ]) 
 
-                // Check if getUserData is successful before using its result
+                // Check if getUserData resolves successfully
                 if (userDataResult.status === "fulfilled" && userDataResult.value) { // Ensure userDataResult.value exists before accessing its properties
-                    setUserData({ email: userDataResult.value.email || null, username: userDataResult.value.username })
+                    setUserData({ email: userDataResult.value?.email || null, username: userDataResult.value?.username })
                     setProfileExists(true)
-                } else {
-                    // setProfileExists(false)
+                } else if (userDataResult.status === "rejected") {
+                    // Verify it's an Axios error before checking its status code (404)
+                    if (axios.isAxiosError(userDataResult.reason) && userDataResult.reason.response?.status === 404) {
+                        setProfileExists(false) // Only set to false when getUserData fails with a 404
+                    } else {
+                        console.error("Error occurred in fetchData:", userDataResult.reason)
+                    }
                 }
 
                 if (userBlogsResult.status === "fulfilled" && userBlogsResult.value) {
                     setUserBlogs(userBlogsResult.value)
                 }
-            } catch (error) {
-                    console.error("Error occurred in fetchData:", error)
-                    setProfileExists(false) // Set to false only if error isn't from request cancellation
             } finally {
                 setLoading(false)
             }

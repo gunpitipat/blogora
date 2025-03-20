@@ -4,9 +4,9 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 import ToolTip from "./components/ToolTip";
 import SearchFilter from "./components/SearchFilter";
-import { useLoadingContext } from "./services/LoadingContext";
-import { useAuthContext } from "./services/AuthContext";
-import { formatDayMonth } from "./services/serviceFunctions";
+import { useLoadingContext } from "./utils/LoadingContext";
+import { useAuthContext } from "./utils/AuthContext";
+import { formatDayMonth } from "./utils/serviceFunctions";
 import { LuArrowUpToLine } from "react-icons/lu";
 
 function App() {
@@ -27,7 +27,6 @@ function App() {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API}/blogs`)
       setBlogs(response.data)
-      console.log(response.data)
     } catch(err) {
       console.error(err)
     } finally {

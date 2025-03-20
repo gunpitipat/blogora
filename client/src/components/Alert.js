@@ -1,7 +1,7 @@
 import "./Alert.css"
 import { FaCheckCircle } from "react-icons/fa";
 import { MdError } from "react-icons/md";
-import { useAlertContext } from "../services/AlertContext";
+import { useAlertContext } from "../utils/AlertContext";
 
 const Alert = ()=>{
     const { alertState } = useAlertContext()

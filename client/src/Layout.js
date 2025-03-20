@@ -1,7 +1,7 @@
 import Alert from "./components/Alert"
 import Navbar from "./components/Navbar"
 import LoadingScreen from "./components/LoadingScreen"
-import { useLoadingContext } from "./services/LoadingContext"
+import { useLoadingContext } from "./utils/LoadingContext"
 
 const Layout = ({ children }) => {
 
