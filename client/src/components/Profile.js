@@ -7,6 +7,7 @@ import LoadingScreen from "./LoadingScreen"
 import NotFound from "./NotFound"
 import { useAuthContext } from "../utils/AuthContext"
 import { formatDayMonth } from "../utils/serviceFunctions"
+import { useAlertContext } from "../utils/AlertContext"
 
 const Profile = () => {
 
@@ -20,6 +21,8 @@ const Profile = () => {
     const { setLoading } = useLoadingContext()
     const { user } = useAuthContext()
 
+    const { setAlertState } = useAlertContext()
+
     // Get personal user data
     const getUserData = async (abortSignal) => {
         try {
@@ -29,15 +32,22 @@ const Profile = () => {
             })
             return response.data // User exists => { email ?, username }
         } catch (error) {
-            if (!axios.isCancel(error)) { // Ignore request cancellation errors to avoid unnecessary logs
-                
-                if (axios.isAxiosError(error) && error.response?.status === 404) {
+            // Ignore request cancellation errors to avoid unnecessary logs
+            if (axios.isCancel(error)) { 
+                return null
+            }
+
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                if (error.response.status === 500) {
+                    setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
+                } else if (error.response.status === 404) {
                     throw error // Suppress 404 error logging but still throw them so Promise.allSettled() marks as "rejected"
                 }
-
-                console.error("Error fetching user data:", error)
-                throw error // Rethrow caught error to be handled by a higher level handler (e.g., Promise.allSetled())
             }
+            console.error("Error fetching user data")
+            throw error // Rethrow caught error to be handled by a higher level handler (e.g., Promise.allSetled())
         }
     }
 
@@ -49,15 +59,14 @@ const Profile = () => {
             )
             return response.data // [ blog documents ]
         } catch (error) {
-            if (!axios.isCancel(error)) {
-
-                if (axios.isAxiosError(error) && error.response?.status === 404) {
-                    throw error
-                }
-
-                console.error("Error fetching user blogs:", error)
+            if (axios.isCancel(error)) {
+                return null
+            }
+            if (error.response && error.response.status === 404) {
                 throw error
             }
+            console.error("Error fetching user blogs")
+            throw error
         }
     }
 
@@ -134,7 +143,7 @@ const Profile = () => {
                             // When users visit other's profile whose blog hasn't been created yet
                             :   <div>
                                     <p>No blogs here yet!</p>
-                                    <Link to="/"><h4>Explore other blogs instead?</h4></Link>
+                                    <Link to="/explore"><h4>Explore other blogs instead?</h4></Link>
                                 </div>
                             }
                         </main>

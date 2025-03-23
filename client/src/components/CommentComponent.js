@@ -106,14 +106,18 @@ const CommentComponent = (props) => {
             const response = await axios.delete(`${process.env.REACT_APP_API}/blog/comment/${commentId}`,
                 { withCredentials: true }
             )
-            setShowCommentModal(null)
             setCommentTrigger(prev => !prev)
             setAlertState({ display: true, type: "success", message: response.data.message })
-            setShowCommentOption(null)
         } catch (error) {
-            console.error("Error deleting comment:", error)
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
         } finally {
             setLoading(false)
+            setShowCommentModal(null)
+            setShowCommentOption(null)
         }
     }
 
@@ -206,7 +210,12 @@ const CommentComponent = (props) => {
                             <li className="delete" onClick={()=>setShowCommentModal(comment._id)}>Delete</li>   
                         </ul> 
                     }
-                    { showCommentModal === comment._id && <ModalComment commentId={comment._id} showModal={showCommentModal} setShowModal={setShowCommentModal} deleteComment={deleteComment} />}
+                    <ModalComment 
+                        showCommentModal={showCommentModal} 
+                        commentId={comment._id} 
+                        setShowCommentModal={setShowCommentModal} 
+                        deleteComment={deleteComment} 
+                    />
                     </div>
                 }
             </div>

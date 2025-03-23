@@ -2,18 +2,13 @@ import "./Navbar.css"
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from "react"
 import { useAuthContext } from "../utils/AuthContext"
-import axios from "axios"
-import { useAlertContext } from "../utils/AlertContext"
 import { FiMenu } from "react-icons/fi";
 import { debounce } from "lodash"
 
 const Navbar = () => {
     const location = useLocation()
-    const [pathname, setPathname] = useState(location.pathname)
 
-    const { isAuthenticated, user, checkAuth } = useAuthContext()
-
-    const { setAlertState } = useAlertContext()
+    const { isAuthenticated, user, logout } = useAuthContext()
 
     // ToolTip for not logged-in users
     const [ showToolTip, setShowToopTip ] = useState(null)
@@ -30,21 +25,6 @@ const Navbar = () => {
         return () => window.removeEventListener("resize", handleResize)
     }, [])
 
-    useEffect(() => {
-        setPathname(location.pathname)
-    }, [location])
-
-    // Logout
-    const logout = async () => {
-        try {
-            const response = await axios.post(`${process.env.REACT_APP_API}/logout`, {}, { withCredentials: true })
-            await checkAuth()
-            setAlertState({ display: true, type: "success", message: response.data.message })
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
     // Function to toggle ToolTip
     const toggleToolTip = (hoveredMenu) => {
         setShowToopTip(hoveredMenu)
@@ -54,7 +34,7 @@ const Navbar = () => {
         <>
             {/* Show menu icon only on mobile and tablet */}
             { isMobile &&
-                <div className="menu-icon-overlay">
+                <div className={`menu-icon-overlay ${isOpen ? "hidden" : ""}`}>
                     <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
                         <FiMenu />
                     </div>
@@ -69,10 +49,10 @@ const Navbar = () => {
             <nav className={`Navbar ${isOpen ? "show-sidebar" : ""}`}>
                 <ul>
                     <div className="menu-group">
-                        <li className={ pathname === "/" ? "selected" : null }>
-                            <Link to="/" onClick={() => setIsOpen(false)}>Explore</Link>
+                        <li className={ location.pathname === "/explore" ? "selected" : null }>
+                            <Link to="/explore" onClick={() => setIsOpen(false)}>Explore</Link>
                         </li>
-                        <li className={ pathname === "/create" ? "selected" : null }>
+                        <li className={ location.pathname === "/create" ? "selected" : null }>
                             { (isAuthenticated && user?.username) ? (
                                 <Link to="/create" onClick={() => setIsOpen(false)}>Create Blog</Link>
                             ) : (
@@ -87,7 +67,7 @@ const Navbar = () => {
                                 </span>
                             )}                    
                         </li>
-                        <li className={ pathname.split("/")[2] === user?.username ? "selected" : null }>
+                        <li className={((location.pathname.split("/")[2] === user?.username) && user?.username) ? "selected" : null }>
                             { (isAuthenticated && user?.username) ? (
                                 <Link to={`/profile/${user.username}`} onClick={() => setIsOpen(false)}>Profile</Link>
                             ) : (
@@ -105,7 +85,7 @@ const Navbar = () => {
                     </div>
                     { !(isAuthenticated && user?.username) && (
                     <div className="menu-group">
-                        <li className={ pathname === "/login" ? "selected" : null }>
+                        <li className={ location.pathname === "/login" ? "selected" : null }>
                             <Link to="/login" onClick={() => setIsOpen(false)}>Log In</Link>
                         </li>
                     </div>)}

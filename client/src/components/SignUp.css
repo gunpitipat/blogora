@@ -116,7 +116,6 @@
     user-select: none; /* Prevent accidentally selecting texts when clicking the icon */
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .SignUp .bg{

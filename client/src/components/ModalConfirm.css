@@ -1,12 +1,19 @@
-.Delete-Modal .Modal{
+.Delete-Modal .modal-overlay{
     background: rgba(0,0,0,0.75);
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    pointer-events: none;
     z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
+}
+.Delete-Modal .modal-overlay.show{
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.15s ease-in-out;
 }
 .Delete-Modal .confirm-container{
     background: #e8e8e8;
@@ -45,32 +52,29 @@
     margin: 0.5rem 0 1.5rem;
     text-align: center;
 }
-.Delete-Modal .confirm-container .btn-container{
+.Delete-Modal .confirm-container .button-container{
     /* align-self: flex-end; */
     width: 50%;
     max-width: 148px;
     display: flex;
     justify-content: space-between;
 }
-.Delete-Modal .btn-container .btn{
+.Delete-Modal .button-container button{
     font-size: 1rem;
     padding: 5px 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
-.Delete-Modal .btn-container .btn.del{
+.Delete-Modal .button-container .delete-button{
     background: #463f3a;
     color: #fafafa;
 }
-.Delete-Modal .btn-container .btn:hover{
+.Delete-Modal .button-container button:hover{
     opacity: 0.75;
 }
-.Delete-Modal .btn-container .btn.cancel{
+.Delete-Modal .button-container .cancel-button{
     background: #fafafa;
-}
-.Delete-Modal .Modal.active{
-    pointer-events: all;
 }
 
 /* Responsive Design */
@@ -83,7 +87,7 @@
     .Delete-Modal .confirm-container{
         width: 85vw;
     }
-    .Delete-Modal .confirm-container .btn-container{
+    .Delete-Modal .confirm-container .button-container{
         width: 75%;
     }
 }

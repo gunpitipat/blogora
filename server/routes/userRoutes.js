@@ -1,6 +1,5 @@
 const express = require("express")
 const { signup, login, logout, getProfile, getProfileBlogs } = require("../controllers/userController")
-const authMiddleware = require("../controllers/middleware/authMiddleware")
 const authStatusCheck = require("../controllers/frontendService/authStatusCheck")
 const profileMiddleware = require("../controllers/middleware/profileMiddleware")
 const noCacheMiddleware = require("../controllers/middleware/noCacheMiddleware")

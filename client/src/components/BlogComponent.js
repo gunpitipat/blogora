@@ -55,10 +55,22 @@ const BlogComponent = () => {
             )
             return response.data
         } catch (error) {
-            if (!axios.isCancel(error)) {
-                console.error("Error fetching a blog:", error)
-                throw error
+            // Ignore request cancellation errors
+            if (axios.isCancel(error)) {
+                return null
             }
+
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                if (error.response.status === 500) {
+                    setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
+                } else if (error.response.status === 404) {
+                    throw error // Skip logging a 404 error
+                }
+            }
+            console.error("Error fetching a blog")
+            throw error
         }
     }
 
@@ -82,9 +94,7 @@ const BlogComponent = () => {
                 } // If using else block and setBlogExists(false), it will runs too early, and <NotFound /> will flicker
                 
             } catch (error) {
-                console.error("Error fetching blog:", error)
-
-                if (error.response && error.response.status === 404) {
+                if (error.response?.status === 404) {
                     setBlogExists(false) // Only set this when the blog is truly not found
                 }
             } finally {
@@ -105,9 +115,14 @@ const BlogComponent = () => {
             )
             return response.data
         } catch (error) {
-            if (!axios.isCancel(error)) {
-                console.error("Error fetching comments:", error)
-                throw error
+            if (axios.isCancel(error)) {
+                return null
+            } else {
+                if (error.response?.status === 404) {
+                    return null // Skip logging
+                }
+                console.error("Error fetching comments")
+                // throw error // No catch block in fetchComments()   
             }
         }
     }
@@ -171,9 +186,7 @@ const BlogComponent = () => {
                             return [ ...prev, { id: newComment._id, viewReply: false }]
                         })
                     }
-                }   
-            } catch (error) {
-                console.error("Error fetching comments:", error)
+                }
             } finally {
                 setCommentLoading(false)
             }
@@ -205,12 +218,12 @@ const BlogComponent = () => {
     const outOfFocus = (e) => {
         // Blog setting tab
         if (showOptions) {
-            if (!e.target.classList.contains("edit") && !e.target.classList.contains("delete") && !e.target.classList.contains("confirm-container")){
+            if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")){
                 setShowOptions(false)
             }
         }
         if (showModal) {
-            if (!e.target.classList.contains("confirm-container")) {
+            if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")) {
                 setShowModal(false)
             }
         }
@@ -225,7 +238,7 @@ const BlogComponent = () => {
             setShowCommentOption(null)
         }   
         // Handle clicking when modal appears
-        if (e.target.classList.contains("modal") || e.target.classList.contains("cancel-button")) {
+        if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")) {
             setShowCommentOption(null)
             setShowCommentModal(null)
         }
@@ -250,12 +263,17 @@ const BlogComponent = () => {
             setAlertState({ display: true, type: "success", message: response.data.message })
             navigate(`/profile/${user.username}`)
         })
-        .catch(err => {
-            console.error(err)
-            setAlertState({ display: true, type: "error", message: err.response.data.message })
+        .catch(error => {
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
         })
         .finally(() => {
             setLoading(false)
+            setShowModal(false) // In case session expires, prevent 2 modals' overlays from overlapping each other
+            setShowOptions(false)
         })
     }
 
@@ -298,7 +316,12 @@ const BlogComponent = () => {
             }
         })
         .catch(error => {
-            console.error(error.response?.data.error)
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
+            setCommentLoading(false)
         })
         .finally(() => {
             setShowCommentInput(false)
@@ -388,7 +411,7 @@ const BlogComponent = () => {
                     {blog && 
                     <div>
                         <header>
-                            <div className="goback-icon" onClick={()=>navigate("/")}> {/* display on mobile screen for easily go back */}
+                            <div className="goback-icon" onClick={()=>navigate("/explore")}> {/* display on mobile screen for easily go back */}
                                 <IoChevronBackOutline />
                             </div>
                             <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>
@@ -401,8 +424,13 @@ const BlogComponent = () => {
                                             <li className="delete" onClick={()=>setShowModal(true)}>Delete</li>    
                                         </ul>
                                     }
-                                    {showModal && <ModalConfirm showModal={showModal} setShowModal={setShowModal} title={blog.title}
-                                    deleteBlog={deleteBlog} slug={slug}/>}
+                                    <ModalConfirm 
+                                        showModal={showModal} 
+                                        setShowModal={setShowModal} 
+                                        title={blog.title}
+                                        deleteBlog={deleteBlog} 
+                                        slug={slug}
+                                    />
                                 </div>
                             }
                         </header>
@@ -452,41 +480,41 @@ const BlogComponent = () => {
                         }
                     </section>
                     <section className="comments" id="comments">
-                            {/* organizeComments(comments).map works well but attaching hierarchy level to each comment is to distinguish comments' UI */}
-                            {/* hierarchyLevel(organizeComments(comments), 1) returns nested comment structure like organizeComments(comments) but adding one more level field */}
-                            {hierarchyLevel(organizeComments(comments), 1).map(comment => {
-                                // Filter for { id, showReply }. Map for only showReply. Destructuring to get boolean value from map array
-                                const [ individualReplyStatus ] = replyStatus.filter(element => element.id === comment._id).map(element => element.showReply)
-                                return <CommentComponent key={comment._id} 
-                                            // Comment and Reply Content
-                                            comment={comment}
-                                            replies={comment.replies}
+                        {/* organizeComments(comments).map works well but attaching hierarchy level to each comment is to distinguish comments' UI */}
+                        {/* hierarchyLevel(organizeComments(comments), 1) returns nested comment structure like organizeComments(comments) but adding one more level field */}
+                        {hierarchyLevel(organizeComments(comments), 1).map(comment => {
+                            // Filter for { id, showReply }. Map for only showReply. Destructuring to get boolean value from map array
+                            const [ individualReplyStatus ] = replyStatus.filter(element => element.id === comment._id).map(element => element.showReply)
+                            return <CommentComponent key={comment._id} 
+                                        // Comment and Reply Content
+                                        comment={comment}
+                                        replies={comment.replies}
 
-                                            // Show/hide Reply Input
-                                            showReplyInput={showReplyInput} 
-                                            individualReplyStatus={individualReplyStatus}
-                                            replyStatus={replyStatus} // For nested replies
-                                            nestedStructure={organizeComments(comments)}
-                                            getAllRelatedReplies={getAllRelatedReplies}
+                                        // Show/hide Reply Input
+                                        showReplyInput={showReplyInput} 
+                                        individualReplyStatus={individualReplyStatus}
+                                        replyStatus={replyStatus} // For nested replies
+                                        nestedStructure={organizeComments(comments)}
+                                        getAllRelatedReplies={getAllRelatedReplies}
 
-                                            blogAuthor={blog.author?.username} // Show "author" next to username if they comment on their own post
-                                            // Create a Reply
-                                            onSendComment={onSendComment}
+                                        blogAuthor={blog.author?.username} // Show "author" next to username if they comment on their own post
+                                        // Create a Reply
+                                        onSendComment={onSendComment}
 
-                                            // Delete Button and Modal
-                                            showCommentOption={showCommentOption}
-                                            toggleCommentOption={toggleCommentOption}
-                                            showCommentModal={showCommentModal}
-                                            setShowCommentModal={setShowCommentModal}
-                                            setCommentTrigger={setCommentTrigger}
-                                            setShowCommentOption={setShowCommentOption}
+                                        // Delete Button and Modal
+                                        showCommentOption={showCommentOption}
+                                        toggleCommentOption={toggleCommentOption}
+                                        showCommentModal={showCommentModal}
+                                        setShowCommentModal={setShowCommentModal}
+                                        setCommentTrigger={setCommentTrigger}
+                                        setShowCommentOption={setShowCommentOption}
 
-                                            // Hierarchy level for UI design
-                                            level={comment.level}
-                                        />
-                            })}
+                                        // Hierarchy level for UI design
+                                        level={comment.level}
+                                    />
+                        })}
+                        {commentLoading && <LoadingScreen /> }
                     </section>
-                    { commentLoading === true && <LoadingScreen /> }
                 </div>
                 <footer className="copyright">
                     <small>&copy; 2025 Pitipat Pattamawilai. All Rights Reserved.</small>

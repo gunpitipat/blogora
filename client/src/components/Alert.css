@@ -1,17 +1,15 @@
 .Alert{
     position: fixed;
     bottom: 2.5rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 999;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 1002; /* Same level as sessionExpired modal */
 }
 .Alert .message{
-    padding: 0.5rem;
+    padding: 0.5rem 1.5rem;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 350px;
+    align-items: center;
+    white-space: nowrap;
     border-radius: 0.25rem;
 }
 .Alert .message.success{
@@ -30,6 +28,13 @@
 .Alert svg{
     align-self: center;
     margin-left: 0.3rem;
+}
+
+/* Responsive Design */
+@media (max-width: 340px) {
+    .Alert .message{
+        font-size: 0.9rem;
+    }
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

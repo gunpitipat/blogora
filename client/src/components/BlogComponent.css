@@ -204,7 +204,6 @@ section.comments{
     padding: 2rem 1rem 0.5rem;
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .BlogComponent header .goback-icon{

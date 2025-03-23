@@ -40,16 +40,24 @@ const Login = () => {
             setErrorStatus(initialErrorStatus)
             setAlertState({ display: true, type: "success", message: response.data.message })
             setLoading(false)
-            navigate("/")
+            navigate("/explore")
         } catch (error) {
-            const { message, field } = error.response.data
-            setErrorStatus({ message, field })
             setLoading(false)
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+                return
+            } else if (error.response.status === 500) {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
+                return
+            } else {
+                const { message, field } = error.response.data
+                setErrorStatus({ message, field })    
+            }
         }
     }
 
     if (loading) return <LoadingScreen />
-    if (isAuthenticated && user?.username) return <Navigate to="/" />
+    if (isAuthenticated && user?.username) return <Navigate to="/explore" />
 
     return(
         <div className="Login">

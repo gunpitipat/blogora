@@ -53,11 +53,12 @@ const SignUp = () => {
         })
         .catch(err => {
             // If the request completely fails (e.g., no internet, backend is unreachable)
+            setLoading(false)
             if (!err.response) {
                 setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
                 return
             } else if (err.response.status === 500) {
-                setAlertState({ display: true, type: "error", message: err.response.data.message || "Server error. Please try again later." })
+                setAlertState({ display: true, type: "error", message: err.response.data?.message || "Server error. Please try again later." })
                 return
             } else {
                 const { success, error } = err.response.data
@@ -79,7 +80,6 @@ const SignUp = () => {
                     return updatedStatus // New object reference ensures React detects change
                 })     
             }
-            setLoading(false)
         })
     }
 

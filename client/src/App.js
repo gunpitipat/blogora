@@ -8,6 +8,7 @@ import { useLoadingContext } from "./utils/LoadingContext";
 import { useAuthContext } from "./utils/AuthContext";
 import { formatDayMonth } from "./utils/serviceFunctions";
 import { LuArrowUpToLine } from "react-icons/lu";
+import { useAlertContext } from "./utils/AlertContext";
 
 function App() {
   const [ blogs, setBlogs ] = useState([])
@@ -22,13 +23,19 @@ function App() {
 
   const { isAuthenticated, user } = useAuthContext()
 
+  const { setAlertState } = useAlertContext()
+
   const fetchData = async ()=>{
     setLoading(true)
     try {
       const response = await axios.get(`${process.env.REACT_APP_API}/blogs`)
       setBlogs(response.data)
-    } catch(err) {
-      console.error(err)
+    } catch(error) {
+      if (!error.response) {
+        setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+      } else {
+        setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
+      }
     } finally {
       setLoading(false)
     }

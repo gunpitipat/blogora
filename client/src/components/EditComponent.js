@@ -28,6 +28,12 @@ const EditComponent = () => {
 
     const { user } = useAuthContext()
 
+    // Alert popup
+    const { setAlertState } = useAlertContext()
+
+    // Extend textarea
+    const [ extendTextarea, setExtendTextarea ] = useState(false)
+
     // Style: Making label bolder when focusing on input/textarea 
     let initialLabels = { titleLabel: false, contentLabel: false }
     const [ labels, setLabels ] = useState(initialLabels)   
@@ -41,12 +47,6 @@ const EditComponent = () => {
             setLabels(initialLabels)
         }
     }
-
-    // Alert popup
-    const { setAlertState } = useAlertContext()
-
-    // Extend textarea
-    const [ extendTextarea, setExtendTextarea ] = useState(false)
     
     // Distance from the top of the page
     function getTotalOffsetTop(element) {
@@ -105,10 +105,10 @@ const EditComponent = () => {
         })
         .catch(error => {
             if (isMounted) {
-                if (error.response?.status === 404) {
+                if (error.response && error.response.status === 404) {
                     setBlogExists(false) // Blog not found
                 } else {
-                    console.error(error)
+                    console.error("Error fetching a blog")
                 }
             }
         })
@@ -159,8 +159,11 @@ const EditComponent = () => {
             window.history.back() // Go back to BlogComponent
         })
         .catch(error => {
-            console.error(error)
-            setAlertState({ display: true, type: "error", message: error.response.data.message })
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
         })
         .finally(() => {
             setLoading(false)

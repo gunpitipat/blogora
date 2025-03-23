@@ -26,6 +26,12 @@ const Form = ()=>{
     const { user } = useAuthContext()
     const navigate = useNavigate()
 
+    // Alert popup
+    const { setAlertState } = useAlertContext()
+
+    // Extend textarea
+    const [ extendTextarea, setExtendTextarea ] = useState(false)
+
     // Save Draft
     const savingDraftFunc = (title,content) => {
         const data = { title, content }
@@ -56,12 +62,6 @@ const Form = ()=>{
             setLabels(initialLabels)
         }
     }
-
-    // Alert popup
-    const { setAlertState } = useAlertContext()
-
-    // Extend textarea
-    const [ extendTextarea, setExtendTextarea ] = useState(false)
     
     // Distance from the top of the page
     function getTotalOffsetTop(element) {
@@ -114,8 +114,11 @@ const Form = ()=>{
             navigate(`/profile/${user.username}`)
         })
         .catch(error => {
-            console.error(error)
-            setAlertState({ display: true, type: "error", message: error.response.data.message })
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
         })
         .finally(() => {
             setLoading(false)

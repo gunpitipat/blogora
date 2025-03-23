@@ -39,7 +39,7 @@ exports.createBlog = async (req,res) => {
     })
     .catch(error => {
         console.error("Error creating blog", error)
-        res.status(500).json({ message: "Internal server error. Please try again later." })
+        res.status(500).json({ message: "Error creating a blog" })
     })
 } 
 

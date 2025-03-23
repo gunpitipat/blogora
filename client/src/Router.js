@@ -13,17 +13,19 @@ import ProtectedRoute from './utils/ProtectedRoute'
 import { AuthProvider } from './utils/AuthContext'
 import NotFound from './components/NotFound'
 import { ViewReplyProvider } from './utils/ViewReplyContext'
+import LandingPage from './LandingPage'
 
 const Router = () => {
     return(
         <BrowserRouter>
             <LoadingProvider>
-                <AuthProvider>
-                    <AlertProvider>
+                <AlertProvider>
+                    <AuthProvider>
                         <ViewReplyProvider>
                             <Layout>
                                 <Routes>
-                                    <Route path="/" element={<App />} />
+                                    <Route path="/" element={<LandingPage />} />
+                                    <Route path="/explore" element={<App />} />
                                     <Route path="/blog/:slug" element={<BlogComponent />} />
                                     <Route path="/profile/:username" element={<Profile />} />
                                     <Route path="/login" element={<Login />} />
@@ -40,8 +42,8 @@ const Router = () => {
                                 </Routes> 
                             </Layout>
                         </ViewReplyProvider>
-                    </AlertProvider>
-                </AuthProvider>
+                    </AuthProvider>
+                </AlertProvider>
             </LoadingProvider>
         </BrowserRouter>
     )

@@ -37,7 +37,7 @@ exports.createComment = async (req,res) => {
         res.status(201).json({ message: "Comment has been post.", comment })
     } catch (error) {
         console.error("Error creating comment:", error)
-        res.status(500).json({ error })
+        res.status(500).json({ message: "Error creating a comment", error })
     }
 }
 
@@ -115,7 +115,7 @@ exports.deleteComment = async (req,res) => {
 
     } catch (error) {
         console.error("Error deleting comment:", error)
-        res.status(500).json({ message: "Error deleteing comment", error })
+        res.status(500).json({ message: "Error deleteing a comment", error })
     }
 }
 

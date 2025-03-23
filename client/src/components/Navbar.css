@@ -98,7 +98,6 @@
     transform: translateX(-50%) translateY(0); /* Moves back to normal position */
 }
 
-
 /* Mobile Screen */
 @media (max-width: 768px) {
     .menu-icon-overlay{
@@ -109,6 +108,10 @@
         left: 0;
         z-index: 1000;
         background-color: rgba(188, 184, 177, 0.7);
+    }
+    .menu-icon-overlay.hidden{
+        background-color: transparent; /* Avoid overlapping selected menu background */
+        transition: background-color 0.2s ease-in-out;
     }
     .menu-icon{
         display: flex;
