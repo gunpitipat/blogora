@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom"
 import axios from "axios"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import "./BlogComponent.css"
 import ModalConfirm from "./ModalConfirm"
 import { useAlertContext } from "../utils/AlertContext"
@@ -128,12 +128,12 @@ const BlogComponent = () => {
     }
 
     // Convert a flat comment array to Nested Structure
-    const organizeComments = (comments) => {
+    const organizeComments = useCallback((comments) => {
         const commentMap = {}; // Store comments by ID
 
         // Initialize all comments
         comments.forEach(comment => {
-            commentMap[comment._id] = { ...comment, replies: [] , showReplyInput: false }
+            commentMap[comment._id] = { ...comment, replies: [] }
         })
 
         const rootComments = []
@@ -149,7 +149,7 @@ const BlogComponent = () => {
             }
         })
         return rootComments;
-    }
+    }, [])
 
     // Fetching comments and replies
     useEffect(() => { // Runs when slug changes OR user posts a new comment
@@ -250,9 +250,9 @@ const BlogComponent = () => {
     }, [showCommentOption])
 
     // Function to toggle comment's delete button
-    const toggleCommentOption = (commentId) => {
+    const toggleCommentOption = useCallback((commentId) => {
         setShowCommentOption(prev => (prev === commentId ? null : commentId))
-    }
+    }, [])
 
 
     // Delete Blog
@@ -279,12 +279,12 @@ const BlogComponent = () => {
 
     const showComment = () => {
         setReplyStatus(prev => prev.map(comment => {
-            return { ...comment, showReply: false }
+            return { ...comment, showReply: false } // Collapse the expanding reply input elsewhere
         }))
         setShowCommentInput(!showCommentInput)
     }
     // Show only clicked reply input (collapse others which were shown before)
-    const showReplyInput = (commentId) => {
+    const showReplyInput = useCallback((commentId) => {
         setShowCommentInput(false) // If comment input is still unfolding, collapse it
         setReplyStatus(prev => prev.map(comment => {
             if (comment.id === commentId) {
@@ -293,10 +293,10 @@ const BlogComponent = () => {
             }
             return { ...comment, showReply: false }
         }))
-    }
+    }, [])
 
     // Create a comment and reply
-    const onSendComment = (commentContent, parentCommentId = null) => {
+    const onSendComment = useCallback((commentContent, parentCommentId = null) => {
         setCommentLoading(true)
         axios.post(`${process.env.REACT_APP_API}/blog/${slug}/comment`, 
             { content: commentContent,
@@ -307,6 +307,7 @@ const BlogComponent = () => {
         .then(response => {
             setAlertState({ display: true, type: "success", message: response.data.message })
             setCommentTrigger(prev => !prev) // Toggle trigger to refresh comment
+
             // Automatically show reply the user has just created
             if (parentCommentId) {
                 return setViewReply(prev => prev.map(element => {
@@ -330,25 +331,25 @@ const BlogComponent = () => {
             }))
             // setCommentLoading(false) in useEffect after comment loading to avoid flickering and ensure fresh comments are fetched before UI updates
         })
-    }
+        // eslint-disable-next-line
+    }, [slug])
 
     // Recursively find target comment's ID in nested structure
-    // eslint-disable-next-line
-    const findTargetId = (nestedStructure, targetId) => {
-        for (const element of nestedStructure) {
-            if (element._id === targetId) { // Base case (found on top level)
-                return element;
-            }
-            if (element.replies.length !== 0) { // Be able to go deeper -> recursively call
-                const found = findTargetId(element.replies, targetId)
-                if (found) return found;
-            }
-        }
-        return false
-    }
+    // const findTargetId = (nestedStructure, targetId) => {
+    //     for (const element of nestedStructure) {
+    //         if (element._id === targetId) { // Base case (found on top level)
+    //             return element;
+    //         }
+    //         if (element.replies.length !== 0) { // Be able to go deeper -> recursively call
+    //             const found = findTargetId(element.replies, targetId)
+    //             if (found) return found;
+    //         }
+    //     }
+    //     return false
+    // }
 
     // Recursively get comment's ID and all nested replies
-    const getAllRelatedReplies = (nestedStructure, targetId) => {
+    const getAllRelatedReplies = useCallback((nestedStructure, targetId) => {
         let result = [];
         for (const element of nestedStructure) {
             if (element._id === targetId) {
@@ -360,28 +361,28 @@ const BlogComponent = () => {
                     for (const element of repliesArray) {
                         nestedReplies.push(element._id) // Add the reply's ID
 
-                        if (element.replies.length > 0) {
+                        if (element.replies?.length > 0) {
                             nestedReplies.push(...collectAllReplies(element.replies)) // Recursively collect more
                         }
                     }
                     return nestedReplies;
                 }
     
-                if (element.replies.length > 0) {
+                if (element.replies?.length > 0) {
                     result.push(...collectAllReplies(element.replies))
                 }
                 return result; // Return once the target ID and all its replies are found
             }
-            if (element.replies.length > 0) {
+            if (element.replies?.length > 0) {
                 const recursiveResult = getAllRelatedReplies(element.replies, targetId)
                 result.push(...recursiveResult)
             }
         }
         return result
-    }
+    }, [])
 
     // Recursively mark hierarchy level to each comment
-    const hierarchyLevel = (nestedStructure, level = 1) => {
+    const hierarchyLevel = useCallback((nestedStructure, level = 1) => {
         return nestedStructure.map(comment => {
             // If comment has no replies
             if (comment.replies.length === 0) {
@@ -395,7 +396,26 @@ const BlogComponent = () => {
                 }
             }
         })
-    }
+    }, [])
+
+    const nestedComments = useMemo(() => {
+        return organizeComments(comments)
+        // eslint-disable-next-line 
+    }, [comments]) // Recomputes only if comments change
+
+    const structuredComments  = useMemo(() => {
+        return hierarchyLevel(organizeComments(comments), 1)
+        // eslint-disable-next-line 
+    }, [nestedComments])
+
+    // Attach individual reply input status
+    const memoizedComments = useMemo(() => {
+        return structuredComments.map(comment => {
+            return { ...comment, 
+                replyInput: replyStatus.find(element => element.id === comment._id)?.showReply ?? false 
+            }
+        })
+    }, [structuredComments, replyStatus])
 
     // ToolTip for not logged-in users when hovering add comment button
     const toggleCommentToolTip = (section) => {
@@ -479,12 +499,8 @@ const BlogComponent = () => {
                             </button>
                         }
                     </section>
-                    <section className="comments" id="comments">
-                        {/* organizeComments(comments).map works well but attaching hierarchy level to each comment is to distinguish comments' UI */}
-                        {/* hierarchyLevel(organizeComments(comments), 1) returns nested comment structure like organizeComments(comments) but adding one more level field */}
-                        {hierarchyLevel(organizeComments(comments), 1).map(comment => {
-                            // Filter for { id, showReply }. Map for only showReply. Destructuring to get boolean value from map array
-                            const [ individualReplyStatus ] = replyStatus.filter(element => element.id === comment._id).map(element => element.showReply)
+                    <section className="comments" id="comments">                    
+                        {memoizedComments.map(comment => {
                             return <CommentComponent key={comment._id} 
                                         // Comment and Reply Content
                                         comment={comment}
@@ -492,9 +508,9 @@ const BlogComponent = () => {
 
                                         // Show/hide Reply Input
                                         showReplyInput={showReplyInput} 
-                                        individualReplyStatus={individualReplyStatus}
+                                        individualReplyStatus={comment.replyInput}
                                         replyStatus={replyStatus} // For nested replies
-                                        nestedStructure={organizeComments(comments)}
+                                        nestedStructure={nestedComments}
                                         getAllRelatedReplies={getAllRelatedReplies}
 
                                         blogAuthor={blog.author?.username} // Show "author" next to username if they comment on their own post

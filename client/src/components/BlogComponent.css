@@ -208,6 +208,8 @@ section.comments{
 @media (max-width: 768px) {
     .BlogComponent header .goback-icon{
         display: flex;
+        top: 0.85rem;
+        left: calc(0.85rem + 1.4rem + 0.85rem + 0.85rem);
     }
     .BlogComponent{
         min-height: calc(100vh - 20px + 40px); /* Make copyright footer overflow on short content pages */
@@ -219,10 +221,6 @@ section.comments{
     }
     .BlogComponent header .title{
         padding-left: 0.25rem;
-    }
-    .BlogComponent header .goback-icon{
-        top: 0.85rem;
-        left: calc(0.85rem + 1.4rem + 0.85rem + 0.85rem);
     }
 }
 @media (max-width: 425px) {

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import "./CommentComponent.css"
 import { formatCommentTime, showFullDateTime } from "../utils/serviceFunctions"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, memo, useMemo } from "react"
 import ReplyInput from "./ReplyInput";
 import { FaReply, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { FaUserPen } from "react-icons/fa6";
@@ -17,7 +17,7 @@ import { useAlertContext } from "../utils/AlertContext";
 import { debounce } from "lodash"
 
 // Recursive Comment Component
-const CommentComponent = (props) => {
+const CommentComponent = memo((props) => { // Prevent unnecessary re-renders when its props remain the same
     const { 
         comment, 
         replies, 
@@ -165,6 +165,17 @@ const CommentComponent = (props) => {
         setIsExpanded(!isExpanded)
     }
 
+    // Attach individual reply input status
+    const memoizedReplies = useMemo(() => {
+        if (replies.length > 0) {
+            return replies.map(reply => {
+                return { ...reply,
+                    replyInput: replyStatus.find(element => element.id === reply._id)?.showReply ?? false
+                }
+            })
+        }
+    }, [replies, replyStatus])
+
     // Styling the connecting line between parent comment and replies via div.vertical-line and div.reply-connector
     return (
         <div className="comment-container">
@@ -255,8 +266,7 @@ const CommentComponent = (props) => {
             {/* <div className={`replies level-${Math.min(level, MAX_INDENT_LEVEL)}`}> */}
             <div className="replies">
                 {replies.length > 0 && individualViewReply && 
-                    replies.map((reply, index) => {
-                        const [nestedIndividualReplyStatus] = replyStatus.filter(element => element.id === reply._id).map(element => element.showReply)
+                    memoizedReplies.map((reply, index) => {
                         return (
                             <div className={`reply-wrapper ${index === replies.length - 1 ? "last-reply" : ""}`}
                                  key={reply._id} 
@@ -269,7 +279,7 @@ const CommentComponent = (props) => {
 
                                     // Show/hide Reply Input
                                     showReplyInput={showReplyInput}
-                                    individualReplyStatus={nestedIndividualReplyStatus}
+                                    individualReplyStatus={reply.replyInput}
                                     replyStatus={replyStatus} // For nested replies
                                     nestedStructure={nestedStructure}
                                     getAllRelatedReplies={getAllRelatedReplies}
@@ -284,6 +294,7 @@ const CommentComponent = (props) => {
                                     showCommentModal={showCommentModal}
                                     setShowCommentModal={setShowCommentModal}
                                     setCommentTrigger={setCommentTrigger}
+                                    setShowCommentOption={setShowCommentOption}
 
                                     // Reference to the parent comment's author
                                     parentAuthor={comment.user?.username}
@@ -298,7 +309,7 @@ const CommentComponent = (props) => {
             </div>
         </div>
     )
-}
+})
 
 export default CommentComponent
 

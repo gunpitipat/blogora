@@ -135,14 +135,13 @@ exports.login = async (req,res) => {
         
         // Validation passed => Create token
         const payload = { username: result.success.user.username, userId: result.success.user._id, role: result.success.user.role }
-        const token = jwt.sign( payload, process.env.JWT_SECRET, { expiresIn: 5 }) //"1d"
+        const token = jwt.sign( payload, process.env.JWT_SECRET, { expiresIn: "1d" })
         // Set HttpOnly Cookie
         res.cookie("token", token, {
             httpOnly: true, // Prevent javascript access (XSS attacks)
             secure: true, // Ensure it's sent over HTTPS (set false for local development since http://localhost runs on http not https, so the browser ignores the cookie)
             sameSite: "none", // Allow cross-site/origin requests (different frontend & backend domains)
-            // maxAge: 1000 * 60 * 60 * 24, // 1 day expiration
-            maxAge: 1000 * 5,
+            maxAge: 1000 * 60 * 60 * 24, // 1 day expiration
             path: "/"
         })
         res.status(200).json({

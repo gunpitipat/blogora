@@ -52,11 +52,15 @@
         right: 0.85rem;
     }
 }
+@media (max-width: 390px) {
+    .ToolTip{
+        top: 0.25rem;
+        right: 0.25rem;
+    }
+}
 @media (max-width: 370px) {
     .ToolTip{
         width: 60vw;
-        top: 0.25rem;
-        right: 0.25rem;
     }
 }
 
