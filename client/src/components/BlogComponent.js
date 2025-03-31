@@ -96,6 +96,9 @@ const BlogComponent = () => {
             } catch (error) {
                 if (error.response?.status === 404) {
                     setBlogExists(false) // Only set this when the blog is truly not found
+                } else {
+                    // Prevent users from getting stuck in LoadingScreen in case of network / server error
+                    setBlogExists(true) // Show a blank page with alert message
                 }
             } finally {
                 setLoading(false);
@@ -218,8 +221,14 @@ const BlogComponent = () => {
     const outOfFocus = (e) => {
         // Blog setting tab
         if (showOptions) {
-            if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")){
-                setShowOptions(false)
+            if (showModal) {
+                if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")){
+                    setShowOptions(false)
+                }
+            } else {
+                if (!e.target.closest(".setting") || e.target.closest(".comment")) { // Setting icon has its own hanlder
+                    setShowOptions(false)
+                }
             }
         }
         if (showModal) {
@@ -429,30 +438,32 @@ const BlogComponent = () => {
             <>
                 <div className="BlogComponent" onClick={outOfFocus}>
                     {blog && 
-                    <div>
+                    <div className="blog-section">
                         <header>
-                            <div className="goback-icon" onClick={()=>navigate("/explore")}> {/* display on mobile screen for easily go back */}
+                            <div className="goback-icon" onClick={()=>navigate(-1)}> {/* For easily go back on mobile screen */}
                                 <IoChevronBackOutline />
                             </div>
                             <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>
                             { ((user?.username === blog.author?.username) || (user?.role === "admin" )) &&
                                 <div className="setting">
-                                    <BiDotsHorizontalRounded onClick={()=>setShowOptions(!showOptions)}/>
+                                    <span onClick={()=>setShowOptions(!showOptions)} className="blog-setting-icon">
+                                        <BiDotsHorizontalRounded />
+                                    </span>
                                     {showOptions && 
                                         <ul className="options">
                                             <Link to={`/blog/edit/${blog.slug}`} className="edit"><li>Edit</li></Link>
                                             <li className="delete" onClick={()=>setShowModal(true)}>Delete</li>    
                                         </ul>
                                     }
-                                    <ModalConfirm 
-                                        showModal={showModal} 
-                                        setShowModal={setShowModal} 
-                                        title={blog.title}
-                                        deleteBlog={deleteBlog} 
-                                        slug={slug}
-                                    />
                                 </div>
                             }
+                            <ModalConfirm 
+                                showModal={showModal} 
+                                setShowModal={setShowModal} 
+                                title={blog.title}
+                                deleteBlog={deleteBlog} 
+                                slug={slug}
+                            />
                         </header>
                         <main className="TipTap-Result">
                             {parser(blog.content)}
@@ -499,7 +510,7 @@ const BlogComponent = () => {
                             </button>
                         }
                     </section>
-                    <section className="comments" id="comments">                    
+                    <section className={`comments ${memoizedComments.length > 0 ? "" : "no-children"}`} id="comments">                    
                         {memoizedComments.map(comment => {
                             return <CommentComponent key={comment._id} 
                                         // Comment and Reply Content

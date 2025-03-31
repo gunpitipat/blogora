@@ -1,56 +1,113 @@
 .BlogComponent{
-    padding: 2.5rem 4rem 6rem;
+    padding: 3rem 8rem 6rem;
     overflow-x: hidden;
     min-height: calc(100vh - 80px + 40px); /* Make copyright footer overflow on short content pages */
 }
 .BlogComponent header{
     padding-bottom: 1rem;
-    border-bottom: 1px solid #aaaaaa;
-    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--neutral-color-heavy);
+    margin-bottom: 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+}
+.BlogComponent header .title{
+    color: var(--accent-color);
+    transition: opacity 0.14s ease-in-out;
+    word-break: break-word; /* Break title if too long one exists */
+    overflow-wrap: break-word; /* Ensures wrapping in older browsers */
 }
 .BlogComponent header .goback-icon{
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 48px;
+    height: 48px;
     position: absolute;
-    left: 0.85rem;
+    top: 0;
+    right: calc(100% + 2.5rem);
     font-size: 1.4rem;
     cursor: pointer;
-    display: none; /* Show only on a small device's screen */
+    opacity: 0.7;
+}
+.BlogComponent header .goback-icon svg{
+    color: var(--accent-color);
+}
+.BlogComponent header .goback-icon:hover{
+    opacity: 1;
 }
 .BlogComponent header .setting{
-    margin: 0 0.5rem;
-    position: relative;
+    position: absolute;
+    left: calc(100% + 2.5rem);
+    height: 48px;
+    width: 48px;
 }
-.BlogComponent header .setting svg:not(.trash){
-    font-size: 1.5rem;
-    position: relative;
-    top: 0.2rem;
+.BlogComponent header .setting .blog-setting-icon{
     cursor: pointer;
-    opacity: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    opacity: 0.7;
+}
+.BlogComponent header .setting .blog-setting-icon svg{
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+.BlogComponent header .setting .blog-setting-icon:hover{
+    opacity: 1;
 }
 .BlogComponent header .title.overlay{
     opacity: 0.14;
     transition: opacity 0.14s ease-in-out;
 }
+.BlogComponent header .setting .options{
+    list-style: none;
+    z-index: 5;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: calc(100% + 2.5rem);
+    display: flex;
+    gap: 0.75rem;
+}
+/* Setting buttons */
+.BlogComponent header .setting .options>*{
+    padding: 0.25rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--accent-color);
+    background-color: var(--neutral-color-light);
+    border: 1px solid var(--accent-color);
+}
+.BlogComponent header .setting .options .delete:hover{
+    opacity: 0.75;
+}
+.BlogComponent header .setting .options a.edit{
+    text-decoration: none;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+.BlogComponent header .setting .options a.edit:hover{
+    opacity: 0.75;
+}
 .BlogComponent main{
     font-size: 1.1rem;
     line-height: 2rem;
+    color: var(--neutral-color-dark);
 }
 .BlogComponent footer{
     margin: 2rem 0 0;
-    padding-bottom: 1.75rem;
-    /* border-bottom: 1px solid #aaaaaa; */
+    padding-bottom: 2rem;
     margin-bottom: 1rem;
 }
 .BlogComponent footer .author{
     text-decoration: none;
     cursor: pointer;
-    font-weight: 800;
-    color:#5c5552;
+    font-weight: 900;
+    color: var(--accent-color);
     display: inline-block;
 }
 .BlogComponent footer .timestamp{
@@ -61,7 +118,9 @@
     position: relative;
     display: block;
     width: fit-content;
+    color: var(--neutral-color-dark);
 }
+
 /* Full date and time tooltip */
 .BlogComponent footer .timestamp .tooltip{
     position: absolute;
@@ -69,7 +128,7 @@
     top: 50%;
     left: 110%;
     transform: translateX(-10px) translateY(-50%);
-    background: rgba(70, 63, 58, 0.8);
+    background: rgba(70, 63, 58, 0.7);
     color: white;
     font-weight: 600;
     padding: 0.25rem 0.5rem;
@@ -86,43 +145,6 @@
     transform: translateX(0) translateY(-50%); /* Moves back to normal position */
 }
 
-
-.BlogComponent header .setting .options{
-    list-style: none;
-    z-index: 5;
-    position: absolute;
-    right: 1.5rem;
-    top: 0;
-    display: flex;
-
-/* Setting buttons */
-}
-.BlogComponent header .setting .options>*{
-    margin: 0 0.5rem;
-    padding: 0.25rem 1rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    background-color: #fafafa;
-    font-size: 1rem;
-}
-.BlogComponent header .setting .options .delete{
-    color: #463f3a;
-    border: 1px solid #463f3a;
-}
-.BlogComponent header .setting .options .delete:hover{
-    background: #8a817c;
-    color: #fafafa;
-}
-.BlogComponent header .setting .options a.edit{
-    text-decoration: none;
-    color: #463f3a;
-    border: 1px solid #463f3a;
-}
-.BlogComponent header .setting .options a.edit:hover{
-    background: #8a817c;
-    color: #fafafa;
-}
-
 /* Content */
 .TipTap-Result :first-child{
     margin-top: 0;
@@ -136,7 +158,7 @@
     margin: 0.5rem 0;
 }
 
-/* Comment */
+/* Comment Input */
 section.blog-comment{
     /* display: flex;
     justify-content: center; */
@@ -146,15 +168,15 @@ section.blog-comment .comment-button{
     padding: 0.35rem 0.7rem;
     cursor: pointer;
     font-size: 1rem;
-    color: #463f3a;
-    border: 1px solid #aaaaaa;
+    color: var(--accent-color);
+    border: 1px solid var(--neutral-color-heavy);
     border-radius: 17px; /* Circular shaped corner => (height / 2) px */
-    background-color: #fafafa;
+    background-color: var(--neutral-color-light);
     display: flex;
     align-items: center;
 }
 section.blog-comment .comment-button:hover{
-    background-color: #f1f0ea;
+    box-shadow: 1px 1px 8px rgba(170, 170, 170,0.2);
 }
 section.blog-comment .comment-button.active{
     border-radius: 17px 17px 0 0;
@@ -170,7 +192,7 @@ section.blog-comment .comment-button.disable{
     cursor: not-allowed;
 }
 section.blog-comment .comment-button.disable:hover{
-    background-color: #fafafa;
+    background-color: var(--neutral-color-light);
 }
 /* ToolTip */
 section.blog-comment .comment-button{
@@ -183,7 +205,7 @@ section.blog-comment .comment-button .tooltip{
     left: 110%;
     transform: translateX(-8px) translateY(-50%);
     background: rgba(70, 63, 58, 0.7);
-    color: white;
+    color: #fff;
     font-weight: 600;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
@@ -201,41 +223,107 @@ section.blog-comment .comment-button .tooltip.show{
 
 /* Comments */
 section.comments{
-    padding: 2rem 1rem 0.5rem;
+    padding: 2rem 0 0.5rem;
+}
+section.comments.no-children{
+    padding: 1rem 0 0.5rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .BlogComponent header .goback-icon{
-        display: flex;
-        top: 0.85rem;
-        left: calc(0.85rem + 1.4rem + 0.85rem + 0.85rem);
-    }
     .BlogComponent{
-        min-height: calc(100vh - 20px + 40px); /* Make copyright footer overflow on short content pages */
+        padding: calc(3rem + 3px) 6rem 6rem; /* top -> menu icon spacing */
+        position: relative;
+        min-height: calc(100vh + 40px); /* Make copyright footer overflow on short content pages */
+    }
+    .BlogComponent header{
+        position: static;
+    }
+    .BlogComponent header .goback-icon{
+        left: 51px;
+    }
+    .BlogComponent header .setting{
+        top: 0;
+        left: 100%;
+        transform: translateX(calc(-100% - 26px));
+    }
+    .BlogComponent header .setting .options{
+        right: calc(100% + 26px);
     }
 }
-@media (max-width: 520px) {
+@media (max-width: 672px) {
     .BlogComponent{
-        padding: 2.5rem 2.5rem 6rem;
+      padding-inline: 5rem;
     }
     .BlogComponent header .title{
-        padding-left: 0.25rem;
+        font-size: 1.9rem;
+    }
+    .BlogComponent header .setting .options{
+        right: calc(100%);
     }
 }
+@media (max-width: 560px) {
+    .BlogComponent{
+        padding-inline: 4rem;
+        padding-top: calc(3.5rem + 3px);
+    } 
+    .BlogComponent header .title{
+        font-size: 1.8rem;
+    }
+    .BlogComponent header .setting{
+        transform: translateX(calc(-100% - 12px));
+    }
+}
+@media (max-width: 480px) {
+    .BlogComponent header .title{
+        font-size: 1.7rem;
+    }
+    /* Blog padding-inline = 4rem / Comment padding-inline = 3.5rem */
+    .BlogComponent{
+        padding-inline: 3.5rem;
+    }
+    .BlogComponent .blog-section{
+        padding-inline: 0.5rem;
+    }
+    .BlogComponent .blog-comment{
+        padding-inline: 0.5rem;
+    }
+}
+/* Fix ReplyInput making comment overflow */
 @media (max-width: 425px) {
-    section.comments{
-        padding: 2rem 0rem 0.5rem;
+    /* Blog padding-inline = 3.5rem / Comment padding-inline = 3rem */
+    .BlogComponent{
+        padding-inline: 3rem;
+    }
+}
+@media (max-width: 412px) {
+    /* Blog padding-inline = 3.5rem / Comment padding-inline = 2.5rem */
+    .BlogComponent{
+        padding-inline: 2.5rem;
+    }
+    .BlogComponent .blog-section{
+        padding-inline: 1rem;
+    }
+    .BlogComponent .blog-comment{
+        padding-inline: 1rem;
+    }
+}
+@media (max-width: 392px) {
+    /* Blog padding-inline = 3.5rem / Comment padding-inline = 2rem */
+    .BlogComponent{
+        padding-inline: 2rem;
+    }
+    .BlogComponent .blog-section{
+        padding-inline: 1.5rem;
+    }
+    .BlogComponent .blog-comment{
+        padding-inline: 1.5rem;
     }
 }
 @media (max-width: 375px) {
+    /* Blog padding-inline = 3rem / Comment padding-inline = 1.5rem */
     .BlogComponent{
-        padding: 2.5rem 1.5rem 6rem;
-    }
-}
-@media (max-width: 355px) {
-    .BlogComponent{
-        padding: 2.5rem 1rem 6rem;
+        padding-inline: 1.5rem;
     }
 }
 

@@ -11,10 +11,10 @@
 .SearchFilter .container input{
     font-size: 1.1rem;
     padding: 0.5rem 2.5rem 0.5rem 1.2rem;
-    border: 1px solid #aaaaaa;
+    border: 1px solid var(--neutral-color-heavy);
     border-radius: 50px;
     outline: none;
-    background-color: #fff;
+    background: linear-gradient(to bottom, #fff, var(--neutral-color-light));
     width: 40vw;
 }
 .SearchFilter .container .search-icon{
@@ -22,7 +22,8 @@
     right: 1rem;
     top: 50%;
     transform: translate(0,-50%);
-    cursor: pointer;
+    cursor: default;
+    color: var(--secondary-color);
 }
 .SearchFilter .container .search-icon svg{
     font-size: 1.1rem;
@@ -30,6 +31,10 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .SearchFilter{
+        padding-top: 0;
+        padding-bottom: 1.5rem;
+    }
     .SearchFilter .container input{
         width: 65vw;
     }

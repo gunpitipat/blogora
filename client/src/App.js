@@ -9,6 +9,7 @@ import { useAuthContext } from "./utils/AuthContext";
 import { formatDayMonth } from "./utils/serviceFunctions";
 import { LuArrowUpToLine } from "react-icons/lu";
 import { useAlertContext } from "./utils/AlertContext";
+import { debounce } from "lodash"
 
 function App() {
   const [ blogs, setBlogs ] = useState([])
@@ -74,13 +75,16 @@ function App() {
 
   // Store scroll position
   useEffect(() => {
-    const saveScroll = () => {
+    const saveScroll = debounce(() => {
       sessionStorage.setItem("scrollPosition", window.scrollY)
+    }, 100)
+
+    if (blogs.length > 0) { // Prevent storing (overwriting) new scroll position before restoring the previous one properly
+      window.addEventListener("scroll", saveScroll)
     }
 
-    window.addEventListener("scroll", saveScroll)
     return () => window.removeEventListener("scroll", saveScroll)
-  }, [])
+  }, [blogs])
 
   // Restore scroll position
   useEffect(() => {

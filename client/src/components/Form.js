@@ -81,7 +81,7 @@ const Form = ()=>{
                 
             if (contentElement && editorElement) { // Ensure contentElement not null and valid to prevent Reference Error
                 const handleTransitionEnd = ()=> {    
-                    const targetScrollY = getTotalOffsetTop(contentElement) - 80 - 16 // 80px (fixed navbar height), 16px (1rem spacing)
+                    const targetScrollY = getTotalOffsetTop(contentElement) - (window.innerWidth <= 768 ? 0 : 80) - (window.innerWidth <= 768 ? 20 : 16) // - fixed navbar height - spacing
                     window.scrollTo({
                         top: targetScrollY,
                         behavior: "smooth"
@@ -151,7 +151,7 @@ const Form = ()=>{
                 </div>
                 <footer className="button-group">
                     <button type="button" className="btn savedraft" onClick={()=>savingDraftFunc(title,content)}>Save Draft</button>
-                    <input type="submit" value="Post" className="btn"/>
+                    <button type="submit" className="btn post">Post</button>
                 </footer>    
             </form>
         </div>

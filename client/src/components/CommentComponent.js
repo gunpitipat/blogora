@@ -57,12 +57,12 @@ const CommentComponent = memo((props) => { // Prevent unnecessary re-renders whe
     const [maxIndent] = useState(2) // Display comments in 3 levels with 2 levels of indentation
 
     // Responsive Design
-    const [isTablet, setIsTablet] = useState(window.innerWidth <= 700 && window.innerWidth > 575)
+    const [isTablet, setIsTablet] = useState(window.innerWidth <= 712 && window.innerWidth > 575)
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 575)
 
     useEffect(() => {
         const handleResize = debounce(() => { // Debounce updates state only after 100ms of inactivity (user stops resizing), preventing unnecessary renders
-            setIsTablet(window.innerWidth <= 700 & window.innerWidth > 575)
+            setIsTablet(window.innerWidth <= 712 & window.innerWidth > 575)
             setIsMobile(window.innerWidth <= 575)
         }, 100)
 

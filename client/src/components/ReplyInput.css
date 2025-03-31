@@ -1,12 +1,12 @@
 .ReplyInput-container{
     display: flex;
     align-items: center;
-    border: 1px solid #aaaaaa;
+    border: 1px solid var(--neutral-color-heavy);
     border-radius: 19px;
-    background: linear-gradient(to bottom, #fff, #fafafa);
+    background: linear-gradient(to bottom, #fff, var(--neutral-color-light));
     padding: 0.5rem 2rem 0.5rem 1rem;
     position: relative;
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     margin: 0.5rem 0 0.25rem 1rem;
 }
 .ReplyInput-container textarea{
@@ -20,7 +20,7 @@
     padding-right: 0.75rem; /* Prevent scroll bar from overlapping content */
 }
 .ReplyInput-container .send-button{
-    color: #463f3a;
+    color: var(--accent-color);
     display: flex;
     align-items: center;
     justify-content: center;

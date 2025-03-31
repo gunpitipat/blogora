@@ -13,12 +13,13 @@
     border-radius: 0.5rem;
     padding: 0.5rem 0.25rem;
     box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
-    background-color: #f1f1f1;
+    background-color: var(--neutral-color-medium);
 }
 .Login h2{
     font-weight: 700;
     text-align: center;
     margin: 2rem 0;
+    color: var(--accent-color);
 }
 .Login form{
     /* display: flex;
@@ -37,15 +38,17 @@
 .Login form label{
     margin-bottom: 0.5rem;
     user-select: none;
+    color: var(--neutral-color-dark);
+    opacity: 0.7;
+    display: flex;
 }
 .Login form input{
     font-size: 1.1rem;
     padding: 0.5rem 0.75rem;
-    border: 1px solid #aaaaaa;
+    border: 1px solid var(--neutral-color-heavy);
     border-radius: 0.25rem;
     outline: none;
-    /* background-color: #fff; */
-    background: linear-gradient(to bottom, #fff, #fafafa);
+    background: linear-gradient(to bottom, #fff, var(--neutral-color-light));
     width: 55vw;
     max-width: 100%; /* Prevent input from exceeding container width */ 
 }
@@ -58,21 +61,16 @@
     transform: translate(-50%,0);
     width: 80px;
     border-radius: 0.25rem;
-    border: 1px solid #463f3a;
-    background-color: #8a817c;
+    border: 1px solid var(--accent-color);
+    background-color: var(--secondary-color);
     color: #fff;
     padding: 0.5rem;
     margin: 0.5rem 0;
     user-select: none;
 }
 .Login .btn:hover{
-    background-color: #463f3a;
+    background-color: var(--accent-color);
     font-weight: 500;
-    border: 1px solid #463f3a;
-}
-.Login form label{
-    opacity: 0.7;
-    display: flex;
 }
 .Login .sign-up{
     margin: 1rem 0 2rem;
@@ -113,18 +111,23 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    right: 1rem;
     top: 50%;
+    right: 0rem;
+    padding: 0 1rem 0 0.75rem;
+    height: 100%;
     transform: translate(0, -50%);
     cursor: pointer;
 }
 .Login .bg form .password-frame .password-icon svg{
     font-size: 1.1rem;
-    color: #5e503f;
-    z-index: 10;
+    color: var(--accent-color);
+    opacity: 0.7;
+}
+.Login .bg form .password-frame .password-icon:hover svg{
+    opacity: 1;
 }
 .Login .bg form #password{
-    padding-right: calc(1rem + 1.1rem + 0.5rem);
+    padding-right: calc(1rem + 1.1rem + 0.75rem);
 }
 .Login .bg form div.sign-up{
     user-select: none;
@@ -132,21 +135,31 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .Login .bg{
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-    }
     .Login{
-        min-height: calc(100vh - 20px);
+        min-height: 100vh;
     }
-}
-@media (max-width: 480px) {
     .Login .bg{
-        width: 80vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        padding-block: 3rem;
+    }
+    .Login h2{
+        margin: 0;
     }
     .Login form{
-        padding: 0rem;
+        margin: 0;
+    }
+    .Login .sign-up{
+        margin-bottom: 0;
+    }
+}
+@media (max-width: 608px) {
+    .Login form{
+        padding-inline: 2.25rem;
+        width: 100%;
     }
     .Login form input{
         width: 100%;
@@ -155,18 +168,32 @@
         width: 100%;
     }
 }
-@media (max-width: 370px) {
+@media (max-width: 516px) {
     .Login .bg{
-        width: 85vw;
+        width: 75vw;
     }
     .Login form{
-        margin: 1rem;
-        width: fit-content;
+        padding-inline: 2rem;
     }
+}
+@media (max-width: 436px) {
+    .Login .bg{
+        width: 80vw;
+    }
+}
+@media (max-width: 389px) {
     .Login .sign-up{
         flex-direction: column;
         align-items: center;
         text-align: center;
+    }
+}
+@media (max-width: 376px) {
+    .Login .bg{
+        width: 85vw;
+    }
+    .Login form{
+        padding-inline: 1.5rem;
     }
 }
 

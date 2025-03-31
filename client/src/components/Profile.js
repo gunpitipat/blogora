@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import "./Profile.css"
 import { useLoadingContext } from "../utils/LoadingContext"
 import LoadingScreen from "./LoadingScreen"
@@ -15,8 +15,6 @@ const Profile = () => {
     const [ userData, setUserData ] = useState({ email: null, username: null })
     const [ userBlogs, setUserBlogs ] = useState([])    
     const [ profileExists, setProfileExists ] = useState(null)
-
-    const navigate = useNavigate()
 
     const { setLoading } = useLoadingContext()
     const { user } = useAuthContext()
@@ -99,7 +97,8 @@ const Profile = () => {
                     if (axios.isAxiosError(userDataResult.reason) && userDataResult.reason.response?.status === 404) {
                         setProfileExists(false) // Only set to false when getUserData fails with a 404
                     } else {
-                        console.error("Error occurred in fetchData:", userDataResult.reason)
+                    // Prevent users from getting stuck in LoadingScreen in case of network / server error
+                        setProfileExists(true) // Show a blank page with alert message
                     }
                 }
 
@@ -116,11 +115,6 @@ const Profile = () => {
         return () => controller.abort() // Cleanup to avoid memory leaks
         // eslint-disable-next-line
     }, [usernameParam])
-
-
-    const goToBlog = (slug) => {
-        navigate(`/blog/${slug}`)
-    }
 
     if (profileExists === null) return <LoadingScreen />
     if (profileExists === false) return <NotFound />
@@ -164,13 +158,13 @@ const Profile = () => {
                         <main className={userBlogs.length === 1 ? "single-blog" : null}>
                             {userBlogs.map((blog, index) => {
                                 return(
-                                    <div className="blog" key={index} onClick={()=>goToBlog(blog.slug)}>
+                                    <Link className="blog" key={index} to={`/blog/${blog.slug}`}>
                                         <div>
-                                            <Link to={`/blog/${blog.slug}`}><h4>{blog.title}</h4></Link>
+                                            <h4>{blog.title}</h4>
                                             <p>{blog.content.replace(/<\/?[^>]+(>|$)/g, " ").substring(0,100)}{blog.content.replace(/<\/?[^>]+(>|$)/g, " ").length > 250 ? " . . ." : null }</p>
                                             <small>{formatDayMonth(blog.createdAt)}</small>
                                         </div>
-                                </div>
+                                    </Link>
                                 )
                             })}
                         </main>

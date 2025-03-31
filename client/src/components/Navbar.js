@@ -34,8 +34,10 @@ const Navbar = () => {
         <>
             {/* Show menu icon only on mobile and tablet */}
             { isMobile &&
-                <div className={`menu-icon-overlay ${isOpen ? "hidden" : ""}`}>
-                    <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
+                <div className={`menu-icon-overlay ${isOpen ? "hidden" : ""}`}
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    <div className="menu-icon">
                         <FiMenu />
                     </div>
                 </div>
@@ -49,6 +51,11 @@ const Navbar = () => {
             <nav className={`Navbar ${isOpen ? "show-sidebar" : ""}`}>
                 <ul>
                     <div className="menu-group">
+                        <li className="nav-logo">
+                            <Link to="/" onClick={() => setIsOpen(false)}>
+                                <span className="blog">BLOG</span><span className="ora">ORA</span>
+                            </Link>
+                        </li>
                         <li className={ location.pathname === "/explore" ? "selected" : null }>
                             <Link to="/explore" onClick={() => setIsOpen(false)}>Explore</Link>
                         </li>

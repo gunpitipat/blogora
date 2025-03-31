@@ -4,7 +4,7 @@
 .comment-container .comment{
     padding: 1rem 1.75rem 1rem 1rem;
     border-radius: 0.25rem;
-    background-color: #f1f1f1;
+    background-color: var(--neutral-color-medium);
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
     border: 1px solid #dddddd;
     position: relative;
@@ -29,20 +29,23 @@
 .comment-container .comment .content{
     opacity: 0.9;
     font-size: 1rem;
-    color: #1f1f1f;
-    margin: 0.25rem 0 0.5rem;
+    color: var(--neutral-color-dark);
+    margin: 0.25rem 0 0.75rem;
     /* Limit height */
     max-height: 150px; /* Shows only 7 lines */
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
 }
 .comment-container .comment .content-expand-icon{ /* Content expand icon */
-    color: #463f3a;
+    color: var(--accent-color);
     opacity: 0.5;
     position: absolute;
     right: 1.75rem;
     bottom: 0.9rem;
     cursor: pointer;
+}
+.comment-container .comment .content-expand-icon:hover{
+    opacity: 0.7;
 }
 .comment-container .comment .content-expand-icon span{
     display: flex;
@@ -55,8 +58,9 @@
     max-height: none;
 }
 .comment-container .comment .reference-author{
-    color: #775144;
+    color: #88726b;
     font-size: 0.95rem;
+    font-weight: 900;
 }
 /* Softly deleted comment */
 .comment-container .comment .content.isDeleted{
@@ -74,12 +78,12 @@
     font-weight: 800;
     text-decoration: none;
     cursor: pointer;
-    color:#5c5552;
+    color: var(--accent-color);
     display: flex;
     align-items: center;
 }
 .comment small .authorComment{
-    color: #5c5552;
+    color: var(--accent-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,7 +91,7 @@
 }
 .comment small .timestamp{
     opacity: 0.7;
-    color: #463f3a;
+    color: var(--neutral-color-dark);
     cursor: default;
     position: relative;
 }
@@ -98,7 +102,7 @@
     left: 110%;
     transform: translateX(-10px) translateY(-50%);
     background: rgba(70, 63, 58, 0.8);
-    color: white;
+    color: #fff;
     font-weight: 600;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
@@ -130,7 +134,7 @@
     position: absolute;
     top: 0;
     left: 1rem;
-    border-left: 1px solid #aaaaaa;
+    border-left: 1px solid var(--neutral-color-heavy);
     height: 100%;
 }
 .reply-button{
@@ -140,7 +144,7 @@
 }
 .reply-button label{
     font-size: 0.85rem;
-    color: #463f3a;
+    color: var(--accent-color);
     margin: 0 0.15rem;
     opacity: 0.7;
     cursor: pointer;
@@ -152,7 +156,7 @@
     cursor: pointer;
 }
 .reply-button .reply-icon svg{ /* Reply icon */
-    color: #463f3a;
+    color: var(--accent-color);
     opacity: 0.5;
 }
 .reply-button:hover label{
@@ -189,7 +193,7 @@
     background: transparent;
     border: none;
     font-size: 0.85rem;
-    color: #463f3a;
+    color: var(--accent-color);
     opacity: 0.7;
     cursor: pointer;
     display: flex;
@@ -208,9 +212,10 @@
 .viewReply-button:hover{
     opacity: 1;
 }
+
 /* Hightlight parent when replies are shown */
 .comment.parent{
-    border: 1px solid #aaaaaa;
+    /* border: 1px solid var(--neutral-color-heavy); */
 }
 
 /* Reply Section */
@@ -243,7 +248,7 @@
     top: 0;
     left: -1rem;
     height: 100%; /* It extends further the last reply, erase it with the same background color */
-    border-left: 1px solid #aaa;
+    border-left: 1px solid var(--neutral-color-heavy);
     /* border-bottom-left-radius: 0.25rem; */
 }
 /* Horizontal connecting line */
@@ -254,8 +259,8 @@
     left: -1rem;
     height: 1rem;
     width: 0.95rem; /* Prevent completely attachment to reply */
-    border-bottom: 1px solid #aaaaaa;
-    border-left: 1px solid #aaaaaa;
+    border-bottom: 1px solid var(--neutral-color-heavy);
+    border-left: 1px solid var(--neutral-color-heavy);
     border-bottom-left-radius: 0.25rem;
     z-index: 2; /* Set z-index higher than erasing line */
 }
@@ -271,7 +276,7 @@
     left: -1rem;
     width: 1px;
     height: calc(100% - 2rem);
-    border-left: 1px solid #fafafa;
+    border-left: 1px solid var(--neutral-color-light);
     z-index: 1;
 }
 
@@ -288,7 +293,7 @@
 .comment .setting svg:not(.trash){
     font-size: 1.1rem;
     opacity: 0.7;
-    color: #1f1f1f;
+    color: var(--accent-color);
 }
 .comment .setting .options{
     list-style: none;
@@ -302,27 +307,26 @@
     padding: 0.2rem 0.6rem;
     border-radius: 0.25rem;
     cursor: pointer;
-    background-color: #fafafa;
     font-size: 0.85rem;
-    color: #463f3a;
-    border: 1px solid #463f3a;
+    background-color: var(--neutral-color-light);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
 }
 .comment .setting .options li:hover{
-    background: #8a817c;
-    color: #fafafa;
+    opacity: 0.75;
 }
 
 /* Responsive Design */
 /* Tablet */
-@media (max-width: 700px) {
-    .comment .content-expand-icon{ /* Content expand icon */
-        bottom: calc(0.9rem + 18.5px + 0.5rem) !important; /* Default space + small tag height + offset spacing (content's margin-bottom) */
+@media (max-width: 712px) {
+    .comment-container .comment .content-expand-icon{ /* Content expand icon */
+        bottom: calc(0.9rem + 18.5px + 0.75rem); /* Default space + small tag height + offset spacing (content's margin-bottom) */
         left: 1rem;
         width: fit-content;
         font-weight: 600;
     }
     .comment small.isTablet-overflowing, .comment small.isMobile-overflowing{
-        margin-top: calc(21px + 0.5rem); /* Space for expand-icon height (21px) + 0.5rem spacing */
+        margin-top: calc(21px + 1rem); /* Space for expand-icon height (21px) + 1rem spacing */
     }
 }
 /* Fix timestamp tooltip for level-3 comments */
@@ -347,7 +351,7 @@
         transform: translateX(0) translateY(0);
     }
     .comment-footer.level-2{
-        padding-top: 0.75rem;
+        padding-top: 0.75rem; /* Space for tooltip */
     }
 }
 /* Mobile */
@@ -356,8 +360,8 @@
         flex-direction: column;
         align-items: flex-start;
     }
-    .comment .content-expand-icon{ /* Content expand icon */
-        bottom: calc(0.9rem + 18.5px + 0.5rem + 17.5px) !important; /* Add another 17.5px of timestamp height */
+    .comment-container .comment .content-expand-icon{ /* Content expand icon */
+        bottom: calc(0.9rem + 18.5px + 0.75rem + 17.5px); /* Add another 17.5px of timestamp height */
     }
     .comment small .timestamp .tooltip{
         left: 0;
@@ -371,18 +375,25 @@
         padding-top: 0.75rem;
     }
     .comment .reference-author{
-        word-break: break-word;
+        word-break: break-word; /* Break @username if too long username exists */
         overflow-wrap: break-word; /* Ensures wrapping in older browsers */
     }
 }
-@media (max-width: 425px) {
+/* Fix ReplyInput making comment overflow */
+@media (max-width: 456px) {
     .comment-footer{
-        padding-right: 0;
+        padding-right: 0
+    }
+    .ReplyInput-container{
+        margin-left: 0 !important;
     }
 }
 @media (max-width: 355px) {
-    .ReplyInput-container{
-        margin-left: 0 !important;
+    .comment-footer{
+        padding-left: 1.5rem;
+    }
+    .comment-footer .footer-utilities{
+        padding-left: 0.5rem;
     }
     .comment-container{
         overflow-x: auto;

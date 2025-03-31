@@ -1,28 +1,33 @@
 .Alert{
     position: fixed;
-    bottom: 2.5rem;
+    bottom: 3rem;
     left: 50%;
     transform: translate(-50%, 0);
     z-index: 1002; /* Same level as sessionExpired modal */
 }
 .Alert .message{
-    padding: 0.5rem 1.5rem;
+    padding: 0.7rem 2rem;
     display: flex;
     align-items: center;
     white-space: nowrap;
     border-radius: 0.25rem;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.Alert .message span{
+    font-size: 17px;
+    color: var(--neutral-color-dark);
 }
 .Alert .message.success{
-    background-color: #d9e0d3;
+    background-color: var(--success-color-light);
 }
 .Alert .message.success svg{
-    color: #3a5a40;
+    color: var(--success-color);
 }
 .Alert .message.error{
-    background-color: #f2e9e4;
+    background-color: var(--error-color-light);
 }
 .Alert .message.error svg{
-    color: #9e2a2b;
+    color: var(--error-color);
     transform: scale(1.15);
 }
 .Alert svg{

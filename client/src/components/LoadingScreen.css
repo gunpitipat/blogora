@@ -13,7 +13,7 @@
 .loading-overlay .spinner{
     width: 3rem;
     height: 3rem;
-    border: 0.4rem solid #463f3a;
+    border: 0.4rem solid var(--accent-color);
     border-top-color: transparent;
     border-radius: 50%;
     animation: spin 1s linear infinite;    

@@ -1,5 +1,5 @@
 .Profile{
-    padding-bottom: 1.5rem;
+    padding-bottom: 2rem;
 }
 .Profile .container{
     width: 90vw;
@@ -17,8 +17,13 @@
     place-items: center;
     margin: 1.5rem 0 1rem;
 }
+.Profile .container header h2{
+    color: var(--accent-color);
+    font-weight: 700;
+}
 .Profile .container header p{
     opacity: 0.5;
+    color: var(--neutral-color-dark);
 }
 .Profile .container main{
     grid-area: content;
@@ -33,33 +38,31 @@
 .Profile .container main .blog, .Profile.No-Blog .container main div{
     padding: 1rem;
     border-radius: 0.25rem;
-    background-color: #f1f1f1;
+    background-color: var(--neutral-color-medium);
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
     width: 100%;
     justify-self: center;
+    text-decoration: none;
 }
-.Profile .container main .blog a, .Profile.No-Blog .container main div a{
+.Profile .container main .blog h4, .Profile.No-Blog .container main div a{
     text-decoration: none;
     cursor: pointer;
-    color:#5c5552;
+    color: var(--accent-color);
     font-size: 1.1rem;
 }
 .Profile .container main .blog p, .Profile.No-Blog .container main div p{
-    opacity: 0.9;
+    opacity: 0.7;
     font-size: 1rem;
-    color: #463f3a;
+    color: var(--neutral-color-dark);
     margin: 0.5rem 0;
 }
 .Profile .container main .blog small{
     opacity: 0.7;
-    color: #463f3a;
+    color: var(--neutral-color-dark);
 }
 
 /* Tablet & Laptop */
 @media (min-width: 1024px) {
-    .Profile .container{
-        width: 75vw !important;
-    }
     .Profile .container main{
         grid-template-columns: repeat(2, 1fr);
         /* grid-template-columns: repeat(auto-fit, minmax(400px,1fr)); */
@@ -76,7 +79,7 @@
 }
 @media (max-width: 768px) {
     .Profile{
-        min-height: calc(100vh - 20px);
+        min-height: 100vh;
     }
 }
 .Profile.No-Blog .container main div{

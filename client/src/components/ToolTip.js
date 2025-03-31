@@ -6,9 +6,11 @@ const ToolTip = (props) => {
     return(
         <div className="ToolTip">
             <section>
-                <p>Sign up and log in to share your thoughts</p>
+                <p>Sign up and log in <span>to share your thoughts</span></p>
                 <button onClick={closeToolTip}>
-                    < IoClose/>
+                    <span className="close-icon">
+                        < IoClose/>
+                    </span>
                 </button>
             </section>
         </div>
