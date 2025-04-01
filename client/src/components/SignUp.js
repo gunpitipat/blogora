@@ -90,18 +90,35 @@ const SignUp = () => {
                 <form onSubmit={submitForm}>
                     <div className={infoStatus.email.type}>
                         <label>Email</label>
-                        <input type="email" value={email} onChange={inputValues("email")}/>
+                        <input type="email" 
+                            value={email} 
+                            onChange={inputValues("email")}
+                            name="email"
+                            autoComplete="email"
+                            inputMode="email"
+                        />
                         <small>{infoStatus.email.type === "error" ? infoStatus.email.message : null}</small>
                     </div>
                     <div className={infoStatus.username.type}>
                         <label>Username</label>
-                        <input type="text" value={username} onChange={inputValues("username")}/>
+                        <input type="text" 
+                            value={username} 
+                            onChange={inputValues("username")}
+                            name="username"
+                            autoComplete="username"
+                            inputMode="text"
+                        />
                         <small>{infoStatus.username.type === "error" ? infoStatus.username.message : null}</small>
                     </div>
                     <div className={infoStatus.password.type}>
                         <label>Password</label>
                         <div className="password-frame">
-                            <input type={showPassword ? "text" : "password"} value={password} onChange={inputValues("password")} id="password"/>
+                            <input type={showPassword ? "text" : "password"} 
+                                value={password} 
+                                onChange={inputValues("password")} 
+                                id="password"
+                                autoComplete="new-password"
+                            />
                             <span className="password-icon" onClick={()=>setShowPassword(!showPassword)}>
                                 {showPassword ? <FaEye/> : <FaEyeSlash/>}
                             </span>
@@ -111,7 +128,12 @@ const SignUp = () => {
                     <div className={infoStatus.cfpassword.type}>
                         <label>Confirm Password</label>
                         <div className="password-frame">
-                            <input type={showcfPassword ? "text" : "password"} value={cfpassword} onChange={inputValues("cfpassword")} id="cfpassword"/>
+                            <input type={showcfPassword ? "text" : "password"} 
+                                value={cfpassword}
+                                onChange={inputValues("cfpassword")} 
+                                id="cfpassword"
+                                autoComplete="new-password"
+                            />
                             <span className="password-icon" onClick={()=>setShowcfPassword(!showcfPassword)}>
                                 {showcfPassword ? <FaEye/> : <FaEyeSlash/>}
                             </span>

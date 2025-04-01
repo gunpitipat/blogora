@@ -12,6 +12,7 @@ const SessionExpired = () => {
         setIsAuthenticated(false)
         setUser(null)
         setSessionExpired(false)
+        localStorage.removeItem("isLogin")
         navigate("/login")
     }
 

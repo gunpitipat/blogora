@@ -40,6 +40,7 @@ const Login = () => {
             setErrorStatus(initialErrorStatus)
             setAlertState({ display: true, type: "success", message: response.data.message })
             setLoading(false)
+            localStorage.setItem("isLogin", "true")
             navigate("/explore")
         } catch (error) {
             setLoading(false)
@@ -66,13 +67,24 @@ const Login = () => {
                 <form onSubmit={submitForm}>
                     <div className={errorStatus.field === "username" ? "showError" : null}>
                         <label>Username</label>
-                        <input type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>
+                        <input type="text" 
+                            value={username} 
+                            onChange={(e)=>setUsername(e.target.value)}
+                            name="username"
+                            autoComplete="username"   
+                            inputMode="text" 
+                        />
                         <small>{errorStatus.message}</small>
                     </div>
                     <div className={errorStatus.field === "password" ? "showError" : null}>
                         <label>Password</label>
                         <div className="password-frame">
-                            <input type={showPassword ? "text" : "password"} value={password} onChange={(e)=>setPassword(e.target.value)} id="password"/>
+                            <input type={showPassword ? "text" : "password"} 
+                                value={password} 
+                                onChange={(e)=>setPassword(e.target.value)} 
+                                id="password" 
+                                autoComplete="current-password"
+                            />
                             <span className="password-icon" onClick={()=>setShowPassword(!showPassword)}>
                                 {showPassword ? <FaEye/> : <FaEyeSlash/>}
                             </span>

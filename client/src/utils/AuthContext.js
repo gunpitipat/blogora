@@ -75,6 +75,7 @@ export const AuthProvider = ({ children }) => {
             await checkAuth()
             loggingOutRef.current = false
             setAlertState({ display: true, type: "success", message: response.data.message })
+            localStorage.removeItem("isLogin")
         } catch (error) {
             setAlertState({ display: true, type: "error", message: "Something went wrong. Please try again." })
         }
@@ -95,6 +96,15 @@ export const AuthProvider = ({ children }) => {
         }
         // eslint-disable-next-line
     }, [isAuthenticated, user])
+
+    // Alert a user when session expired and they refresh or reload the page
+    useEffect(() => {
+        if (localStorage.getItem("isLogin") && !isAuthenticated) {
+            setAlertState({ display: true, type: "error", message: "Your session expired." })
+            localStorage.removeItem("isLogin")
+        }
+        // eslint-disable-next-line
+    }, [])
 
     return ( // When using user.username as a condition for rendering UI, use optional chaining (user?.username) to prevent errors where user might be null or undefined initially
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, checkAuth, sessionExpired, setSessionExpired, logout }}>

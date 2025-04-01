@@ -58,7 +58,7 @@ function App() {
 
   const closeToolTip = () => {
     setShowToolTip(false)
-    sessionStorage.setItem("tooltip_shown","true") // Set a flag to ensure it will only be shown once per each session
+    sessionStorage.setItem("tooltip_shown", "true") // Set a flag to ensure it will only be shown once per each session
   }
 
   const searchingBlogs = (target) => {
