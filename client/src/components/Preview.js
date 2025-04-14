@@ -124,7 +124,7 @@ const Preview = () => {
     }
     return (
         <div className="Preview">
-            {/* <div className="preview-overlay"></div> */}
+            <div className="preview-overlay"></div>
             <div className="BlogComponent">
                 <div className="blog-section">
                     <header>

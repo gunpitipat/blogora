@@ -271,6 +271,7 @@ const Form = ()=>{
                     </button>
                 </footer>    
             </form>
+            
             {/* If preview couldn't open */}
             {showPopUpAlert && 
                 <PopUpAlert

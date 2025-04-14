@@ -102,6 +102,7 @@
 .EditComponent .btn label{
     font-weight: 400;
     color: var(--accent-color);
+    cursor: pointer;
 }
 .EditComponent .btn.update label{
     color: var(--neutral-color-light);
@@ -151,6 +152,15 @@
 }
 .EditComponent .btn.preview{
     gap: 0.7rem;
+}
+/* Previewing */
+.EditComponent .btn.preview.previewing{
+    background: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+}
+.EditComponent .btn.preview.previewing label{
+    color: var(--neutral-color-light);
 }
 /* Hover state */
 .EditComponent .btn:hover{
