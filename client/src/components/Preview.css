@@ -1,0 +1,92 @@
+.Preview .preview-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1001; /* Cover navbar */
+    pointer-events: auto;
+}
+
+/* Placeholders */
+.Preview .title.placeholder, .Preview main .placeholder{
+    font-style: italic;
+    opacity: 0.5;
+}
+
+/* Animated indicator */
+.Preview .indicator{
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--neutral-color-light);
+    border: 1px solid rgba(188, 184, 177, 0.75);
+    border-radius: 16px;
+    z-index: 1000; /* Higher than copyright */
+}
+/* Outer circle */
+.Preview .indicator .outer-circle{
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    border-radius: 100%;
+    background: var(--secondary-color);
+    animation: ping 2.8s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+/* Outer circle - ping effect */
+@keyframes ping {
+    0% {
+        transform: scale(1);
+        opacity: 0.75;
+    }
+    75%, 100% {
+        transform: scale(2.25);
+        opacity: 0;
+    }
+}
+/* Inner circle */
+.Preview .indicator .inner-circle{
+    height: 12px;
+    width: 12px;
+    border-radius: 100%;
+    background: var(--secondary-color);
+    animation: breathingWave 2.8s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+/* Inner circle - breathing wave effect */
+@keyframes breathingWave {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1; 
+    }
+    50% { 
+        transform: scale(1.25);
+        opacity: 0.75; 
+    }
+}
+/* Label */
+.Preview .indicator label{
+    color: var(--accent-color);
+    opacity: 0.8;
+    font-weight: 500;
+}
+/* Disconnected */
+.Preview .indicator.disconnected{
+    background-color: var(--neutral-color-medium);
+    border: 1px solid var(--neutral-color-heavy);
+}
+.Preview .indicator.disconnected label{
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 375px) {
+    .Preview .indicator{
+        right: 1rem;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

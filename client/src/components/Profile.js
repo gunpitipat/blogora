@@ -6,11 +6,10 @@ import { useLoadingContext } from "../utils/LoadingContext"
 import LoadingScreen from "./LoadingScreen"
 import NotFound from "./NotFound"
 import { useAuthContext } from "../utils/AuthContext"
-import { formatDayMonth } from "../utils/serviceFunctions"
 import { useAlertContext } from "../utils/AlertContext"
+import BlogSnippet from "./BlogSnippet"
 
 const Profile = () => {
-
     const { username: usernameParam } = useParams()
     const [ userData, setUserData ] = useState({ email: null, username: null })
     const [ userBlogs, setUserBlogs ] = useState([])    
@@ -18,7 +17,6 @@ const Profile = () => {
 
     const { setLoading } = useLoadingContext()
     const { user } = useAuthContext()
-
     const { setAlertState } = useAlertContext()
 
     // Get personal user data
@@ -26,9 +24,9 @@ const Profile = () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}`,{
                 withCredentials: true,
-                signal: abortSignal // Passes abortController signal to link the request with abortController
+                signal: abortSignal // Pass abortController signal to link the request with abortController
             })
-            return response.data // User exists => { email ?, username }
+            return response.data // User exists -> { email ?, username }
         } catch (error) {
             // Ignore request cancellation errors to avoid unnecessary logs
             if (axios.isCancel(error)) { 
@@ -71,7 +69,7 @@ const Profile = () => {
     useEffect(() => {
         if (!usernameParam) return // Prevent fetching when username is undefined initially
 
-        const controller = new AbortController() // For cleanup (request cancellation) when component unmountes
+        const controller = new AbortController() // For cleanup (request cancellation) when component unmounts
         const { signal } = controller
 
         const fetchData = async () => {
@@ -83,7 +81,7 @@ const Profile = () => {
             // Promise.allSettled() never rejects. It returns an array. catch block in fetchData() will never run
             // The rejected promise inside will store the error in reason instead of throwing it
             try {
-                const [userDataResult, userBlogsResult] = await Promise.allSettled([ // Run both API requests concurrently, ensuring both promises run to completion, even if one fails
+                const [userDataResult, userBlogsResult] = await Promise.allSettled([ // Run both API requests concurrently, ensuring run to completion, even if one fails
                     getUserData(signal), 
                     getUserBlogs(signal)
                 ]) 
@@ -119,7 +117,7 @@ const Profile = () => {
     if (profileExists === null) return <LoadingScreen />
     if (profileExists === false) return <NotFound />
     if (profileExists && userData.username) {
-        // User has no blog (or data has not been fetched completely)
+        // User has no blog
         if (userBlogs.length === 0) { 
             return (
                 <div className="Profile No-Blog">
@@ -155,15 +153,11 @@ const Profile = () => {
                             <h2>{userData.username}</h2>
                             <p>{userData.email}</p>
                         </header>
-                        <main className={userBlogs.length === 1 ? "single-blog" : null}>
+                        <main className={userBlogs.length === 1 ? "single-blog" : ""}>
                             {userBlogs.map((blog, index) => {
-                                return(
+                                return (
                                     <Link className="blog" key={index} to={`/blog/${blog.slug}`}>
-                                        <div>
-                                            <h4>{blog.title}</h4>
-                                            <p>{blog.content.replace(/<\/?[^>]+(>|$)/g, " ").substring(0,100)}{blog.content.replace(/<\/?[^>]+(>|$)/g, " ").length > 250 ? " . . ." : null }</p>
-                                            <small>{formatDayMonth(blog.createdAt)}</small>
-                                        </div>
+                                        <BlogSnippet blog={blog} disableInnerLink />
                                     </Link>
                                 )
                             })}

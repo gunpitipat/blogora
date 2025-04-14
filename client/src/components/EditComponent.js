@@ -3,7 +3,7 @@ import "./EditComponent.css"
 import { Navigate, useParams } from "react-router-dom"
 import axios from "axios"
 import { useAlertContext } from "../utils/AlertContext"
-import { FaPen } from "react-icons/fa";
+import { FaPen, FaEye } from "react-icons/fa";
 import { TfiArrowsCorner } from "react-icons/tfi";
 import { BsArrowsAngleContract } from "react-icons/bs";
 import TipTap from "./TipTap"
@@ -11,6 +11,8 @@ import { useLoadingContext } from "../utils/LoadingContext"
 import LoadingScreen from "./LoadingScreen"
 import NotFound from "./NotFound"
 import { useAuthContext } from "../utils/AuthContext"
+import { getTotalOffsetTop } from "../utils/layoutUtils"
+import { FaUpRightFromSquare, FaBan } from "react-icons/fa6";
 
 const EditComponent = () => {
     const { slug } = useParams()
@@ -47,16 +49,6 @@ const EditComponent = () => {
             setLabels(initialLabels)
         }
     }
-    
-    // Distance from the top of the page
-    function getTotalOffsetTop(element) {
-        let offset = 0;
-        while (element) {
-          offset += element.offsetTop;
-          element = element.offsetParent; // Move to the nearest positioned ancestor
-        }
-        return offset;
-      }
 
     // Perform scrolling after extendTextarea set to true (the DOM updates)
     useEffect(() => {
@@ -122,6 +114,10 @@ const EditComponent = () => {
         // eslint-disable-next-line 
     }, [slug])
 
+    // Preview blog
+    const previewBlog = () => {
+    }
+
     // Edit Form
     const showEditForm = () => (
         <form onSubmit={submitForm}>
@@ -146,8 +142,25 @@ const EditComponent = () => {
                 </div>
             </div>
             <footer className="button-group">
-                <button type="button" className="btn discard" onClick={()=>{window.history.back()}}>Discard</button>
-                <button type="submit" className="btn update">Update</button>
+                <button className="btn discard" type="button" onClick={()=>{window.history.back()}}>
+                    <span className="icon">
+                        <FaBan style={{transform:"scaleX(-1)"}} />
+                    </span>
+                    <label>Discard</label>
+                </button>
+                <button className="btn preview" type="button" onClick={previewBlog}>
+                    <span className="icon">
+                        <FaUpRightFromSquare />
+                        <FaEye className="eye" />
+                    </span>
+                    <label>Preview</label>
+                </button>
+                <button className="btn update" type="submit">
+                    <span className="icon">
+                        <FaUpRightFromSquare />
+                    </span>
+                    <label>Update</label>
+                </button>
             </footer>
         </form>
     )

@@ -40,9 +40,8 @@ export const AuthProvider = ({ children }) => {
         []
     )
     
-    // Prevent isAuthenticated and user from being lost when refreshing the page
     useEffect(() => {
-        checkAuth() // Checking if the session is still valid once the app loads
+        checkAuth() // Checking if the session is still valid once the app loads or is refreshed
         // eslint-disable-next-line
     }, [])
 
@@ -72,10 +71,10 @@ export const AuthProvider = ({ children }) => {
         try {
             loggingOutRef.current = true // Prevent session expiration modal from appearing
             const response = await axios.post(`${process.env.REACT_APP_API}/logout`, {}, { withCredentials: true })
+            localStorage.removeItem("isLogin")
             await checkAuth()
             loggingOutRef.current = false
             setAlertState({ display: true, type: "success", message: response.data.message })
-            localStorage.removeItem("isLogin")
         } catch (error) {
             setAlertState({ display: true, type: "error", message: "Something went wrong. Please try again." })
         }
@@ -97,14 +96,17 @@ export const AuthProvider = ({ children }) => {
         // eslint-disable-next-line
     }, [isAuthenticated, user])
 
-    // Alert a user when session expired and they refresh or reload the page
+    // Alert a user when their session expired and they refresh or reload the page
     useEffect(() => {
+        // Avoid alerting if isAuthenticated is being initialized and not updated yet
+        if (isAuthenticated === null) return
+
         if (localStorage.getItem("isLogin") && !isAuthenticated) {
             setAlertState({ display: true, type: "error", message: "Your session expired." })
             localStorage.removeItem("isLogin")
         }
         // eslint-disable-next-line
-    }, [])
+    }, [isAuthenticated])
 
     return ( // When using user.username as a condition for rendering UI, use optional chaining (user?.username) to prevent errors where user might be null or undefined initially
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, checkAuth, sessionExpired, setSessionExpired, logout }}>

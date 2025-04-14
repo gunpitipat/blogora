@@ -120,6 +120,15 @@
   .MenuBar{
     grid-template-columns: repeat(5, minmax(44px, 1fr));
   }
+  .MenuBar .button-group:last-child::before{
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(170, 170, 170, 0.5);
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
 }
 @media (max-width: 340px) {
   .MenuBar{

@@ -13,7 +13,7 @@ import CommentInput from "./CommentInput"
 import CommentComponent from "./CommentComponent";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
-import { formatCommentTime, showFullDateTime } from "../utils/serviceFunctions"
+import { formatCommentTime, showFullDateTime } from "../utils/formatDateUtils"
 import { useViewReplyContext } from "../utils/ViewReplyContext"
 import { IoChevronBackOutline } from "react-icons/io5";
 
@@ -243,7 +243,7 @@ const BlogComponent = () => {
         if (!showCommentOption) return // Exit early if no menu is open
 
         // Check if the clicked element is not delete button and not the setting icon where has its own open-close handling
-        if (!e.target.classList.contains("delete") && !e.target.closest(".setting-icon") && !e.target.closest(".ModalComment")) { // Exclude ModalComment condition since it'll be written separately below
+        if (!e.target.classList.contains("delete") && !e.target.closest(".comment-setting-icon") && !e.target.closest(".ModalComment")) { // Exclude ModalComment condition since it'll be written separately below
             setShowCommentOption(null)
         }   
         // Handle clicking when modal appears
@@ -445,25 +445,27 @@ const BlogComponent = () => {
                             </div>
                             <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>
                             { ((user?.username === blog.author?.username) || (user?.role === "admin" )) &&
-                                <div className="setting">
-                                    <span onClick={()=>setShowOptions(!showOptions)} className="blog-setting-icon">
-                                        <BiDotsHorizontalRounded />
-                                    </span>
-                                    {showOptions && 
-                                        <ul className="options">
-                                            <Link to={`/blog/edit/${blog.slug}`} className="edit"><li>Edit</li></Link>
-                                            <li className="delete" onClick={()=>setShowModal(true)}>Delete</li>    
-                                        </ul>
-                                    }
-                                </div>
+                                <>
+                                    <div className="setting">
+                                        <span onClick={()=>setShowOptions(!showOptions)} className="blog-setting-icon">
+                                            <BiDotsHorizontalRounded />
+                                        </span>
+                                        {showOptions && 
+                                            <ul className="options">
+                                                <Link to={`/blog/edit/${blog.slug}`} className="edit"><li>Edit</li></Link>
+                                                <li className="delete" onClick={()=>setShowModal(true)}>Delete</li>    
+                                            </ul>
+                                        }
+                                    </div>
+                                    <ModalConfirm 
+                                        showModal={showModal} 
+                                        setShowModal={setShowModal} 
+                                        title={blog.title}
+                                        deleteBlog={deleteBlog} 
+                                        slug={slug}
+                                    />
+                                </>
                             }
-                            <ModalConfirm 
-                                showModal={showModal} 
-                                setShowModal={setShowModal} 
-                                title={blog.title}
-                                deleteBlog={deleteBlog} 
-                                slug={slug}
-                            />
                         </header>
                         <main className="TipTap-Result">
                             {parser(blog.content)}
@@ -476,7 +478,7 @@ const BlogComponent = () => {
                                 onMouseEnter={() => setShowDateToolTip(true)}
                                 onMouseLeave={() => setShowDateToolTip(false)}
                             >
-                                {formatCommentTime(blog.createdAt)}
+                                <label>{formatCommentTime(blog.createdAt)}</label>
                                 <div className={`tooltip ${showDateToolTip ? "show" : ""}`}>
                                     {showFullDateTime(blog.createdAt)}
                                 </div>
@@ -486,7 +488,7 @@ const BlogComponent = () => {
                     <section className="blog-comment">
                         { (user?.username && isAuthenticated)
                         ?   <div>
-                                <button className={showCommentInput ? "comment-button active" : "comment-button"} onClick={showComment}>
+                                <button className={`comment-button ${showCommentInput ? "active" : ""}`} onClick={showComment}>
                                     <span className="comment-icon">
                                         { !showCommentInput ? <LuCirclePlus /> : <LuCircleMinus />}
                                     </span>

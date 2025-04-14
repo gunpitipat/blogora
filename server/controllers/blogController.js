@@ -20,13 +20,16 @@ exports.createBlog = async (req,res) => {
         }
         return slug
     }
+    
     // Validate data
     switch (true) {
         case title.trim().length === 0:
             return res.status(400).json({ message: "Please fill in your blog's title." })
-        case title.trim().length >= 50:
+        case title.trim().length < 10:
+            return res.status(400).json({ message: "Your title is too short." })
+        case title.trim().length > 60:
             return res.status(400).json({ message: "Your title is too long." })
-        case content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0: // Content stores html format. Empty character will be <p> </p>, not " "
+        case content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0: // Content stores html format. Empty character will be <p></p>, not ""
             return res.status(400).json({ message: "Your content is entirely blank." })
     }
 
@@ -108,9 +111,10 @@ exports.updateBlog = async (req,res) => {
         const { slug } = req.params
         const { title, content } = req.body
         const userId = req.userId
-        if(title.trim().length === 0) return res.status(400).json({ message: "Title cannot be blank." })
-        if(title.trim().length >= 50) return res.status(400).json({ message: "Your title is too long." })
-        if(content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0) return res.status(400).json({ message: "Content is entirely blank." })
+        if (title.trim().length === 0) return res.status(400).json({ message: "Title cannot be blank." })
+        if (title.trim().length < 10) return res.status(400).json({ message: "Your title is too short." })
+        if (title.trim().length > 60) return res.status(400).json({ message: "Your title is too long." })
+        if (content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0) return res.status(400).json({ message: "Content is entirely blank." })
 
         const blog = await Blogs.findOneAndUpdate({ slug, author: userId }, { title, content }, { new: true })
         if (!blog) return res.status(404).json({ message: "Blog not found" })

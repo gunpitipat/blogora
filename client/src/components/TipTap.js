@@ -12,7 +12,7 @@ export const MenuBar = (props) => {
   const { editor } = useCurrentEditor()
 
   const {submit, contentLabel } = props
-  // contentLabel is for styling (focusing label and hightlighting paragraph button)
+  // contentLabel is for styling (focusing label and highlighting paragraph button)
 
   if (!editor) {
     return null
@@ -143,7 +143,7 @@ const extensions = [
     codeBlock: false,
   },{
     HTMLAttributes: {
-      allowedTags: [ 'p', 'h1', 'strong', 'i', 'ul', 'ol', 'a', 'br' ], // Only tags for menubar features
+      allowedTags: [ 'p', 'h1', 'strong', 'i', 'ul', 'ol', 'li', 'br' ], // Only tags for menubar features
     },
   }),
   Underline.configure({
@@ -169,8 +169,16 @@ const TipTap = (props) => {
   const { content, setContent, submit, setSubmit, contentLabel } = props
 
   const onUpdate = ({editor}) => {
-    const myHtml = editor.getHTML().replace(/<p>\s*<\/p>/g, "<p><br></p>");
-    setContent(myHtml)
+    let htmlContent = editor.getHTML()
+
+    // Keep empty lines visually represented
+    htmlContent = htmlContent.replace(/<p>(\s|&nbsp;)*<\/p>/g, "<p><br></p>");
+    // Preserve intentional spaces within text
+    htmlContent = htmlContent.replace(/ {2,}/g, match => {
+      return '&nbsp;'.repeat(match.length - 1) + ' '; // Add one real space at the end to prevent long unbreakable lines
+    })
+
+    setContent(htmlContent)
   }  
 
   useEffect(() => {

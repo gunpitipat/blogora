@@ -1,6 +1,6 @@
 import "./Form.css"
-import { useEffect, useState } from "react"
-import { FaPen } from "react-icons/fa";
+import { useEffect, useMemo, useRef, useState } from "react"
+import { FaPen, FaEye } from "react-icons/fa";
 import axios from "axios"
 import { TfiArrowsCorner } from "react-icons/tfi";
 import { BsArrowsAngleContract } from "react-icons/bs";
@@ -9,15 +9,23 @@ import TipTap from "./TipTap";
 import { useLoadingContext } from "../utils/LoadingContext"
 import { useAuthContext } from "../utils/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getTotalOffsetTop } from "../utils/layoutUtils";
+import { FaUpRightFromSquare, FaPenToSquare } from "react-icons/fa6";
+import { debounce } from "lodash"
+import PopUpAlert from "./PopUpAlert";
 
 const Form = ()=>{
-
     const [ title, setTitle ] = useState("")
 
     const [ content, setContent ] = useState(() => {
         const data = localStorage.getItem("save_draft")
         return data ? JSON.parse(data).content : ""
     })
+
+    // Preview
+    const [ previewOpen, setPreviewOpen ] = useState(false)
+    const [ showPopUpAlert, setShowPopUpAlert ] = useState(false)
+    const previewWindowRef = useRef(null)
     
     // Prop to TipTap component to clear content after submitting form
     const [ submit, setSubmit ] = useState(false)
@@ -33,9 +41,9 @@ const Form = ()=>{
     const [ extendTextarea, setExtendTextarea ] = useState(false)
 
     // Save Draft
-    const savingDraftFunc = (title,content) => {
+    const savingDraftFunc = (title, content) => {
         const data = { title, content }
-        localStorage.setItem("save_draft",JSON.stringify(data))
+        localStorage.setItem("save_draft", JSON.stringify(data))
         setAlertState({ display: true, type: "success", message: "Draft saved successfully." })
     }
 
@@ -62,16 +70,6 @@ const Form = ()=>{
             setLabels(initialLabels)
         }
     }
-    
-    // Distance from the top of the page
-    function getTotalOffsetTop(element) {
-        let offset = 0;
-        while (element) {
-          offset += element.offsetTop;
-          element = element.offsetParent; // Move to the nearest positioned ancestor
-        }
-        return offset;
-      }
 
     // Perform scrolling after extendTextarea set to true (the DOM updates)
     useEffect(() => {
@@ -125,6 +123,106 @@ const Form = ()=>{
         })
     }
 
+    // Preview Feature
+    // Preview button hanlder
+    const previewBlog = () => {
+        // Open a new tab if window reference is null or inaccessible, or the latest preview is closed
+        if (!previewWindowRef.current || previewWindowRef.current.closed) {    
+            localStorage.setItem("previewData", JSON.stringify({ title, content }))
+            const slug = Date.now().toString()
+            localStorage.setItem("formSync", slug)
+    
+            const previewWindow = window.open(`/preview/${slug}`, "_blank")
+            if (!previewWindow) {
+                setShowPopUpAlert(true)
+                setAlertState({ display: true, type: "error", message: "Preview couldn't open." })
+            } else {
+                previewWindowRef.current = previewWindow
+            }
+        // Close the preview if window reference is valid and the tab is still open
+        } else {
+            previewWindowRef.current.close()
+        }
+    }
+
+    // Track if preview tab is open and controllable
+    useEffect(() => {
+        // Handle preview connectivity
+        const handleStorageChange = (event) => {
+            if (event.key === "previewOpen") {
+                let result;
+                setTimeout(() => {
+                    if (previewWindowRef.current && !previewWindowRef.current.closed) {
+                        try {
+                            // Preview is navigated away within the same origin
+                            if (previewWindowRef.current.location.pathname.split("/").pop() !== localStorage.getItem("formSync")) {
+                                result = false
+                            } else {
+                                if (event.newValue === "true") {
+                                    result = true
+                                } else if (event.newValue === "false") {
+                                    return // Preview is just refreshed
+                                }
+                            }
+                        } catch (error) { // Preview is navigated away to an external domain
+                            result = false
+                        }
+                    } else {
+                        if (event.newValue === "false") { // Preview is manually closed
+                            result = false
+                        }
+                    }
+                    
+                    if (result) {
+                        setPreviewOpen(true)
+                    } else {
+                        setPreviewOpen(false)
+                        localStorage.removeItem("previewOpen")
+                        localStorage.removeItem("previewData")
+                        localStorage.removeItem("formSync")
+                        previewWindowRef.current = null
+                    }
+                }, 50) // Ensure previewWindowRef.current.closed updates
+            }
+        }
+
+        window.addEventListener("storage", handleStorageChange)
+        return () => window.removeEventListener("storage", handleStorageChange)
+        // eslint-disable-next-line
+    }, [])
+
+    // Update localStorage when title or content changes
+    const deboundedUpdate = useMemo( // Memoize a returned function from debounce
+        () => debounce((title, content) => {
+                if (previewOpen) { // Only update when preview is open
+                    localStorage.setItem("previewData", JSON.stringify({ title, content }))
+                }
+            }, 500),
+        [previewOpen]
+    )
+
+    useEffect(() => {
+        deboundedUpdate(title, content)
+    }, [title, content, deboundedUpdate])
+
+    // Clean up localStorage
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            localStorage.removeItem("previewData")
+            localStorage.removeItem("formSync")
+            localStorage.removeItem("previewOpen")
+        }
+
+        window.addEventListener("beforeunload", handleBeforeUnload) // Clear when closing or refreshing
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload)
+            // In case of internal navigation
+            localStorage.removeItem("previewData")
+            localStorage.removeItem("formSync")
+            localStorage.removeItem("previewOpen")
+        }
+    }, [])
+
     return(
         <div className="Form" onClick={outOfFocus}>
             <h2>Create Your Blog</h2>
@@ -150,10 +248,37 @@ const Form = ()=>{
                     </div>
                 </div>
                 <footer className="button-group">
-                    <button type="button" className="btn savedraft" onClick={()=>savingDraftFunc(title,content)}>Save Draft</button>
-                    <button type="submit" className="btn post">Post</button>
+                    <button className="btn savedraft" type="button" onClick={()=>savingDraftFunc(title,content)}>
+                        <span className="icon">
+                            <FaPenToSquare />
+                        </span>
+                        <label>Save Draft</label>
+                    </button>
+                    <button className={`btn preview ${previewOpen ? "previewing" : ""}`} type="button" onClick={previewBlog}>
+                        {!previewOpen &&
+                        <span className="icon">
+                            <FaUpRightFromSquare />
+                            <FaEye className="eye" />
+                        </span>
+                        }
+                        <label>{!previewOpen ? "Preview" : "Previewing"}</label>
+                    </button>
+                    <button className="btn post" type="submit">
+                        <span className="icon">
+                            <FaUpRightFromSquare />
+                        </span>
+                        <label>Post</label>
+                    </button>
                 </footer>    
             </form>
+            {/* If preview couldn't open */}
+            {showPopUpAlert && 
+                <PopUpAlert
+                    popUpContent={`Please allow pop-ups for this site in your browser settings to use the preview feature.`}
+                    showPopUpAlert={showPopUpAlert}
+                    setShowPopUpAlert={setShowPopUpAlert}
+                />
+            } 
         </div>
     )
 }

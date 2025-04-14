@@ -1,3 +1,4 @@
+// DD/MM/YYYY format
 export const formatDayMonth = (value) => {
     let date = new Date(value) // Convert value to a Date object
     let day = date.getDate().toString().padStart(2, '0')
@@ -41,11 +42,10 @@ export const formatCommentTime = (value) => {
     // If the comments was created more than 1 day ago, show in DD/MM/YY format    
     const day = commentDate.getDate().toString().padStart(2, '0')
     const month = (commentDate.getMonth() + 1).toString().padStart(2, '0')
-    const year = commentDate.getFullYear().toString().slice(-2)
+    const year = commentDate.getFullYear().toString()
 
     return `${day}/${month}/${year}`
 }
-
 
 export const showFullDateTime = (value) => {
     let date = new Date(value)
@@ -54,6 +54,15 @@ export const showFullDateTime = (value) => {
     let year = String(date.getFullYear())
     let time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true })
     return `${day}/${month}/${year}, ${time}`
+}
+
+// DD/MM/YY format
+export const formatDayMonthYear = (value) => {
+    let date = new Date(value)
+    let day = date.getDate().toString().padStart(2, '0')
+    let month = (date.getMonth() + 1).toString().padStart(2, '0')
+    let year = date.getFullYear().toString().slice(-2)
+    return `${day}/${month}/${year}`
 }
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

@@ -5,7 +5,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 1000;
+    z-index: 1002;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
@@ -48,10 +48,12 @@
 }
 .ModalComment .confirm-container h1{
     font-size: 1.5rem;
+    color: var(--accent-color);
 }
 .ModalComment .confirm-container p{
     margin: 0.5rem 0 1.5rem;
     text-align: center;
+    color: var(--neutral-color-dark);
 }
 .ModalComment .confirm-container .button-container{
     display: flex;
@@ -65,16 +67,19 @@
     cursor: pointer;
     border: 1px solid var(--accent-color);
 }
-.ModalComment .button-container button:hover{
-    opacity: 0.75;
-}
 .ModalComment .button-container .delete-button{
     background: var(--accent-color);
     color: var(--neutral-color-light);
+    opacity: 0.9;
 }
 .ModalComment .button-container .cancel-button{
     background: var(--neutral-color-light);
     color: var(--accent-color);
+    opacity: 0.8;
+}
+.ModalComment .button-container button:hover{
+    font-weight: 500;
+    opacity: 1;
 }
 
 /* Responsive Design */

@@ -43,43 +43,10 @@ body{
 .copyright.hide{
   opacity: 0;
 }
+
 .App{
   padding: 2rem 8rem 6rem;
-  min-height: 100vh; /* Make copyright footer overflow on short content pages */
-}
-.App .blog{
-  padding: 1.5rem 1.5rem;
-  border-bottom: 1px solid var(--primary-color);
-  border-radius: 0.25rem 0.25rem 0 0;
-}
-.App .blog:nth-child(odd){
-  /* background-color: var(--neutral-color-medium); */
-}
-.App .blog a h2{
-  display: inline-block; /* Prevent excessive clickable area */
-  font-weight: 900;
-}
-.App .blog p{
-  margin: 0.5rem 0 0.75rem;
-  opacity: 0.7;
-  color: var(--neutral-color-dark);
-}
-.App .blog small{
-  font-weight: 400;
-}
-.App .blog small .author{
-  font-weight: 800;
-  text-decoration: none;
-  cursor: pointer;
-}
-.App .blog small span{
-  opacity: 0.7; 
-  color: var(--neutral-color-dark);
-}
-.App .blog a{
-  text-decoration: none;
-  color: var(--accent-color);
-  cursor: pointer;
+  min-height: 100vh; /* Make copyright footer overflow on short content page */
 }
 
 /* Back-to-top button */

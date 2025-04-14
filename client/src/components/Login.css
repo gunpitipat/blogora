@@ -62,15 +62,16 @@
     width: 80px;
     border-radius: 0.25rem;
     border: 1px solid var(--accent-color);
-    background-color: var(--secondary-color);
-    color: #fff;
+    background-color: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
     padding: 0.5rem;
     margin: 0.5rem 0;
     user-select: none;
 }
 .Login .btn:hover{
-    background-color: var(--accent-color);
     font-weight: 500;
+    opacity: 1;
 }
 .Login .sign-up{
     margin: 1rem 0 2rem;

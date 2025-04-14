@@ -14,6 +14,7 @@ import { AuthProvider } from './utils/AuthContext'
 import NotFound from './components/NotFound'
 import { ViewReplyProvider } from './utils/ViewReplyContext'
 import LandingPage from './LandingPage'
+import Preview from './components/Preview'
 
 const Router = () => {
     return(
@@ -35,6 +36,7 @@ const Router = () => {
                                     <Route element={<ProtectedRoute />}>
                                         <Route path="/create" element={<Form />} />
                                         <Route path="/blog/edit/:slug" element={<EditComponent />} />
+                                        <Route path="/preview/:slug" element={<Preview />} />
                                     </Route>
 
                                     {/* Catch-all Route for undefined paths */}

@@ -44,21 +44,47 @@
     justify-self: center;
     text-decoration: none;
 }
-.Profile .container main .blog h4, .Profile.No-Blog .container main div a{
+/* Clickable blog container as a Link */
+.Profile .container main .blog{
+    cursor: pointer;
+}
+
+/* Modify BlogSnippet */
+.Profile .container main .blog .BlogSnippet{
+    padding: 0;
+    border: none;
+    /* height: 100%; */
+}
+.Profile .container main .blog .BlogSnippet .title h2{
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+.Profile .container main .blog .BlogSnippet .content-container{
+    margin: 0.5rem 0;
+    max-height: 68px; /* Default when there's only one column in a row */
+}
+.Profile .container main .blog .BlogSnippet .content-container .subtitle{
+    font-size: 1.04rem;
+}
+.Profile .container main .blog .BlogSnippet small.footer .author, .Profile .container main .blog .BlogSnippet small.footer .separator{
+    display: none;
+}
+.Profile .container main .blog .BlogSnippet .content-container .fade-overlay{
+    background: linear-gradient(to bottom, rgba(241, 241, 241, 0), rgba(241, 241, 241, 1));
+    height: 2rem;
+}
+
+.Profile.No-Blog .container main div a{
     text-decoration: none;
     cursor: pointer;
     color: var(--accent-color);
     font-size: 1.1rem;
 }
-.Profile .container main .blog p, .Profile.No-Blog .container main div p{
+.Profile.No-Blog .container main div p{
     opacity: 0.7;
     font-size: 1rem;
     color: var(--neutral-color-dark);
     margin: 0.5rem 0;
-}
-.Profile .container main .blog small{
-    opacity: 0.7;
-    color: var(--neutral-color-dark);
 }
 
 /* Tablet & Laptop */
@@ -90,11 +116,6 @@
     grid-template-columns: 1fr !important;
     place-self: center;
     width: 90%;
-}
-
-/* Click blog container as a Link */
-.Profile .container main .blog{
-    cursor: pointer;
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

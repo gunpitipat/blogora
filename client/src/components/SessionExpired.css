@@ -5,7 +5,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 1002; /* Higher than LoadingScreen */
+    z-index: 1004; /* Higher than LoadingScreen */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
@@ -48,10 +48,12 @@
 }
 .SessionExpired .confirm-container h1{
     font-size: 1.5rem;
+    color: var(--accent-color);
 }
 .SessionExpired .confirm-container .content{
     margin: 0.5rem 0 1.5rem;
     text-align: center;
+    color: var(--neutral-color-dark);
 }
 .SessionExpired .confirm-container .content p{
     display: inline-block;
@@ -68,17 +70,21 @@
     cursor: pointer;
     border: 1px solid var(--accent-color);
 }
-.SessionExpired .button-container button:hover{
-    opacity: 0.75;
-}
 .SessionExpired .button-container .confirm-button{
     background: var(--accent-color);
     color: var(--neutral-color-light);
+    opacity: 0.9;
 }
 .SessionExpired .button-container .cancel-button{
     background: var(--neutral-color-light);
     color: var(--accent-color);
+    opacity: 0.8;
 }
+.SessionExpired .button-container button:hover{
+    font-weight: 500;
+    opacity: 1;
+}
+
 
 /* Responsive Design */
 @media (max-width: 485px) {

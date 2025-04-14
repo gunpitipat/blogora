@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import "./CommentComponent.css"
-import { formatCommentTime, showFullDateTime } from "../utils/serviceFunctions"
+import { formatCommentTime, showFullDateTime } from "../utils/formatDateUtils"
 import { useState, useEffect, useRef, memo, useMemo } from "react"
 import ReplyInput from "./ReplyInput";
 import { FaReply, FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -199,35 +199,39 @@ const CommentComponent = memo((props) => { // Prevent unnecessary re-renders whe
                     <small className={`${(isTablet && isOverflowing) ? "isTablet-overflowing" : ""} ${isMobile && isOverflowing ? "isMobile-overflowing" : ""}`}>
                         <Link to={`/profile/${comment.user.username}`} className="author">
                             { comment.user.username }
-                            <span className="authorComment">&nbsp;{blogAuthor === comment.user.username ? <FaUserPen /> : null }</span>
+                            <span className="authorComment">&nbsp;{blogAuthor === comment.user?.username ? <FaUserPen /> : null }</span>
                         </Link>
                         {!isMobile && <span>&nbsp;&bull;&nbsp;</span>}
                         <span className="timestamp"
                             onMouseEnter={() => setShowDateToolTip(true)}
                             onMouseLeave={() => setShowDateToolTip(false)}
                         >
-                            {formatCommentTime(comment.createdAt)}
+                            <label>{formatCommentTime(comment.createdAt)}</label>
                             <div className={`tooltip ${showDateToolTip ? "show" : ""} `}>
                                 {showFullDateTime(comment.createdAt)}
                             </div>
                         </span>
                     </small>
                 }
-                { ((!comment.isDeleted && user?.username === comment.user.username) || (!comment.isDeleted && user?.role === "admin")) &&
-                   <div className="setting">
-                    <BiDotsHorizontalRounded className="setting-icon" onClick={()=>toggleCommentOption(comment._id)} />
-                    { showCommentOption === comment._id &&
-                        <ul className="options">
-                            <li className="delete" onClick={()=>setShowCommentModal(comment._id)}>Delete</li>   
-                        </ul> 
-                    }
-                    <ModalComment 
-                        showCommentModal={showCommentModal} 
-                        commentId={comment._id} 
-                        setShowCommentModal={setShowCommentModal} 
-                        deleteComment={deleteComment} 
-                    />
-                    </div>
+                { ((!comment.isDeleted && user?.username === comment.user?.username) || (!comment.isDeleted && user?.role === "admin")) &&
+                    <>
+                        <div className="setting">
+                            <span className="comment-setting-icon" onClick={()=>toggleCommentOption(comment._id)}>
+                                <BiDotsHorizontalRounded />
+                            </span>
+                            { showCommentOption === comment._id &&
+                                <ul className="options">
+                                    <li className="delete" onClick={()=>setShowCommentModal(comment._id)}>Delete</li>   
+                                </ul> 
+                            }
+                        </div>
+                        <ModalComment 
+                            showCommentModal={showCommentModal} 
+                            commentId={comment._id} 
+                            setShowCommentModal={setShowCommentModal} 
+                            deleteComment={deleteComment} 
+                        />
+                    </>
                 }
             </div>
             {/* Reply Input Section */}

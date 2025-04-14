@@ -5,7 +5,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 1000;
+    z-index: 1002;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
@@ -49,9 +49,14 @@
     font-size: 1.5rem;
     opacity: 0.8;
 }
+.Delete-Modal .confirm-container h1{
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
 .Delete-Modal .confirm-container p{
     margin: 0.5rem 0 1.5rem;
     text-align: center;
+    color: var(--neutral-color-dark);
 }
 .Delete-Modal .confirm-container .button-container{
     display: flex;
@@ -68,13 +73,16 @@
 .Delete-Modal .button-container .delete-button{
     background: var(--accent-color);
     color: var(--neutral-color-light);
-}
-.Delete-Modal .button-container button:hover{
-    opacity: 0.75;
+    opacity: 0.9;
 }
 .Delete-Modal .button-container .cancel-button{
     background: var(--neutral-color-light);
     color: var(--accent-color);
+    opacity: 0.8;
+}
+.Delete-Modal .button-container button:hover{
+    font-weight: 500;
+    opacity: 1;
 }
 
 /* Responsive Design */
