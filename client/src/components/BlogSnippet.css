@@ -33,6 +33,7 @@
 .BlogSnippet .content-container .content{
     opacity: 0.7;
     white-space: pre-line; /* Preserve \n visually */
+    font-size: 1rem;
 }
 .BlogSnippet .content-container .fade-overlay{
     position: absolute;
@@ -45,6 +46,8 @@
 }
 .BlogSnippet small.footer{
     font-weight: 400;
+    display: flex;
+    flex-wrap: wrap;
 }
 .BlogSnippet small.footer .author{
     font-weight: 800;

@@ -74,6 +74,15 @@
     height: 2rem;
 }
 
+.Profile.No-Blog .container main{
+    grid-template-columns: 1fr !important;
+    place-self: center;
+    width: 90%;
+}
+.Profile.No-Blog .container main div{
+    text-align: center;
+    padding-bottom: 1.5rem;
+}
 .Profile.No-Blog .container main div a{
     text-decoration: none;
     cursor: pointer;
@@ -94,7 +103,7 @@
         /* grid-template-columns: repeat(auto-fit, minmax(400px,1fr)); */
     }
     .Profile.No-Blog .container main{
-        width: 40% !important;
+        width: 40%;
     }
 
     /* For users who have only one blog, make it center on desktop */
@@ -107,15 +116,6 @@
     .Profile{
         min-height: 100vh;
     }
-}
-.Profile.No-Blog .container main div{
-    text-align: center;
-    padding-bottom: 1.5rem;
-}
-.Profile.No-Blog .container main{
-    grid-template-columns: 1fr !important;
-    place-self: center;
-    width: 90%;
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

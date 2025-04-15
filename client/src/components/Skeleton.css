@@ -1,0 +1,13 @@
+@keyframes shimmer {
+    0% {
+        left: -20%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

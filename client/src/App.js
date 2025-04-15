@@ -3,24 +3,24 @@ import { useState, useEffect, useMemo } from "react"
 import axios from "axios"
 import ToolTip from "./components/ToolTip";
 import SearchFilter from "./components/SearchFilter";
-import { useLoadingContext } from "./utils/LoadingContext";
 import { useAuthContext } from "./utils/AuthContext";
 import { LuArrowUpToLine } from "react-icons/lu";
 import { useAlertContext } from "./utils/AlertContext";
 import { debounce } from "lodash"
 import BlogSnippet from "./components/BlogSnippet";
+import Skeleton from "./components/Skeleton";
 
 function App() {
   const [ blogs, setBlogs ] = useState([])
   const [ showToolTip, setShowToolTip ] = useState(false)
   const [ searchInput, setSearchInput ] = useState("")
   const [ showBackToTop, setShowBackToTop ] = useState(false)
-  const { setLoading } = useLoadingContext()
   const { isAuthenticated, user } = useAuthContext()
   const { setAlertState } = useAlertContext()
+  const [ isLoading, setIsLoading ] = useState(true)
 
   const fetchData = async ()=>{
-    setLoading(true)
+    setIsLoading(true)
     try {
       const response = await axios.get(`${process.env.REACT_APP_API}/blogs`)
       setBlogs(response.data)
@@ -31,7 +31,7 @@ function App() {
         setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
       }
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
@@ -116,9 +116,15 @@ function App() {
       <div className="App">
         <SearchFilter searchInput={searchInput} setSearchInput={setSearchInput}/>
 
-        {filteredBlogs.length > 0 && filteredBlogs.map((blog, index) => {
-          return <BlogSnippet key={index} blog={blog} />
-        })}
+        {isLoading ? (
+          Array.from({ length: 2 }).map((_, index) => (
+            <Skeleton key={index} contentLineCount={6} />
+          ))
+        ) : (
+          filteredBlogs.length > 0 && filteredBlogs.map((blog, index) => {
+            return <BlogSnippet key={index} blog={blog} />
+          })
+        )}
 
         {/* For new users who have not logged in yet */}
         { !(isAuthenticated && user?.username) && blogs.length > 0 && (showToolTip && <ToolTip closeToolTip={closeToolTip}/>)}
