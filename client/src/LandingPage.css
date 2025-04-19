@@ -1,0 +1,19 @@
+.LandingPage{
+    align-items: center;
+}
+.LandingPage .btn.try-demo{
+    font-size: 1rem;    
+    cursor: pointer;
+    outline: none;
+    border-radius: 0.25rem;
+    border: 1px solid var(--accent-color);
+    background-color: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+    padding: 0.5rem;    
+    user-select: none;
+}
+.LandingPage .btn.try-demo:hover{
+    font-weight: 500;
+    opacity: 1;
+}

@@ -3,8 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const Blogs = require("../models/blogsModel")
 
-// Sign Up (create user)
-exports.signup = async (req,res) => {
+// Sign up (create user)
+exports.signup = async (req, res) => {
     const { email, username, password, cfpassword } = req.body
 
     let indication = { success: [], error: [] }
@@ -108,8 +108,60 @@ exports.signup = async (req,res) => {
     }
 };
 
+// Create Demo user
+exports.createDemoUser = async (req, res) => {
+    try {
+        // Saved credentials from localStorage
+        const { savedUsername, savedPassword } = req.body
+
+        if (savedUsername && savedPassword) {
+            const demoUser = await Users.findOne({ role: "demo", username: savedUsername })
+
+            // Return the same credentials if there's at least 3 mins left to perform login
+            if (demoUser && demoUser.password && (demoUser.expiresAt - Date.now() >= 3 * 60 * 1000)) {
+                const isMatch = await bcrypt.compare(savedPassword, demoUser.password)
+                if (isMatch) {
+                    return res.status(201).json({ username: savedUsername, password: savedPassword })
+                }
+            }
+        }
+
+        // Find the lowest available sequential username
+        const existingDemoUsers = await Users.find({ role: "demo" }).select("username")
+        const takenUsernames = new Set(existingDemoUsers.map(user => user.username))
+        let newUsername = "DemoUser01"
+
+        for (let i = 1; i <= existingDemoUsers.length + 1; i++) {
+            const proposedUsername = `DemoUser${String(i).padStart(2, "0")}`
+            if (!takenUsernames.has(proposedUsername)) {
+                newUsername = proposedUsername
+                break
+            }
+        }
+
+        const newPassword = "TryDemo" + newUsername.slice(-2)
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+        const expiresInMinutes = 15 // Threshold before login
+        const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000)
+
+        // Create a new demo user
+        const demoUser = await Users.create({
+            email: `${newUsername}@blogora.com`,
+            username: newUsername,
+            username_lowercase: newUsername.toLowerCase(),
+            password: hashedPassword,
+            role: "demo",
+            expiresAt
+        })
+        res.status(201).json({ username: newUsername, password: newPassword });
+    } catch (error) {
+        res.status(500).json({ message: "Error creating demo user." });
+    }
+}
+
 // Login (create authentication token and cookie)
-exports.login = async (req,res) => {
+exports.login = async (req, res) => {
     const { username, password } = req.body
 
     const validation = async (username, password) => {
@@ -120,33 +172,48 @@ exports.login = async (req,res) => {
         if (!existingUser) return { message: "This username has not been registered.", field: "username" }
 
         // Validate password
-        const isMatch = await bcrypt.compare(password,existingUser.password)
+        const isMatch = await bcrypt.compare(password, existingUser.password)
         if (!isMatch) return { message: "Incorrect Password", field: "password" }
 
         return { success: { user: existingUser } }
     }
 
     try {
-        const result = await validation(username,password)
+        const result = await validation(username, password)
 
         if (result.message) {
             return res.status(400).json({ message: result.message, field: result.field })
         }
+
+        const user = result.success.user
+
+        // Default for normal users
+        let expiresIn = "1d" // for JWT token
+        let maxAge = 1000 * 60 * 60 * 24 // 1 day for cookie
+
+        if (user.role === "demo") {
+            // Extend demo session to 30 mins
+            expiresIn = "30m"
+            maxAge = 1000 * 60 * 30
+
+            user.expiresAt = new Date(Date.now() + maxAge)
+            await user.save()
+        }
         
-        // Validation passed => Create token
-        const payload = { username: result.success.user.username, userId: result.success.user._id, role: result.success.user.role }
-        const token = jwt.sign( payload, process.env.JWT_SECRET, { expiresIn: "1d" }) 
+        // Validation passed -> Create token
+        const payload = { username: user.username, userId: user._id, role: user.role }
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn }) 
         // Set HttpOnly Cookie
         res.cookie("token", token, {
             httpOnly: true, // Prevent javascript access (XSS attacks)
-            secure: true, // Ensure it's sent over HTTPS (set false for local development since http://localhost runs on http not https, so the browser ignores the cookie)
+            secure: true, // Ensure it's sent over HTTPS
             sameSite: "none", // Allow cross-site/origin requests (different frontend & backend domains)
-            maxAge: 1000 * 60 * 60 * 24, // 1 day expiration
+            maxAge,
             path: "/"
         })
         res.status(200).json({
             message: "Login Successful",
-            username: result.success.user.username
+            username: user.username
         })
     } catch (error) {
         console.error(error)
@@ -155,7 +222,23 @@ exports.login = async (req,res) => {
 }
 
 // Logout
-exports.logout = (req,res) => {
+exports.logout = async (req, res) => {
+    try {
+        // If demo user, clean it up
+        const token = req.cookies.token
+
+        if (token) {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+            if (decoded.role === "demo") {
+                await Users.deleteOne({ _id: decoded.userId })
+            }
+        }
+    } catch {
+        // If cookie/token is expired or invalid, TTL already deleted demo user
+    }
+
+    // Clear cookie regardless
     res.cookie("token", "", {
         httpOnly: true,
         secure: true,
@@ -163,11 +246,12 @@ exports.logout = (req,res) => {
         path: "/",
         expires: new Date(0) // Expire immediately
     })
+
     res.status(200).json({ message: "Logged out successfully" })
 }
 
 // User's Profile
-exports.getProfile = async (req,res) => {
+exports.getProfile = async (req, res) => {
     try {
         const { username } = req.params // Extract from URL
         const userId = req.userId // Extract from token payload if the owner visits
@@ -189,7 +273,7 @@ exports.getProfile = async (req,res) => {
     }
 }
 
-exports.getProfileBlogs = async (req,res) => {
+exports.getProfileBlogs = async (req, res) => {
     try {
         const { username } = req.params
 

@@ -22,10 +22,18 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'admin'], // Ensures the value can only be either one of the predefined options
-        default: 'user'
+        enum: ["user", "admin", "demo"], // Ensures the value can only be either one of the predefined options
+        default: "user"
+    },
+    expiresAt: {
+        type: Date,
+        required: false,
+        default: undefined // Only set for demo users
     }
 })
+
+// TTL index to auto-delete demo users (docs with expiresAt) when expiresAt is reached
+userSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 
 module.exports = mongoose.model("Users",userSchema)
 

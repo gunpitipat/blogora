@@ -15,11 +15,11 @@ const AlertProvider = ({ children }) => {
         if (alertState.display) {
             timer = setTimeout(() => {
                 setAlertState(initialAlertState)
-            },3000)
+            }, 3000)
         }
         return () => clearTimeout(timer)
         // eslint-disable-next-line
-    },[alertState.display, alertState.message])
+    }, [alertState.display, alertState.message])
     
     return(
         <AlertContext.Provider value={{ alertState, setAlertState }}>

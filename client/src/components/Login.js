@@ -1,12 +1,14 @@
 import "./Login.css"
 import { Link, useNavigate, Navigate } from "react-router-dom"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import { useAlertContext } from "../utils/AlertContext"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useLoadingContext } from "../utils/LoadingContext"
 import { useAuthContext } from "../utils/AuthContext"
 import LoadingScreen from "./LoadingScreen"
+import { useDemoContext } from "../utils/DemoContext"
+import PopUpAlert from "./PopUpAlert";
 
 const Login = () => {
     const [ username, setUsername ] = useState("")
@@ -20,10 +22,42 @@ const Login = () => {
     const navigate = useNavigate()
     
     const { loading, setLoading } = useLoadingContext()
-
     const { setAlertState } = useAlertContext()
-
     const { isAuthenticated, user, checkAuth } = useAuthContext()
+    const { prefillDemo, setPrefillDemo, showDemoPopUp, setShowDemoPopUp } = useDemoContext()
+
+    // Auto-prefill credentials for demo users
+    useEffect(() => {        
+        if (!prefillDemo) return
+
+        try {
+            const TTL_MINUTES_BEFORE_LOGIN = 15
+            const LOGIN_BUFFER_MINUTES = 3
+            const demoCredentials = JSON.parse(localStorage.getItem("demoCredentials"))
+
+            const isInvalid = !demoCredentials ||
+                !demoCredentials.username ||
+                !demoCredentials.password || 
+                Date.now() - demoCredentials.createdAt > (TTL_MINUTES_BEFORE_LOGIN - LOGIN_BUFFER_MINUTES) * 60 * 1000
+            
+            if (isInvalid) {
+                localStorage.removeItem("demoCredentials") 
+                setAlertState({ display: true, type: "error", message: "Demo expired. Please try again." })
+                navigate("/")
+                return
+            }
+
+            setUsername(demoCredentials.username)
+            setPassword(demoCredentials.password)
+
+        } catch {
+            // In case of corrupted JSON
+            localStorage.removeItem("demoCredentials") 
+            setAlertState({ display: true, type: "error", message: "Something went wrong. Please try again." })
+            navigate("/")
+        }
+        // eslint-disable-next-line
+    }, [])
 
     // Submit form
     const submitForm = async (e) => {
@@ -41,6 +75,8 @@ const Login = () => {
             setAlertState({ display: true, type: "success", message: response.data.message })
             setLoading(false)
             localStorage.setItem("isLogin", "true")
+            localStorage.removeItem("demoCredentials")
+            setPrefillDemo(false)
             navigate("/explore")
         } catch (error) {
             setLoading(false)
@@ -97,7 +133,12 @@ const Login = () => {
                         <span><Link to="/signup">Sign Up</Link></span>
                     </div>
                 </form>
-            </div>
+            </div> 
+            <PopUpAlert 
+                popUpContent={`test`}
+                showPopUpAlert={showDemoPopUp}
+                setShowPopUpAlert={setShowDemoPopUp}
+            />
         </div>
     )
 }

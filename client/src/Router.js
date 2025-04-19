@@ -15,6 +15,7 @@ import NotFound from './components/NotFound'
 import { ViewReplyProvider } from './utils/ViewReplyContext'
 import LandingPage from './LandingPage'
 import Preview from './components/Preview'
+import { DemoProvider } from './utils/DemoContext'
 
 const Router = () => {
     return(
@@ -22,28 +23,30 @@ const Router = () => {
             <LoadingProvider>
                 <AlertProvider>
                     <AuthProvider>
-                        <ViewReplyProvider>
-                            <Layout>
-                                <Routes>
-                                    <Route path="/" element={<LandingPage />} />
-                                    <Route path="/explore" element={<App />} />
-                                    <Route path="/blog/:slug" element={<BlogComponent />} />
-                                    <Route path="/profile/:username" element={<Profile />} />
-                                    <Route path="/login" element={<Login />} />
-                                    <Route path="/signup" element={<SignUp />} />
+                        <DemoProvider>
+                            <ViewReplyProvider>
+                                <Layout>
+                                    <Routes>
+                                        <Route path="/" element={<LandingPage />} />
+                                        <Route path="/explore" element={<App />} />
+                                        <Route path="/blog/:slug" element={<BlogComponent />} />
+                                        <Route path="/profile/:username" element={<Profile />} />
+                                        <Route path="/login" element={<Login />} />
+                                        <Route path="/signup" element={<SignUp />} />
 
-                                    {/* Protected Routes */}
-                                    <Route element={<ProtectedRoute />}>
-                                        <Route path="/create" element={<Form />} />
-                                        <Route path="/blog/edit/:slug" element={<EditComponent />} />
-                                        <Route path="/preview/:slug" element={<Preview />} />
-                                    </Route>
+                                        {/* Protected Routes */}
+                                        <Route element={<ProtectedRoute />}>
+                                            <Route path="/create" element={<Form />} />
+                                            <Route path="/blog/edit/:slug" element={<EditComponent />} />
+                                            <Route path="/preview/:slug" element={<Preview />} />
+                                        </Route>
 
-                                    {/* Catch-all Route for undefined paths */}
-                                    <Route path="*" element={<NotFound />} />
-                                </Routes> 
-                            </Layout>
-                        </ViewReplyProvider>
+                                        {/* Catch-all Route for undefined paths */}
+                                        <Route path="*" element={<NotFound />} />
+                                    </Routes> 
+                                </Layout>
+                            </ViewReplyProvider>
+                        </DemoProvider>
                     </AuthProvider>
                 </AlertProvider>
             </LoadingProvider>
