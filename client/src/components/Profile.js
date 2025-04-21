@@ -22,7 +22,7 @@ const Profile = () => {
     // Get personal user data
     const getUserData = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}`,{
+            const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}`, {
                 withCredentials: true,
                 signal: abortSignal // Pass abortController signal to link the request with abortController
             })

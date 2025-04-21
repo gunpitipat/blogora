@@ -22,8 +22,18 @@ const blogSchema = mongoose.Schema({
     comments: [{ // Referenced documents: an array of ObjectIds
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comments" // Reference to the Comment model
-    }]
+    }],
+    isDemo: {
+        type: Boolean,
+        default: false
+    },
+    demoAuthor: {
+        type: String
+    }
 }, { timestamps: true })
+
+// Compound index (make cron job and queries on demo blogs faster and efficient)
+blogSchema.index({ isDemo: 1, demoAuthor: 1 })
 
 module.exports = mongoose.model("Blogs",blogSchema)
 

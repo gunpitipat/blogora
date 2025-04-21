@@ -6,7 +6,12 @@ const Comments = require("../models/commentsModel")
 // Create blog
 exports.createBlog = async (req,res) => {
     const { title, content } = req.body
+    const trimmedTitle = title.trim()
     const userId = req.userId // Extracted from JWT token (authMiddleware)
+    
+    // For demo users
+    const isDemo = req.userRole === "demo"
+    const demoAuthor = isDemo ? req.username : undefined
 
     // Generate a unique slug from title
     const generateUniqueSlug = async (title) => {
@@ -23,34 +28,43 @@ exports.createBlog = async (req,res) => {
     
     // Validate data
     switch (true) {
-        case title.trim().length === 0:
+        case trimmedTitle.length === 0:
             return res.status(400).json({ message: "Please fill in your blog's title." })
-        case title.trim().length < 10:
+        case trimmedTitle.length < 10:
             return res.status(400).json({ message: "Your title is too short." })
-        case title.trim().length > 60:
+        case trimmedTitle.length > 60:
             return res.status(400).json({ message: "Your title is too long." })
         case content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0: // Content stores html format. Empty character will be <p></p>, not ""
             return res.status(400).json({ message: "Your content is entirely blank." })
     }
 
-    const slug = await generateUniqueSlug(title);
+    const slug = await generateUniqueSlug(trimmedTitle);
 
-    // Create data
-    Blogs.create({ title, content, author: userId, slug })
-    .then(blog => {
+    // Create blog
+    try {
+        const blog = await Blogs.create({
+            title: trimmedTitle,
+            content,
+            author: userId,
+            slug,
+            isDemo,
+            demoAuthor
+        })
         res.status(201).json({ blog, message: "Your blog has been posted!" })
-    })
-    .catch(error => {
+
+    } catch (error) {
         console.error("Error creating blog", error)
         res.status(500).json({ message: "Error creating a blog" })
-    })
-} 
+    }
+}
 
 // Get all blogs
 exports.getAllBlogs = async (req,res) => {
     try {
-        const blogs = await Blogs.find({})
-        .populate({ path: "author", select: "username" })
+        const filter = req.blogFilter
+        const blogs = await Blogs.find(filter)
+            .sort({ createdAt: -1 }) // Newest first
+            .populate({ path: "author", select: "username" })
 
         res.status(200).json(blogs)
 
@@ -110,13 +124,19 @@ exports.updateBlog = async (req,res) => {
     try {
         const { slug } = req.params
         const { title, content } = req.body
+        const trimmedTitle = title.trim()
         const userId = req.userId
-        if (title.trim().length === 0) return res.status(400).json({ message: "Title cannot be blank." })
-        if (title.trim().length < 10) return res.status(400).json({ message: "Your title is too short." })
-        if (title.trim().length > 60) return res.status(400).json({ message: "Your title is too long." })
+
+        if (trimmedTitle.length === 0) return res.status(400).json({ message: "Title cannot be blank." })
+        if (trimmedTitle.length < 10) return res.status(400).json({ message: "Your title is too short." })
+        if (trimmedTitle.length > 60) return res.status(400).json({ message: "Your title is too long." })
         if (content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0) return res.status(400).json({ message: "Content is entirely blank." })
 
-        const blog = await Blogs.findOneAndUpdate({ slug, author: userId }, { title, content }, { new: true })
+        const blog = await Blogs.findOneAndUpdate(
+            { slug, author: userId }, 
+            { title: trimmedTitle, content }, 
+            { new: true })
+            
         if (!blog) return res.status(404).json({ message: "Blog not found" })
         
         res.status(200).json({ blog, message: "Updated successfully" })

@@ -22,7 +22,9 @@ function App() {
   const fetchData = async ()=>{
     setIsLoading(true)
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API}/blogs`)
+      const response = await axios.get(`${process.env.REACT_APP_API}/blogs`, {
+        withCredentials: true
+      })
       setBlogs(response.data)
     } catch(error) {
       if (!error.response) {

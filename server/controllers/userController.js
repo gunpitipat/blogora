@@ -129,9 +129,16 @@ exports.createDemoUser = async (req, res) => {
         // Find the lowest available sequential username
         const existingDemoUsers = await Users.find({ role: "demo" }).select("username")
         const takenUsernames = new Set(existingDemoUsers.map(user => user.username))
+
+        // In case where TTL deleted demo user but cron job hasn't deleted their blogs yet
+        const existingDemoBlogAuthors = await Blogs.find({ isDemo: true }).distinct("demoAuthor")
+        existingDemoBlogAuthors.forEach(username => {
+            takenUsernames.add(username)
+        })
+
         let newUsername = "DemoUser01"
 
-        for (let i = 1; i <= existingDemoUsers.length + 1; i++) {
+        for (let i = 1; i <= takenUsernames.size + 1; i++) {
             const proposedUsername = `DemoUser${String(i).padStart(2, "0")}`
             if (!takenUsernames.has(proposedUsername)) {
                 newUsername = proposedUsername
@@ -232,6 +239,7 @@ exports.logout = async (req, res) => {
 
             if (decoded.role === "demo") {
                 await Users.deleteOne({ _id: decoded.userId })
+                await Blogs.deleteMany({ isDemo: true, demoAuthor: decoded.username })
             }
         }
     } catch {
