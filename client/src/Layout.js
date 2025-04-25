@@ -2,7 +2,7 @@ import Alert from "./components/Alert"
 import Navbar from "./components/Navbar"
 import LoadingScreen from "./components/LoadingScreen"
 import { useLoadingContext } from "./utils/LoadingContext"
-import SessionExpired from "./components/SessionExpired"
+import SessionExpiration from "./components/SessionExpiration"
 
 const Layout = ({ children }) => {
 
@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
         <div>
             <Navbar />
             {loading && <LoadingScreen />}
-            {<SessionExpired />} {/* Session expiration modal */}
+            {<SessionExpiration />} {/* Session expiration modal */}
             {children}
             <Alert />
         </div>

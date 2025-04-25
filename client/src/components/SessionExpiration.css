@@ -1,4 +1,4 @@
-.SessionExpired .modal-overlay{
+.SessionExpiration .modal-overlay{
     background: rgba(0,0,0,0.75);
     position: fixed;
     top: 0;
@@ -10,12 +10,12 @@
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
 }
-.SessionExpired .modal-overlay.show{
+.SessionExpiration .modal-overlay.show{
     opacity: 1;
     visibility: visible;
     transition: opacity 0.15s ease-in-out;
 }
-.SessionExpired .confirm-container{
+.SessionExpiration .confirm-container{
     background: var(--neutral-color-medium);
     width: 75vw;
     max-width: 500px;
@@ -30,7 +30,7 @@
     padding: 1rem;
 }
 /* Icon */
-.SessionExpired .icon-background{
+.SessionExpiration .icon-background{
     background: #fff;
     border-radius: 100%;
     width: 50px;
@@ -40,47 +40,47 @@
     align-items: center;
     margin-bottom: 1rem;
 }
-.SessionExpired .icon-background svg{
+.SessionExpiration .icon-background svg{
     color: var(--accent-color);
     transform: scale(0.95);
     font-size: 1.5rem;
     opacity: 0.8;
 }
-.SessionExpired .confirm-container h1{
+.SessionExpiration .confirm-container h1{
     font-size: 1.5rem;
     color: var(--accent-color);
 }
-.SessionExpired .confirm-container .content{
+.SessionExpiration .confirm-container .content{
     margin: 0.5rem 0 1.5rem;
     text-align: center;
     color: var(--neutral-color-dark);
 }
-.SessionExpired .confirm-container .content p{
+.SessionExpiration .confirm-container .content p{
     display: inline-block;
 }
-.SessionExpired .confirm-container .button-container{
+.SessionExpiration .confirm-container .button-container{
     display: flex;
     gap: 0.75rem;
     padding-right: 11px; /* Offset due to different lengths of each button content */
 }
-.SessionExpired .button-container button{
+.SessionExpiration .button-container button{
     font-size: 1rem;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
     border: 1px solid var(--accent-color);
 }
-.SessionExpired .button-container .confirm-button{
+.SessionExpiration .button-container .confirm-button{
     background: var(--accent-color);
     color: var(--neutral-color-light);
     opacity: 0.9;
 }
-.SessionExpired .button-container .cancel-button{
+.SessionExpiration .button-container .cancel-button{
     background: var(--neutral-color-light);
     color: var(--accent-color);
     opacity: 0.8;
 }
-.SessionExpired .button-container button:hover{
+.SessionExpiration .button-container button:hover{
     font-weight: 500;
     opacity: 1;
 }
@@ -88,15 +88,15 @@
 
 /* Responsive Design */
 @media (max-width: 485px) {
-    .SessionExpired .confirm-container{
+    .SessionExpiration .confirm-container{
         width: 85vw;
     }
 }
 @media (max-width: 430px) {
-    .SessionExpired .confirm-container .content p{
+    .SessionExpiration .confirm-container .content p{
         display: block;
     }
-    .SessionExpired .confirm-container .content p:first-of-type{
+    .SessionExpiration .confirm-container .content p:first-of-type{
         margin-bottom: 0.1rem;
     }
 }

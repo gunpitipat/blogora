@@ -197,8 +197,8 @@ const CommentComponent = memo((props) => { // Prevent unnecessary re-renders whe
                 }
                 { !comment.isDeleted &&
                     <small className={`${(isTablet && isOverflowing) ? "isTablet-overflowing" : ""} ${isMobile && isOverflowing ? "isMobile-overflowing" : ""}`}>
-                        <Link to={`/profile/${comment.user.username}`} className="author">
-                            { comment.user.username }
+                        <Link to={`/profile/${comment.user?.username}`} className="author">
+                            { comment.user?.username }
                             <span className="authorComment">&nbsp;{blogAuthor === comment.user?.username ? <FaUserPen /> : null }</span>
                         </Link>
                         {!isMobile && <span>&nbsp;&bull;&nbsp;</span>}

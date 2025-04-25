@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
             (error) => {
                 if (error.response && (error.response.status === 401 || error.response.status === 403)) {
                     if (isAuthenticated && !loggingOutRef.current) {
-                        // Show SessionExpired Modal when the user was authenticated and session expired, not when manually logged out
+                        // Show SessionExpiration Modal when the user was authenticated and session expired, not when manually logged out
                         setSessionExpired(true)
                     }
                 }
@@ -68,14 +68,20 @@ export const AuthProvider = ({ children }) => {
 
     // Logout
     const logout = async () => {
+        setLoading(true)
         try {
             loggingOutRef.current = true // Prevent session expiration modal from appearing
             const response = await axios.post(`${process.env.REACT_APP_API}/logout`, {}, { withCredentials: true })
             localStorage.removeItem("isLogin")
             await checkAuth()
             loggingOutRef.current = false
+            setLoading(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
+            setTimeout(() => {
+                navigate("/login")
+            }, 0)
         } catch (error) {
+            setLoading(false)
             setAlertState({ display: true, type: "error", message: "Something went wrong. Please try again." })
         }
     }

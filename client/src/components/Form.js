@@ -17,10 +17,7 @@ import PopUpAlert from "./PopUpAlert";
 const Form = ()=>{
     const [ title, setTitle ] = useState("")
 
-    const [ content, setContent ] = useState(() => {
-        const data = localStorage.getItem("save_draft")
-        return data ? JSON.parse(data).content : ""
-    })
+    const [ content, setContent ] = useState(null)
 
     // Preview
     const [ previewOpen, setPreviewOpen ] = useState(false)
@@ -41,21 +38,37 @@ const Form = ()=>{
     const [ extendTextarea, setExtendTextarea ] = useState(false)
 
     // Save Draft
-    const savingDraftFunc = (title, content) => {
-        const data = { title, content }
-        localStorage.setItem("save_draft", JSON.stringify(data))
+    const saveDraft = (title, content) => {
+        localStorage.setItem("blogDraft", JSON.stringify({ title, content, author: user?.username }))
         setAlertState({ display: true, type: "success", message: "Draft saved successfully." })
     }
 
+    // Initialize content (TipTap) / Restore the draft
     useEffect(() => {
-        // In case of saving draft
-        if (localStorage.getItem("save_draft")) { // { title: "your title", content: "your content" }
-            const saveDraft = JSON.parse(localStorage.getItem("save_draft"))
-            setTitle(saveDraft.title)
-            setContent(saveDraft.content)
+        if (!user?.username) return
+
+        const saved = localStorage.getItem("blogDraft")
+        if (!saved) {
+            setContent("")
+            return
+        }
+
+        try {
+            const draft = JSON.parse(saved)
+
+            if (draft && draft.author === user.username) {
+                setTitle(draft.title || "")
+                setContent(draft.content || "")
+            } else {
+                localStorage.removeItem("blogDraft") // Prevent one user's draft from leaking to another's session
+                setContent("")
+            }
+        } catch {
+            localStorage.removeItem("blogDraft") // In case of corrupted JSON
+            setContent("")
         }
         // eslint-disable-next-line
-    }, [])
+    }, [user?.username])
 
     // Style: Making label bolder when focusing on input/textarea 
     let initialLabels = { titleLabel: false, contentLabel: false }
@@ -108,7 +121,7 @@ const Form = ()=>{
             setSubmit(true)
             setExtendTextarea(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
-            localStorage.removeItem("save_draft")
+            localStorage.removeItem("blogDraft")
             navigate(`/profile/${user.username}`)
         })
         .catch(error => {
@@ -240,7 +253,15 @@ const Form = ()=>{
                     </label>
                     <div className={extendTextarea ? "textarea-container extend" : "textarea-container"}>
                         <div onClick={()=>focusLabelFunc("contentLabel")}>
-                            <TipTap content={content} setContent={setContent} submit={submit} setSubmit={setSubmit} contentLabel={labels.contentLabel}/>                 
+                            {content !== null && (
+                                <TipTap 
+                                    content={content} 
+                                    setContent={setContent} 
+                                    submit={submit} 
+                                    setSubmit={setSubmit} 
+                                    contentLabel={labels.contentLabel}
+                                />                 
+                            )}
                             <div className="sizing" onClick={()=>setExtendTextarea(!extendTextarea)}>
                                 { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{transform:"scaleX(-1)"}}/>}
                             </div>
@@ -248,7 +269,7 @@ const Form = ()=>{
                     </div>
                 </div>
                 <footer className="button-group">
-                    <button className="btn savedraft" type="button" onClick={()=>savingDraftFunc(title,content)}>
+                    <button className="btn savedraft" type="button" onClick={()=>saveDraft(title, content)}>
                         <span className="icon">
                             <FaPenToSquare />
                         </span>

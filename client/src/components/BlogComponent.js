@@ -50,9 +50,10 @@ const BlogComponent = () => {
     // Retrieve a blog
     const getBlog = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, 
-                { signal: abortSignal }
-            )
+            const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, { 
+                withCredentials: true,
+                signal: abortSignal
+            })
             return response.data
         } catch (error) {
             // Ignore request cancellation errors
@@ -113,9 +114,10 @@ const BlogComponent = () => {
     // Retrieve comments
     const getComments = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}/comments`,
-                { signal: abortSignal }
-            )
+            const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}/comments`, { 
+                withCredentials: true, 
+                signal: abortSignal 
+            })
             return response.data
         } catch (error) {
             if (axios.isCancel(error)) {

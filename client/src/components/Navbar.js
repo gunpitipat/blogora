@@ -30,6 +30,12 @@ const Navbar = () => {
         setShowToopTip(hoveredMenu)
     }
 
+    // Handle logout click
+    const handleLogout = () => {
+        setIsOpen(false) // Close sidebar on mobile
+        logout()
+    }
+
     return(
         <>
             {/* Show menu icon only on mobile and tablet */}
@@ -99,11 +105,9 @@ const Navbar = () => {
                     { (isAuthenticated && user?.username) && (
                     <div className="menu-group">
                         <li>
-                            <Link to="/" onClick={() => setIsOpen(false)}>
-                                <button className="logout-btn" onClick={logout}>
-                                    Log Out
-                                </button>
-                            </Link>
+                            <span className="logout-menu" onClick={handleLogout}>
+                                <button className="logout-btn">Log Out</button>
+                            </span>
                         </li>
                     </div>)}
                 </ul>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useLocation } from "react-router-dom"
 import "./Profile.css"
 import { useLoadingContext } from "../utils/LoadingContext"
 import LoadingScreen from "./LoadingScreen"
@@ -16,8 +16,10 @@ const Profile = () => {
     const [ profileExists, setProfileExists ] = useState(null)
 
     const { setLoading } = useLoadingContext()
-    const { user } = useAuthContext()
+    const { user, setSessionExpired } = useAuthContext()
     const { setAlertState } = useAlertContext()
+
+    const location = useLocation()
 
     // Get personal user data
     const getUserData = async (abortSignal) => {
@@ -39,6 +41,12 @@ const Profile = () => {
                 if (error.response.status === 500) {
                     setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
                 } else if (error.response.status === 404) {
+
+                    // Show session expiration modal if demo user got TTL-deleted and visits their profile
+                    if (location.pathname === `/profile/${user?.username}`) {
+                        setSessionExpired(true)
+                    }
+
                     throw error // Suppress 404 error logging but still throw them so Promise.allSettled() marks as "rejected"
                 }
             }
@@ -50,9 +58,10 @@ const Profile = () => {
     // Get all user's blogs
     const getUserBlogs = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}/blogs`,
-                { signal: abortSignal }
-            )
+            const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}/blogs`, { 
+                withCredentials: true,
+                signal: abortSignal 
+            })
             return response.data // [ blog documents ]
         } catch (error) {
             if (axios.isCancel(error)) {

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useAuthContext } from "../utils/AuthContext"
-import "./SessionExpired.css"
+import "./SessionExpiration.css"
 import { FaUserTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"
 
-const SessionExpired = () => {
+const SessionExpiration = () => {
     const { sessionExpired, setSessionExpired, setIsAuthenticated, user, setUser } = useAuthContext()
     const navigate = useNavigate()
     
@@ -26,7 +26,7 @@ const SessionExpired = () => {
     }, [sessionExpired])
 
     return (
-        <div className="SessionExpired">
+        <div className="SessionExpiration">
             <div className={`modal-overlay ${sessionExpired ? "show" : ""}`}>
                 <div className="confirm-container">
                     <div className="icon-background"><FaUserTimes /></div>
@@ -45,6 +45,6 @@ const SessionExpired = () => {
     )
 }
 
-export default SessionExpired
+export default SessionExpiration
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

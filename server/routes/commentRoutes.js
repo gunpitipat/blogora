@@ -2,12 +2,13 @@ const express = require("express")
 const router = express.Router()
 const { createComment, getComments, deleteComment } = require("../controllers/commentController")
 const authMiddleware = require("../controllers/middleware/authMiddleware")
+const commentFilterMiddleware = require("../controllers/middleware/commentFilterMiddleware")
 
 // Comments and Replies
 router.post("/blog/:slug/comment", authMiddleware, createComment)
 router.delete("/blog/comment/:commentId", authMiddleware, deleteComment)
-// Get only comments for a blog
-router.get("/blog/:slug/comments", getComments)
+// Get comments for a blog
+router.get("/blog/:slug/comments", commentFilterMiddleware, getComments)
 
 module.exports = router
 

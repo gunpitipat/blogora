@@ -8,7 +8,7 @@ import { useLoadingContext } from "../utils/LoadingContext"
 import { useAuthContext } from "../utils/AuthContext"
 import LoadingScreen from "./LoadingScreen"
 import { useDemoContext } from "../utils/DemoContext"
-import PopUpAlert from "./PopUpAlert";
+import DemoPopUp from "./DemoPopUp"
 
 const Login = () => {
     const [ username, setUsername ] = useState("")
@@ -24,7 +24,7 @@ const Login = () => {
     const { loading, setLoading } = useLoadingContext()
     const { setAlertState } = useAlertContext()
     const { isAuthenticated, user, checkAuth } = useAuthContext()
-    const { prefillDemo, setPrefillDemo, showDemoPopUp, setShowDemoPopUp } = useDemoContext()
+    const { prefillDemo, setPrefillDemo } = useDemoContext()
 
     // Auto-prefill credentials for demo users
     useEffect(() => {        
@@ -99,7 +99,7 @@ const Login = () => {
     return(
         <div className="Login">
             <div className="bg">
-                <h2>Log In</h2>
+                <h2 className="headline">Log In</h2>
                 <form onSubmit={submitForm}>
                     <div className={errorStatus.field === "username" ? "showError" : null}>
                         <label>Username</label>
@@ -134,11 +134,7 @@ const Login = () => {
                     </div>
                 </form>
             </div> 
-            <PopUpAlert 
-                popUpContent={`test`}
-                showPopUpAlert={showDemoPopUp}
-                setShowPopUpAlert={setShowDemoPopUp}
-            />
+            <DemoPopUp />
         </div>
     )
 }

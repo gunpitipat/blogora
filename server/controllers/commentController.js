@@ -2,11 +2,15 @@ const Comments = require("../models/commentsModel")
 const Blogs = require("../models/blogsModel")
 
 // Create a new comment and link it to a blog
-exports.createComment = async (req,res) => {
+exports.createComment = async (req, res) => {
     try {
         const userId = req.userId // Extracted from JWT token (authMiddleware)
         const { slug } = req.params
         const { content, parentCommentId } = req.body
+
+        // For demo users
+        const isDemo = req.userRole === "demo"
+        const demoAuthor = isDemo ? req.username : undefined
 
         if (!content || content.trim().length === 0) {
             return res.status(400).json({ message: "Comment content cannot be empty." })
@@ -29,7 +33,9 @@ exports.createComment = async (req,res) => {
             user: userId,
             blog: blog._id,
             content: content.trim(),
-            parentComment: parentCommentId || null // If req.body doesn't contain parentCommentId, set it null (top-level comment)
+            parentComment: parentCommentId || null, // If req.body doesn't contain parentCommentId, set it null (top-level comment)
+            isDemo,
+            demoAuthor
         })
         await comment.save()
         await Blogs.findByIdAndUpdate(blog._id, { $push: { comments: comment._id } })
@@ -42,14 +48,15 @@ exports.createComment = async (req,res) => {
 }
 
 // Retrieve comments for a blog
-exports.getComments = async (req,res) => {
+exports.getComments = async (req, res) => {
     try {
         const { slug } = req.params
+        const commentFilter = req.commentFilter
 
         const blog = await Blogs.findOne({ slug }).select("_id")
         if (!blog) return res.status(404).json({ message: "Blog not found" })
 
-        const comments = await Comments.find({ blog: blog._id })
+        const comments = await Comments.find({ blog: blog._id, ...commentFilter })
         .populate({ path: "user", select: "username" }) // Populate user details
         .sort({ createdAt: 1 }) // Sort by oldest comment first
 
@@ -57,12 +64,12 @@ exports.getComments = async (req,res) => {
         
     } catch (error) {
         console.error("Error retrieving comments:", error)
-        res.status(500).json({ message: "Error retreiving comments", error })
+        res.status(500).json({ message: "Error retrieving comments" })
     }
 }
 
 // Delete comment with conditional soft/hard deletion 
-exports.deleteComment = async (req,res) => {
+exports.deleteComment = async (req, res) => {
     try {
         const { commentId } = req.params
         const userId = req.userId

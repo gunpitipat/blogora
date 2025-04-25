@@ -34,8 +34,18 @@ const commentSchema = mongoose.Schema({
     isDeleted: { // For soft deleting comment
         type: Boolean,
         default: false
+    },
+    isDemo: {
+        type: Boolean,
+        default: false
+    },
+    demoAuthor: {
+        type: String
     }
 })
+
+// Compound index (improve queries efficiency on demo comments)
+commentSchema.index({ isDemo: 1, demoAuthor: 1 })
 
 module.exports = mongoose.model("Comments", commentSchema)
 

@@ -2,6 +2,8 @@ const Users = require("../models/usersModel")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const Blogs = require("../models/blogsModel")
+const Comments = require("../models/commentsModel")
+const mongoose = require("mongoose")
 
 // Sign up (create user)
 exports.signup = async (req, res) => {
@@ -130,9 +132,13 @@ exports.createDemoUser = async (req, res) => {
         const existingDemoUsers = await Users.find({ role: "demo" }).select("username")
         const takenUsernames = new Set(existingDemoUsers.map(user => user.username))
 
-        // In case where TTL deleted demo user but cron job hasn't deleted their blogs yet
-        const existingDemoBlogAuthors = await Blogs.find({ isDemo: true }).distinct("demoAuthor")
-        existingDemoBlogAuthors.forEach(username => {
+        // In case where TTL deleted demo user but cron job hasn't deleted their blogs and comments yet
+        const [existingDemoBlogAuthors, existingDemoCommentAuthors] = await Promise.all([
+            Blogs.find({ isDemo: true }).distinct("demoAuthor"),
+            Comments.find({ isDemo: true }).distinct("demoAuthor")
+        ])
+        const allExistingDemoAuthors = new Set([...existingDemoBlogAuthors, ...existingDemoCommentAuthors])
+        allExistingDemoAuthors.forEach(username => {
             takenUsernames.add(username)
         })
 
@@ -238,8 +244,46 @@ exports.logout = async (req, res) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
             if (decoded.role === "demo") {
+                // Clean up demo user
                 await Users.deleteOne({ _id: decoded.userId })
+
+                // Clean up demo blogs
                 await Blogs.deleteMany({ isDemo: true, demoAuthor: decoded.username })
+
+                // Find demo comments
+                const demoComments = await Comments.find({ 
+                        isDemo: true, 
+                        demoAuthor: decoded.username 
+                    }).select("_id blog")
+
+                // Group comment IDs per blog
+                const blogUpdatesMap = new Map()
+                demoComments.forEach(comment => {
+                    const blogId = comment.blog.toString()
+                    if (!blogUpdatesMap.has(blogId)) {              //  {
+                        blogUpdatesMap.set(blogId, [])              //    blogId1: [commentId1, commentId2]
+                    }                                               //    blogId2: [commentId3], ...
+                    blogUpdatesMap.get(blogId).push(comment._id)    //  }
+                })
+
+                const blogIds = Array.from(blogUpdatesMap.keys()).map(blogId => new mongoose.Types.ObjectId(blogId)) // Map back to ObjectId for query
+
+                // Get only normal blogs
+                const normalBlogs = await Blogs.find({
+                    _id: { $in: blogIds },
+                    isDemo: false
+                }).select("_id").lean()  // Read only
+
+                // Remove ref comment IDs from normal blogs
+                for (const blog of normalBlogs) {
+                    const commentIds = blogUpdatesMap.get(blog._id.toString()) // Map keys are stored as Strings
+                    await Blogs.findByIdAndUpdate(blog._id, {
+                        $pull: { comments: { $in: commentIds } }
+                    })
+                }
+
+                // Delete demo comments
+                await Comments.deleteMany({ isDemo: true, demoAuthor: decoded.username })
             }
         }
     } catch {
@@ -262,15 +306,20 @@ exports.logout = async (req, res) => {
 exports.getProfile = async (req, res) => {
     try {
         const { username } = req.params // Extract from URL
-        const userId = req.userId // Extract from token payload if the owner visits
+        const userId = req.userId // Extract from token payload
 
-        const profile = await Users.findOne({ username_lowercase: username.toLowerCase() }).select("_id email username")
+        const profile = await Users.findOne({ username_lowercase: username.toLowerCase() }).select("_id email username role")
         if (!profile) return res.status(404).json({ message: "User not found" })
         
-        // Verify if the viewer is the profile owner. If not, respond with only username (excluding email)
         const isOwner = userId === profile._id.toString()
+
+        // Only allow the demo user to view their own profile
+        if (profile.role === "demo" && !isOwner) {
+            return res.status(404).json({ message: "Profile not available" })
+        }
+        
         const userProfile = isOwner 
-        ? { email: profile.email, username: profile.username }
+        ? { email: profile.email, username: profile.username } // Email is visible only to the owner
         : { username: profile.username }
 
         res.status(200).json(userProfile)
@@ -284,9 +333,15 @@ exports.getProfile = async (req, res) => {
 exports.getProfileBlogs = async (req, res) => {
     try {
         const { username } = req.params
+        const userId = req.userId
 
         const user = await Users.findOne({ username_lowercase: username.toLowerCase() })
         if (!user) return res.status(404).json({ message: "User not found" })
+
+        // Only allow the demo user to view their own profile
+        if (user.role === "demo" && userId !== user._id.toString()) {
+            return res.status(404).json({ message: "Profile not available" })
+        }
 
         const blogs = await Blogs.find({ author: user._id }).populate({ path: "author", select: "username" })
         if (!blogs) return res.status(404).json({ message: "Blog not found" })

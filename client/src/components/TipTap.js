@@ -184,7 +184,7 @@ const TipTap = (props) => {
   useEffect(() => {
     setSubmit(false)
     // eslint-disable-next-line
-  },[submit])
+  }, [submit])
 
   return (
     <div className="text-editor">

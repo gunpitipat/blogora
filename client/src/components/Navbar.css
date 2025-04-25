@@ -29,7 +29,7 @@
     align-items: flex-end;
     position: relative;
 }
-.Navbar li:not(.nav-logo) a{
+.Navbar li:not(.nav-logo) a, .Navbar li span.logout-menu{
     text-decoration: none;
     font-size: 1.25rem;
     font-weight: 600;
@@ -42,7 +42,7 @@
     display: flex;
     align-items: flex-end;
 }
-.Navbar li:not(.nav-logo):hover a{
+.Navbar li:not(.nav-logo) a:hover, .Navbar li:not(.nav-logo) span.logout-menu:hover .logout-btn{
     font-weight: 900;
 }
 
@@ -93,11 +93,6 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    /* No need to set padding. Make it small to prevent accidental click */
-    /* Make it less prominent than the other menus */
-}
-.Navbar .menu-group .logout-btn:hover{
-    font-weight: 900;
 }
 
 /* Selected menu */
@@ -233,7 +228,7 @@
     .Navbar li.nav-logo{
         width: 100%;
     }
-    .Navbar a, .Navbar li span.disable-menu label{
+    .Navbar a, .Navbar span.logout-menu, .Navbar li span.disable-menu label{
         width: 100%;
         padding: 1rem 2.25rem !important;
         border: none !important;

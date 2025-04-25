@@ -30,7 +30,7 @@ exports.createBlog = async (req,res) => {
     switch (true) {
         case trimmedTitle.length === 0:
             return res.status(400).json({ message: "Please fill in your blog's title." })
-        case trimmedTitle.length < 10:
+        case trimmedTitle.length < 5:
             return res.status(400).json({ message: "Your title is too short." })
         case trimmedTitle.length > 60:
             return res.status(400).json({ message: "Your title is too long." })
@@ -77,8 +77,8 @@ exports.getAllBlogs = async (req,res) => {
 // Get single blog
 exports.getBlog = async (req,res) => {
     try {
-        const { slug } = req.params
-        const blog = await Blogs.findOne({ slug }).populate({ path: "author", select: "username" })
+        const filter = req.blogFilter 
+        const blog = await Blogs.findOne(filter).populate({ path: "author", select: "username" })
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" })
         }
@@ -128,7 +128,7 @@ exports.updateBlog = async (req,res) => {
         const userId = req.userId
 
         if (trimmedTitle.length === 0) return res.status(400).json({ message: "Title cannot be blank." })
-        if (trimmedTitle.length < 10) return res.status(400).json({ message: "Your title is too short." })
+        if (trimmedTitle.length < 5) return res.status(400).json({ message: "Your title is too short." })
         if (trimmedTitle.length > 60) return res.status(400).json({ message: "Your title is too long." })
         if (content.replace(/<\/?[^>]+(>|$)/g, "").trim().length === 0) return res.status(400).json({ message: "Content is entirely blank." })
 

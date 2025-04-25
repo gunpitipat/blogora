@@ -91,7 +91,7 @@ const EditComponent = () => {
         setContent("")
         setAuthor(null)
 
-        axios.get(`${process.env.REACT_APP_API}/blog/${slug}`)
+        axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, { withCredentials: true })
         .then(response => {
             if (isMounted) {
                 const { title: titleData, content: contentData, author: authorId } = response.data

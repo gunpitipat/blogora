@@ -1,8 +1,7 @@
 const jwt = require("jsonwebtoken")
 
-const blogFilterMiddleware = (req, res, next) => {
-    const { slug } = req.params
-    let filter = { isDemo: false, slug } // Default filter
+const commentFilterMiddleware = (req, res, next) => {
+    let commentFilter = { isDemo: false } // Exclude demo comments by default
 
     const token = req.cookies.token
     if (token) {
@@ -10,11 +9,11 @@ const blogFilterMiddleware = (req, res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
             if (decoded.role === "demo") {
-                // Allow demo user to access their own blog
-                filter = {
+                // Allow normal comments + their own demo comments
+                commentFilter = {
                     $or: [
-                        { isDemo: false, slug },
-                        { isDemo: true, demoAuthor: decoded.username, slug }
+                        { isDemo: false },
+                        { isDemo: true, demoAuthor: decoded.username }
                     ]
                 }
             }
@@ -23,10 +22,10 @@ const blogFilterMiddleware = (req, res, next) => {
         }
     }
 
-    req.blogFilter = filter
+    req.commentFilter = commentFilter
     next()
 }
 
-module.exports = blogFilterMiddleware
+module.exports = commentFilterMiddleware
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

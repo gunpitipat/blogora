@@ -10,8 +10,8 @@ router.post("/signup", signup)
 router.post("/demo/signup", createDemoUser)
 router.post("/login", login)
 router.post("/logout", logout)
-router.get("/profile/:username", profileMiddleware, getProfile) // profileMiddleware is to prevent others' emails from being exposed
-router.get("/profile/:username/blogs", getProfileBlogs)
+router.get("/profile/:username", profileMiddleware, getProfile)
+router.get("/profile/:username/blogs", profileMiddleware, getProfileBlogs)
 
 // Authentication status check for frontend usage
 router.get("/check-auth",noCacheMiddleware, authStatusCheck)
