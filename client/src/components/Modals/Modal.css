@@ -1,0 +1,96 @@
+.Modal .modal-overlay{
+    background: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1002;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
+}
+.Modal .modal-overlay.show{
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.15s ease-in-out;
+}
+.Modal .modal-container{
+    background: var(--neutral-color-medium);
+    width: 75vw;
+    max-width: 500px;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-80%);
+    padding: 1rem;    
+}
+.Modal .trash-background{
+    background: #fff;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.Modal .trash-background svg{
+    color: var(--accent-color);
+    transform: scale(0.95);
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+.Modal .modal-container h1{
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+.Modal .modal-container .modal-content{
+    margin: 0.5rem 0 1.5rem;
+    text-align: center;
+    color: var(--neutral-color-dark);
+}
+.Modal .button-container{
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+.Modal .button-container button{
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--accent-color);
+}
+.Modal .button-container .cancel-button{
+    background: var(--neutral-color-light);
+    color: var(--accent-color);
+    opacity: 0.8;
+}
+.Modal .button-container .confirm-button{
+    background: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+}
+.Modal .button-container button:hover{
+    font-weight: 500;
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .Modal .modal-container{
+        width: 80vw;
+    }
+}
+@media (max-width: 390px) {
+    .Modal .modal-container{
+        width: 85vw;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

@@ -1,0 +1,74 @@
+.PopupAlert .overlay{
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1002;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
+}
+.PopupAlert .overlay.show{
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.15s ease-in-out;
+}
+.PopupAlert .container{
+    background: var(--neutral-color-medium);
+    max-width: 285px;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    position: relative;
+    top: 1.5rem;
+    left: 50%;
+    transform: translate(-50%, 0);
+    padding: 1rem 1.15rem;
+    box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.2);
+}
+.PopupAlert .container p{
+    color: var(--neutral-color-dark);
+}
+.PopupAlert .container button{
+    font-size: 1rem;
+    width: auto; /* Reset since Form button style afftects */
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--accent-color);
+    background: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+    align-self: flex-end;
+}
+.PopupAlert .container button:hover{
+    font-weight: 500;
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (min-width: 425px) {
+    .PopupAlert .container{
+        max-width: 340px;
+    }
+}
+@media (min-width: 1024px) {
+    .PopupAlert .container{
+        max-width: 460px;
+    }
+}
+
+/* PopupAlert in Form */
+.Form .PopupAlert .container{
+    max-width: 285px;
+}
+@media (min-width: 768px) {
+    .Form .PopupAlert .container{
+        max-width: 400px;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */
