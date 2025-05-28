@@ -1,5 +1,5 @@
 import "./Explore.css"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import axios from "axios"
 import WelcomeTooltip from "./WelcomeTooltip";
 import SearchFilter from "./SearchFilter";
@@ -15,9 +15,12 @@ function Explore() {
   const [ showTooltip, setShowTooltip ] = useState(false)
   const [ searchInput, setSearchInput ] = useState("")
   const [ showBackToTop, setShowBackToTop ] = useState(false)
+  const [ isLoading, setIsLoading ] = useState(true)
+
+  const hasRestoredScroll = useRef(false)
+
   const { isAuthenticated, user } = useAuthContext()
   const { setAlertState } = useAlertContext()
-  const [ isLoading, setIsLoading ] = useState(true)
 
   const fetchData = async ()=>{
     setIsLoading(true)
@@ -49,7 +52,7 @@ function Explore() {
       setShowTooltip(true) // Show tooltip only if it hasn’t been seen
     }
     // eslint-disable-next-line
-  },[])
+  }, [])
 
   const closeTooltip = () => {
     setShowTooltip(false)
@@ -70,10 +73,12 @@ function Explore() {
     })
   }, [searchInput, blogs])
 
-  // Store scroll position
+  // Save scroll position
   useEffect(() => {
     const saveScroll = debounce(() => {
-      sessionStorage.setItem("scrollPosition", window.scrollY)
+      if (hasRestoredScroll.current) {
+        sessionStorage.setItem("scrollPosition", window.scrollY)
+      }
     }, 100)
 
     if (blogs.length > 0) { // Prevent storing (overwriting) new scroll position before restoring the previous one properly
@@ -85,15 +90,15 @@ function Explore() {
 
   // Restore scroll position
   useEffect(() => {
-    setTimeout(() => {
-      if (blogs.length > 0) {
-        const storedScroll = sessionStorage.getItem("scrollPosition") || 0
-        if (storedScroll) {
-          window.scrollTo(0, parseFloat(storedScroll))
-        }
+    if (blogs.length > 0 && !hasRestoredScroll.current) {
+      const storedScroll = sessionStorage.getItem("scrollPosition") || 0
+      if (storedScroll) {
+        window.scrollTo(0, parseFloat(storedScroll))
+        console.log(storedScroll)
       }
-    }, 50) // Small delay to ensure both blogs is updated and UI is "fully" rendered
-  }, [blogs])
+      hasRestoredScroll.current = true
+    }
+}, [blogs])
 
   // Show/hide back-to-top button
   useEffect(() => {

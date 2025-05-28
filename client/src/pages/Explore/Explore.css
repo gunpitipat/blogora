@@ -23,7 +23,7 @@
   font-family: var(--body);
 }
 body{
-  padding-top: 80px;
+  padding-top: 80px; /* Navbar spacing */
   background-color: var(--neutral-color-light);
   position: relative; /* Reference for copyright positioning */
 }
@@ -153,6 +153,7 @@ body{
   animation: shimmer 1.4s infinite;
   animation-delay: 0.3s;
 }
+
 @media (max-width: 1024px) {
   .Explore .skeleton .title{
       width: 70%;

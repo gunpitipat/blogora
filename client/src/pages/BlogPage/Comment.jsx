@@ -14,7 +14,7 @@ import axios from "axios";
 import { useLoadingContext } from "../../contexts/LoadingContext";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
 import { useAlertContext } from "../../contexts/AlertContext";
-import { debounce } from "lodash"
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 // Recursive Comment Component
 const Comment = memo((props) => { // Prevent unnecessary re-renders when its props remain the same
@@ -57,19 +57,8 @@ const Comment = memo((props) => { // Prevent unnecessary re-renders when its pro
     const [maxIndent] = useState(2) // Display comments in 3 levels with 2 levels of indentation
 
     // Responsive Design
-    const [isTablet, setIsTablet] = useState(window.innerWidth <= 712 && window.innerWidth > 575)
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 575)
-
-    useEffect(() => {
-        const handleResize = debounce(() => { // Debounce updates state only after 100ms of inactivity (user stops resizing), preventing unnecessary renders
-            setIsTablet(window.innerWidth <= 712 & window.innerWidth > 575)
-            setIsMobile(window.innerWidth <= 575)
-        }, 100)
-
-        window.addEventListener("resize", handleResize)
-
-        return () => window.removeEventListener("resize", handleResize)
-    }, [comment]) // Ensure it runs after content is available
+    const isTablet = useMediaQuery("(max-width: 712px) and (min-width: 576px)")
+    const isMobile = useMediaQuery("(max-width: 575px)")
 
     // Create a reply using shared comment creation function from BlogPage
     const onSendReply = (replyContent) => {

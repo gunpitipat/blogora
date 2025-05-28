@@ -1,21 +1,20 @@
-.LandingPage{
-    align-items: center;
+:root{
+    --max-screen-width: 1512px;
+    --max-screen-height: 900px;
 }
-.LandingPage .btn.try-demo{
-    font-size: 1rem;    
-    cursor: pointer;
-    outline: none;
-    border-radius: 0.25rem;
-    border: 1px solid var(--accent-color);
-    background-color: var(--accent-color);
-    color: var(--neutral-color-light);
-    opacity: 0.9;
-    padding: 0.5rem;    
-    user-select: none;
+.LandingPage section{
+    height: calc(100vh - 80px);
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
-.LandingPage .btn.try-demo:hover{
-    font-weight: 500;
-    opacity: 1;
+
+/* Stacked Layout */
+@media (max-width: 1081px) {
+    .LandingPage section{
+        height: auto;
+    }
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

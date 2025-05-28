@@ -1,9 +1,9 @@
 import "./Navbar.css"
 import { Link, useLocation } from 'react-router-dom'
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useAuthContext } from "../../contexts/AuthContext"
 import { FiMenu } from "react-icons/fi";
-import { debounce } from "lodash"
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 const Navbar = () => {
     const location = useLocation()
@@ -15,15 +15,7 @@ const Navbar = () => {
 
     // Responsive navbar on mobile
     const [ isOpen, setIsOpen ] = useState(false)
-    const [ isMobile, setIsMobile ] = useState(window.innerWidth <= 768)
-    useEffect(() => {
-        const handleResize = debounce(() => {
-            setIsMobile(window.innerWidth <= 768)
-        }, 100) 
-
-        window.addEventListener("resize", handleResize) // Updates isMobile dynamically on resize
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
+    const isMobile = useMediaQuery("(max-width: 768px)")
 
     // Function to toggle Tooltip
     const toggleTooltip = (hoveredMenu) => {

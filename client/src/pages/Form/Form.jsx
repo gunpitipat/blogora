@@ -210,7 +210,7 @@ const Form = ()=>{
                 if (previewOpen) { // Only update when preview is open
                     localStorage.setItem("previewData", JSON.stringify({ title, content }))
                 }
-            }, 500),
+            }, 100),
         [previewOpen]
     )
 
