@@ -13,11 +13,14 @@ import { getTotalOffsetTop } from "../../utils/layoutUtils";
 import { FaUpRightFromSquare, FaPenToSquare } from "react-icons/fa6";
 import { debounce } from "lodash"
 import PopupAlert from "../../components/Popups/PopupAlert";
+import { cleanEditorContent } from "../../utils/contentUtils";
 
 const Form = ()=>{
     const [ title, setTitle ] = useState("")
-
     const [ content, setContent ] = useState(null)
+
+    let initialLabels = { titleLabel: false, contentLabel: false }
+    const [ labels, setLabels ] = useState(initialLabels) 
 
     // Preview
     const [ previewOpen, setPreviewOpen ] = useState(false)
@@ -70,18 +73,10 @@ const Form = ()=>{
         // eslint-disable-next-line
     }, [user?.username])
 
-    // Style: Making label bolder when focusing on input/textarea 
-    let initialLabels = { titleLabel: false, contentLabel: false }
-    const [ labels, setLabels ] = useState(initialLabels)   
-    const focusLabelFunc = (label) => {
+    // Make label bolder when focusing on input/textarea
+    const focusLabel = (label) => {
         initialLabels = { ...initialLabels, [label]: true }
         setLabels(initialLabels) // Updating labels causes a re-render, resetting initialLabels to its initial value
-    }
-    // Style: Click anywhere to stop focusing on text field
-    const outOfFocus = (e) => {
-        if (e.target.nodeName !== "INPUT") {
-            setLabels(initialLabels)
-        }
     }
 
     // Perform scrolling after extendTextarea set to true (the DOM updates)
@@ -111,37 +106,37 @@ const Form = ()=>{
     }, [extendTextarea])
 
     // Submit form data
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault()
         setLoading(true)
-        axios.post(`${process.env.REACT_APP_API}/create`, { title, content }, { withCredentials: true })
-        .then(response => {
+        try {
+            const cleanedContent = cleanEditorContent(content)
+            const response = await axios.post(`${process.env.REACT_APP_API}/create`, { title, content: cleanedContent }, { withCredentials: true })
             setTitle("")
             setContent("")
             setSubmit(true)
             setExtendTextarea(false)
+            setLoading(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
             localStorage.removeItem("blogDraft")
             navigate(`/profile/${user.username}`)
-        })
-        .catch(error => {
+        } catch (error) {
+            setLoading(false)
             if (!error.response) {
                 setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
             } else {
                 setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
             }
-        })
-        .finally(() => {
-            setLoading(false)
-        })
+        }
     }
 
     // Preview Feature
     // Preview button hanlder
     const previewBlog = () => {
         // Open a new tab if window reference is null or inaccessible, or the latest preview is closed
-        if (!previewWindowRef.current || previewWindowRef.current.closed) {    
-            localStorage.setItem("previewData", JSON.stringify({ title, content }))
+        if (!previewWindowRef.current || previewWindowRef.current.closed) {  
+            const cleanedContent = cleanEditorContent(content)
+            localStorage.setItem("previewData", JSON.stringify({ title, content: cleanedContent }))
             const slug = Date.now().toString()
             localStorage.setItem("formSync", slug)
     
@@ -208,7 +203,8 @@ const Form = ()=>{
     const deboundedUpdate = useMemo( // Memoize a returned function from debounce
         () => debounce((title, content) => {
                 if (previewOpen) { // Only update when preview is open
-                    localStorage.setItem("previewData", JSON.stringify({ title, content }))
+                    const cleanedContent = cleanEditorContent(content)
+                    localStorage.setItem("previewData", JSON.stringify({ title, content: cleanedContent }))
                 }
             }, 100),
         [previewOpen]
@@ -237,39 +233,41 @@ const Form = ()=>{
     }, [])
 
     return(
-        <div className="Form" onClick={outOfFocus}>
+        <div className="Form">
             <h2>Create Your Blog</h2>
             <form onSubmit={submitForm}>
                 <div className="title">
-                    <label className={labels.titleLabel? "bold" : null}>
-                        Title <FaPen visibility={labels.titleLabel? "visible":"hidden"}/>
+                    <label className={labels.titleLabel ? "bold" : null}>
+                        Title <FaPen visibility={labels.titleLabel ? "visible" : "hidden"}/>
                     </label>
-                    <input type="text" value={title} onFocus={()=>focusLabelFunc("titleLabel")}
-                        onChange={(e)=>setTitle(e.target.value)}/>
+                    <input type="text" value={title} 
+                        onFocus={() => focusLabel("titleLabel")}
+                        onBlur={() => setLabels(initialLabels)}
+                        onChange={(e) => setTitle(e.target.value)}/>
                 </div>
                 <div className="content" id="content">
-                    <label className={labels.contentLabel? "bold" : null}>
-                        Content <FaPen visibility={labels.contentLabel? "visible":"hidden"}/>
+                    <label className={labels.contentLabel ? "bold" : null}>
+                        Content <FaPen visibility={labels.contentLabel ? "visible":"hidden"}/>
                     </label>
                     <div className={extendTextarea ? "textarea-container extend" : "textarea-container"}>
-                        <div onClick={()=>focusLabelFunc("contentLabel")}>
-                            {content !== null && (
-                                <TipTap 
-                                    content={content} 
-                                    setContent={setContent} 
-                                    submit={submit} 
-                                    setSubmit={setSubmit} 
-                                    contentLabel={labels.contentLabel}
-                                />                 
-                            )}
-                            <div className="sizing" onClick={()=>setExtendTextarea(!extendTextarea)}>
-                                { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{transform:"scaleX(-1)"}}/>}
-                            </div>
+                        {content !== null && (
+                            <TipTap 
+                                content={content} 
+                                setContent={setContent} 
+                                submit={submit} 
+                                setSubmit={setSubmit} 
+                                isFocusing={labels.contentLabel}
+                                onFocus={() => focusLabel("contentLabel")}
+                                onBlur={() => setLabels(initialLabels)}
+                            />                 
+                        )}
+                        <div className="sizing" onClick={() => setExtendTextarea(!extendTextarea)}>
+                            { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{ transform: "scaleX(-1)" }}/>}
                         </div>
                     </div>
                 </div>
                 <footer className="button-group">
-                    <button className="btn savedraft" type="button" onClick={()=>saveDraft(title, content)}>
+                    <button className="btn savedraft" type="button" onClick={() => saveDraft(title, content)}>
                         <span className="icon">
                             <FaPenToSquare />
                         </span>

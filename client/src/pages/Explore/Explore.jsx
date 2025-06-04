@@ -22,14 +22,14 @@ function Explore() {
   const { isAuthenticated, user } = useAuthContext()
   const { setAlertState } = useAlertContext()
 
-  const fetchData = async ()=>{
+  const fetchData = async () => {
     setIsLoading(true)
     try {
       const response = await axios.get(`${process.env.REACT_APP_API}/blogs`, {
         withCredentials: true
       })
       setBlogs(response.data)
-    } catch(error) {
+    } catch (error) {
       if (!error.response) {
         setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
       } else {
@@ -94,7 +94,6 @@ function Explore() {
       const storedScroll = sessionStorage.getItem("scrollPosition") || 0
       if (storedScroll) {
         window.scrollTo(0, parseFloat(storedScroll))
-        console.log(storedScroll)
       }
       hasRestoredScroll.current = true
     }

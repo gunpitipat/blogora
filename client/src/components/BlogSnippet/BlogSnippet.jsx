@@ -8,6 +8,7 @@ import { debounce } from "lodash"
 
 const BlogSnippet = (props) => {
     const { blog, disableInnerLink } = props
+
     const contentRef = useRef(null)
     const [isOverflowing, setIsOverflowing] = useState(false)
 

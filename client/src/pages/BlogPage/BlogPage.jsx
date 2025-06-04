@@ -16,6 +16,7 @@ import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
 import { formatCommentTime, showFullDateTime } from "../../utils/formatDateUtils"
 import { useViewReplyContext } from "../../contexts/ViewReplyContext"
 import { IoChevronBackOutline } from "react-icons/io5";
+import { handleEmptyLine } from "../../utils/contentUtils"
 
 const BlogPage = () => {
     const { slug } = useParams()
@@ -436,6 +437,8 @@ const BlogPage = () => {
     if (blogExists === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
     if (blogExists && blog) {
+        const formattedHtml = handleEmptyLine(blog.content)
+        const parsedContent = parser(formattedHtml)
         return(
             <>
                 <div className="BlogPage" onClick={outOfFocus}>
@@ -474,7 +477,7 @@ const BlogPage = () => {
                             }
                         </header>
                         <main className="TipTap-Result">
-                            {parser(blog.content)}
+                            {parsedContent}
                         </main>
                         <footer>
                             <Link to={`/profile/${blog.author?.username}`} className="author">

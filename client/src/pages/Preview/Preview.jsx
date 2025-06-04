@@ -9,6 +9,7 @@ import { useLocation, useParams } from "react-router-dom";
 import NotFound from "../NotFound/NotFound";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
 import PopupAlert from "../../components/Popups/PopupAlert";
+import { handleEmptyLine } from "../../utils/contentUtils";
 
 const Preview = () => {
     const { slug } = useParams()
@@ -122,6 +123,7 @@ const Preview = () => {
     if (sessionValid === false && !sessionStorage.getItem("previewData")) {
         return <NotFound /> // When a user directly accesses /preview/random-slug
     }
+    
     return (
         <div className="Preview">
             <div className="preview-overlay"></div>
@@ -139,9 +141,9 @@ const Preview = () => {
                         }
                     </header>
                     <main className="TipTap-Result">
-                        {previewData.content?.replace(/<\/?[^>]+(>|$)/g, "").trim() === ""
+                        {previewData.content?.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/gi, "").trim().length === 0
                             ? <p className="placeholder">Write your content...</p>
-                            : parser(previewData.content)
+                            : parser(handleEmptyLine(previewData.content)) || <p className="placeholder">Write your content...</p>
                         }
                     </main>
                     <footer>

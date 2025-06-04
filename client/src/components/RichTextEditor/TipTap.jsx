@@ -5,17 +5,20 @@ import {useEffect} from 'react'
 import Underline from "@tiptap/extension-underline"
 import { IoText } from "react-icons/io5";
 import Heading from "@tiptap/extension-heading";
-// Icons
 import { FaBold, FaItalic, FaStrikethrough, FaHeading, FaListUl, FaListOl, FaUndoAlt, FaRedoAlt, FaUnderline } from "react-icons/fa";
 
 export const MenuBar = (props) => {
   const { editor } = useCurrentEditor()
 
-  const {submit, contentLabel } = props
-  // contentLabel is for styling (focusing label and highlighting paragraph button)
+  const { submit, isFocusing } = props
 
   if (!editor) {
     return null
+  }
+
+  const isActive = (type) => {
+    if (!isFocusing) return false
+    return editor.isActive(type)
   }
 
   return (
@@ -24,13 +27,13 @@ export const MenuBar = (props) => {
         {/* Paragraph button */}
         <button type="button"
           onClick={() => editor.chain().focus().setParagraph().run()}
-          className={ (contentLabel && editor.isActive('paragraph')) ? "paragraph is-active" : "paragraph" }
+          className={ isActive("paragraph") ? "paragraph is-active" : "paragraph" }
         >
           <IoText />
         </button>
         <button type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
+          className={ (isFocusing && editor.isActive('heading', { level: 1 })) ? 'is-active' : ''}
         >
           <FaHeading/>
         </button>
@@ -43,7 +46,7 @@ export const MenuBar = (props) => {
               .toggleBold()
               .run()
           }
-          className={editor.isActive('bold') ? 'is-active' : ''}
+          className={isActive("bold") ? 'is-active' : ''}
         >
           <FaBold/>
         </button>
@@ -56,13 +59,13 @@ export const MenuBar = (props) => {
               .toggleItalic()
               .run()
           }
-          className={editor.isActive('italic') ? 'is-active' : ''}
+          className={isActive("italic") ? 'is-active' : ''}
         >
           <FaItalic/>
         </button>
         <button type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={editor.isActive('underline') ? 'is-active' : ''}
+          className={isActive("underline") ? 'is-active' : ''}
         >
           <FaUnderline/>
         </button>
@@ -75,19 +78,19 @@ export const MenuBar = (props) => {
               .toggleStrike()
               .run()
           }
-          className={editor.isActive('strike') ? 'is-active' : ''}
+          className={isActive("strike") ? 'is-active' : ''}
         >
           <FaStrikethrough/>
         </button>
         <button type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'is-active' : ''}
+          className={isActive("bulletList") ? 'is-active' : ''}
         >
           <FaListUl/>
         </button>
         <button type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive('orderedList') ? 'is-active' : ''}
+          className={isActive("orderedList") ? 'is-active' : ''}
         >
           <FaListOl/>
         </button>
@@ -143,7 +146,7 @@ const extensions = [
     codeBlock: false,
   },{
     HTMLAttributes: {
-      allowedTags: [ 'p', 'h1', 'strong', 'i', 'ul', 'ol', 'li', 'br' ], // Only tags for menubar features
+      allowedTags: [ 'p', 'h1', 'strong', 'i', 'ul', 'ol', 'li' ], // Only tags for menubar features
     },
   }),
   Underline.configure({
@@ -154,32 +157,50 @@ const extensions = [
   Heading.configure({
     levels: [1], // Allow only h1, disable h2-h6
   }),
-  // Link.configure({
-  //   defaultProtocol: 'https',
-  //   protocols: ['http', 'https'],
-  //   openOnClick: true, // Enable opening links by clicking
-  //   HTMLAttributes: {
-  //     class: 'custom-link', // Add a custom class to links
-  //   },
-  // }),
 ]
 
-
 const TipTap = (props) => {
-  const { content, setContent, submit, setSubmit, contentLabel } = props
+  const { content, setContent, submit, setSubmit, isFocusing, onFocus, onBlur } = props
 
-  const onUpdate = ({editor}) => {
+  const onUpdate = ({ editor }) => {
     let htmlContent = editor.getHTML()
 
-    // Keep empty lines visually represented
-    htmlContent = htmlContent.replace(/<p>(\s|&nbsp;)*<\/p>/g, "<p><br></p>");
     // Preserve intentional spaces within text
     htmlContent = htmlContent.replace(/ {2,}/g, match => {
-      return '&nbsp;'.repeat(match.length - 1) + ' '; // Add one real space at the end to prevent long unbreakable lines
+      return '&nbsp;'.repeat(match.length - 1) + ' ' // Add one real space at the end to prevent long unbreakable lines
     })
+    // Preseve a single leading space after opening tag, preventing editor from trimming whitespace
+    htmlContent = htmlContent.replace(/(<[^>]+>) /g, '$1&nbsp;')
 
-    setContent(htmlContent)
-  }  
+    // Disallow leading <br> inside list items (Shift+Enter on an empty list item)
+    let cleanedContent = htmlContent.replace(
+      /(<li>\s*<p>)(?:<(strong|em|u|s)[^>]*>)*(?:&nbsp;|\s|<\/?(strong|em|u|s)[^>]*>)*(<br\s*\/?>\s*)+/gi, // Capture something like <li><p><br>, <li><p><u class=\"my-custom-class\">&nbsp; </u><br>
+      '$1'
+    )
+
+    // Disallow empty list items (Enter on an empty list item)
+    cleanedContent = cleanedContent.replace(
+      /<li>\s*<p>(?:<[^>]+>)*(\s|&nbsp;)*(?:<\/?[^>]+>)*<\/p>\s*<\/li>\s*(?=<li>)/gi, // Capture something like <li><p>&nbsp; </p></li><li> (excluding lookahead <li>)
+      '' // Replacing entire <li> with '' still results in <li><p></p></li> due to default editor behavior
+    )
+
+    // Disallow leading empty <p> inside list items (edge case) caused by inserting list between content and pressing Shift+Enter twice
+    cleanedContent = cleanedContent.replace(
+      /<li>\s*(<p>[\s\S]*<\/p>)\s*<p>[\s\S]*<\/li>/gi, // Capture something like <li><p></p><p><br>Text</p></li>
+      '<li>$1</li>'
+    )
+
+    // Sync editor content displayed only if cleaned up
+    if (cleanedContent !== htmlContent) {
+      const { from } = editor.state.selection
+
+      editor.commands.setContent(cleanedContent, false) // false -> do not add to undo history
+
+      editor.chain().setTextSelection(from).run() // Restore cursor position (selection)
+    }
+
+    setContent(cleanedContent)
+  }
 
   useEffect(() => {
     setSubmit(false)
@@ -188,17 +209,33 @@ const TipTap = (props) => {
 
   return (
     <div className="text-editor">
-      <EditorProvider slotBefore={<MenuBar submit={submit} setSubmit={setSubmit} contentLabel={contentLabel}/>}
-       extensions={extensions} 
-       content={content} 
-       onUpdate={onUpdate}
-       editorProps={{
-        attributes: {
-          id: "text-editor",
+      <EditorProvider 
+        slotBefore={
+          <MenuBar 
+            submit={submit} 
+            setSubmit={setSubmit} 
+            isFocusing={isFocusing}
+          />
         }
-       }}
-       
-      ></EditorProvider> 
+        extensions={extensions} 
+        content={content} 
+        onUpdate={onUpdate}
+        editorProps={{
+          attributes: {
+            id: "text-editor",
+          },
+          handleDOMEvents: {
+            focus: () => {
+              onFocus?.()
+              return false
+            },
+            blur: () => {
+              onBlur?.()
+              return false
+            }
+          }
+        }}
+       /> 
     </div>
   )
 }
