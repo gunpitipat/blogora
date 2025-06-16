@@ -16,7 +16,7 @@ const DemoPopup = () => {
                             <h4 className="subheadline">Full Access</h4>
                             <p>
                                 <span className="highlight">Try the full experience without signing up</span>
-                                <span className="plaintext"> - create blogs, preview and edit posts, comment on any blog, and delete your content anytime.</span>
+                                <span className="plaintext"> - create blogs, preview and edit them, comment on any blog, and delete your content anytime.</span>
                             </p>
                         </section>
                         <section>

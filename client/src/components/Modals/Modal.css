@@ -29,7 +29,7 @@
     transform: translate(-50%,-80%);
     padding: 1rem;    
 }
-.Modal .trash-background{
+.Modal .icon-background{
     background: #fff;
     border-radius: 100%;
     width: 50px;
@@ -39,11 +39,14 @@
     align-items: center;
     margin-bottom: 1rem;
 }
-.Modal .trash-background svg{
+.Modal .icon-background svg{
     color: var(--accent-color);
     transform: scale(0.95);
     font-size: 1.5rem;
     opacity: 0.8;
+}
+.Modal .icon-background .warning-icon{
+    transform: scale(1);
 }
 .Modal .modal-container h1{
     font-size: 1.5rem;
@@ -79,6 +82,33 @@
 .Modal .button-container button:hover{
     font-weight: 500;
     opacity: 1;
+}
+
+/* Modal in Form.jsx */
+.Form .Modal .modal-container{
+    max-width: 525px;
+}
+.Form .Modal .button-container .confirm-button{
+    padding: 5px 14px;
+}
+.Form .Modal .button-container .cancel-button{
+    padding: 5px 18px;
+}
+@media (max-width: 694px) {
+    .Form .Modal .modal-container{
+        width: 400px;
+    }
+    .Form .Modal .modal-container .modal-content{
+        max-width: 340px;
+    }
+}
+@media (max-width: 480px) {
+    .Form .Modal .modal-container{
+        width: 300px;
+    }
+    .Form .Modal .modal-container .modal-content{
+        max-width: 280px;
+    }
 }
 
 /* Responsive Design */

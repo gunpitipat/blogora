@@ -6,7 +6,7 @@ import { useDemoContext } from "../../contexts/DemoContext"
 import { useAuthContext } from "../../contexts/AuthContext";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import { useNavigate } from "react-router-dom"
-import BlogoraGlobe from "../../assets/BlogoraGlobe.png"
+import BlogoraGlobe from "../../assets/images/BlogoraGlobe.png"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { FiArrowUpRight } from "react-icons/fi";

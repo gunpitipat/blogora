@@ -73,13 +73,16 @@ exports.deleteComment = async (req, res) => {
     try {
         const { commentId } = req.params
         const userId = req.userId
-        const isAdmin = req.userRole === "admin" // Allow admin to override delete comment
         
         // Find the comment
-        const comment = await Comments.findById(commentId)
+        const comment = await Comments.findById(commentId).populate({ path: "blog", select: "author" })
         if (!comment) return res.status(404).json({ message: "Comment not found" })
+        
+        const isAdmin = req.userRole === "admin"
+        const isCommentAuthor = comment.user.toString() === userId
+        const isBlogAuthor = comment.blog.author.toString() === userId
 
-        if (userId !== comment.user.toString() && !isAdmin) {
+        if (!isAdmin && !isCommentAuthor && !isBlogAuthor) {
             return res.status(401).json({ message: "Unauthorized" })
         }
         

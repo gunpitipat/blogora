@@ -197,7 +197,7 @@ section.blog-comment .comment-button.disable{
     cursor: not-allowed;
 }
 section.blog-comment .comment-button.disable:hover{
-    background-color: var(--neutral-color-light);
+    box-shadow: none;
 }
 /* Tooltip */
 section.blog-comment .comment-button{

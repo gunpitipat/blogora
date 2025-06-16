@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Explore from './pages/Explore/Explore'
 import Form from './pages/Form/Form'
 import BlogPage from './pages/BlogPage/BlogPage'
@@ -17,43 +17,52 @@ import LandingPage from './pages/LandingPage/LandingPage'
 import Preview from './pages/Preview/Preview'
 import { DemoProvider } from './contexts/DemoContext'
 
-const Router = () => {
-    return(
-        <BrowserRouter>
-            <LoadingProvider>
-                <AlertProvider>
-                    <AuthProvider>
-                        <DemoProvider>
-                            <ViewReplyProvider>
-                                <Layout>
-                                    <Routes>
-                                        <Route path="/" element={<LandingPage />} />
-                                        <Route path="/explore" element={<Explore />} />
-                                        <Route path="/blog/:slug" element={<BlogPage />} />
-                                        <Route path="/profile/:username" element={<Profile />} />
-                                        <Route path="/login" element={<Login />} />
-                                        <Route path="/signup" element={<SignUp />} />
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <AppProviders />,
+        children: [
+            { path: "/", element: <LandingPage /> },
+            { path: "/explore", element: <Explore /> },
+            { path: "/blog/:slug", element: <BlogPage /> },
+            { path: "/profile/:username", element: <Profile /> },
+            { path: "/login", element: <Login /> },
+            { path: "/signup", element: <SignUp /> },
 
-                                        {/* Protected Routes */}
-                                        <Route element={<ProtectedRoute />}>
-                                            <Route path="/create" element={<Form />} />
-                                            <Route path="/blog/edit/:slug" element={<EditBlog />} />
-                                            <Route path="/preview/:slug" element={<Preview />} />
-                                        </Route>
+            // Protected routes
+            {
+                element: <ProtectedRoute />,
+                children: [
+                    { path: "/create", element: <Form /> },
+                    { path: "/blog/edit/:slug", element: <EditBlog /> },
+                    { path: "/preview/:slug", element: <Preview /> }
+                ]
+            },
 
-                                        {/* Catch-all Route for undefined paths */}
-                                        <Route path="*" element={<NotFound />} />
-                                    </Routes> 
-                                </Layout>
-                            </ViewReplyProvider>
-                        </DemoProvider>
-                    </AuthProvider>
-                </AlertProvider>
-            </LoadingProvider>
-        </BrowserRouter>
+            // Undefined paths
+            { path: "*", element: <NotFound /> }
+        ]
+    }
+])
+
+function AppProviders() {
+    return (
+        <LoadingProvider>
+            <AlertProvider>
+                <AuthProvider>
+                    <DemoProvider>
+                        <ViewReplyProvider>
+                            <Layout />
+                        </ViewReplyProvider>
+                    </DemoProvider>
+                </AuthProvider>
+            </AlertProvider>
+        </LoadingProvider>
     )
 }
 
-export default Router
+const Router = () => <RouterProvider router={router} />
+
+export default  Router
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

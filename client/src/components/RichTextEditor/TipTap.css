@@ -34,6 +34,7 @@
   border: 1px solid var(--neutral-color-heavy);
   border-radius: 0.25rem;
   margin-top: 0.5rem;
+  overflow: scroll;
 }
 .tiptap{
   font-size: 1.1rem;

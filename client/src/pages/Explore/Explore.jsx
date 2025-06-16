@@ -9,6 +9,7 @@ import { useAlertContext } from "../../contexts/AlertContext";
 import { debounce } from "lodash"
 import BlogSnippet from "../../components/BlogSnippet/BlogSnippet";
 import Skeleton from "./Skeleton";
+import Footer from "../../components/Layout/Footer";
 
 function Explore() {
   const [ blogs, setBlogs ] = useState([])
@@ -140,9 +141,7 @@ function Explore() {
         </div>
       </div>
       
-      <footer className="copyright">
-        <small>&copy; 2025 Pitipat Pattamawilai. All Rights Reserved.</small>
-      </footer>
+      <Footer />
     </>
   );
 }

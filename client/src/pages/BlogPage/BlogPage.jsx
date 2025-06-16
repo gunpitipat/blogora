@@ -17,6 +17,7 @@ import { formatCommentTime, showFullDateTime } from "../../utils/formatDateUtils
 import { useViewReplyContext } from "../../contexts/ViewReplyContext"
 import { IoChevronBackOutline } from "react-icons/io5";
 import { handleEmptyLine } from "../../utils/contentUtils"
+import Footer from "../../components/Layout/Footer"
 
 const BlogPage = () => {
     const { slug } = useParams()
@@ -466,6 +467,7 @@ const BlogPage = () => {
                                         showModal={showModal}
                                         setShowModal={setShowModal}
                                         action="Delete"
+                                        cancelLabel="Cancel"
                                         title="Confirm Delete"
                                         content={
                                             <p>Are you sure you want to delete "<span style={{fontWeight:"bolder"}}>{blog.title}</span>" blog?</p>
@@ -554,9 +556,7 @@ const BlogPage = () => {
                         {commentLoading && <LoadingScreen /> }
                     </section>
                 </div>
-                <footer className="copyright">
-                    <small>&copy; 2025 Pitipat Pattamawilai. All Rights Reserved.</small>
-                </footer>
+                <Footer />
             </>
         )
     }

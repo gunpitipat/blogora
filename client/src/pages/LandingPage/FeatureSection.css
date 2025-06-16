@@ -1,6 +1,51 @@
 .FeatureSection .container{
     width: 100%;
-    padding-top: 5rem;
+    padding-block: 5rem;
+    /* border: 1px solid red; */
+}
+.FeatureSection #feature-headline{
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin-bottom: 3rem;
+    padding-left: 3rem;
+}
+.FeatureSection #feature-headline .brandname{
+    background: linear-gradient(to right, var(--accent-color), var(--secondary-color), var(--primary-color));
+    background-size: 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+.FeatureSection .features-wrapper{
+    /* border: 1px solid orange; */
+}
+/* Feature panels */
+.FeatureSection .feature-visual{
+    margin-bottom: 2rem;
+}
+.FeatureSection .feature-visual video{
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(101, 92, 85, 0.15);
+}
+.FeatureSection .feature-content{
+    padding-inline: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.FeatureSection .feature-content .feature-subtitle{
+    font-size: 1.4rem;
+    color: var(--accent-color);
+}
+.FeatureSection .feature-content .feature-body{
+    font-size: 1rem;
+    color: var(--neutral-color-dark);
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

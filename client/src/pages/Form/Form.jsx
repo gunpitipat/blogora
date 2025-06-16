@@ -1,5 +1,5 @@
 import "./Form.css"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { FaPen, FaEye } from "react-icons/fa";
 import axios from "axios"
 import { TfiArrowsCorner } from "react-icons/tfi";
@@ -8,12 +8,13 @@ import { useAlertContext } from "../../contexts/AlertContext";
 import TipTap from "../../components/RichTextEditor/TipTap";
 import { useLoadingContext } from "../../contexts/LoadingContext"
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useBlocker } from "react-router-dom";
 import { getTotalOffsetTop } from "../../utils/layoutUtils";
 import { FaUpRightFromSquare, FaPenToSquare } from "react-icons/fa6";
 import { debounce } from "lodash"
 import PopupAlert from "../../components/Popups/PopupAlert";
 import { cleanEditorContent } from "../../utils/contentUtils";
+import Modal from "../../components/Modals/Modal";
 
 const Form = ()=>{
     const [ title, setTitle ] = useState("")
@@ -41,8 +42,14 @@ const Form = ()=>{
     const [ extendTextarea, setExtendTextarea ] = useState(false)
 
     // Save Draft
+    const [ isUnsaved, setIsUnsaved ] = useState(false) // Track whether the user has unsaved work
+    const [ pendingNavigation, setPendingNavigation ] = useState(null)
+    const [ showModal, setShowModal ] = useState(false)
+    const [ forceNavigate, setForceNavigate ] = useState(false) // Disable navigation blocker to allow navigate() when posted successfully
+
     const saveDraft = (title, content) => {
         localStorage.setItem("blogDraft", JSON.stringify({ title, content, author: user?.username }))
+        setIsUnsaved(false)
         setAlertState({ display: true, type: "success", message: "Draft saved successfully." })
     }
 
@@ -72,6 +79,69 @@ const Form = ()=>{
         }
         // eslint-disable-next-line
     }, [user?.username])
+
+    // Track unsaved changes
+    const updateUnsaved = useMemo(() => {
+        return debounce(() => {
+            const saved = localStorage.getItem("blogDraft")
+            let draft = { title: "", content: "", author: user?.username }
+
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved)
+                    if (parsed && parsed.author === user?.username) draft = parsed
+                } catch {
+                    // Ignore corrupted draft
+                }
+            }
+
+            const isChanged = title !== draft.title || content !== draft.content
+            setIsUnsaved(isChanged)
+        }, 300)
+    }, [title, content, user?.username])
+
+    useEffect(() => {
+        updateUnsaved()
+        return () => updateUnsaved.cancel() // Cancel debounce on unmount
+    }, [updateUnsaved])
+
+    // Warn the user before closing or reloading the tab if they have unsaved changes
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (!isUnsaved) return
+
+            setShowModal(false)
+            e.preventDefault()
+            e.returnValue = "" // Trigger native browser confirmation
+        }
+
+        window.addEventListener("beforeunload", handleBeforeUnload)
+
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+    }, [isUnsaved])
+
+    // Intercept navigation and warn the user if they have unsaved changes
+    const blocker = useBlocker(isUnsaved && !forceNavigate)
+
+    useEffect(() => {
+        if (blocker.state === "blocked") {
+            setPendingNavigation(blocker) // Store blocker object to call its methods later
+            setShowModal(true)
+        }
+    }, [blocker])
+
+    // Modal button handlers
+    const handleModalConfirm = useCallback(() => {
+        pendingNavigation?.proceed() // Continue navigation
+        setShowModal(false)
+        setPendingNavigation(null)
+    }, [pendingNavigation])
+
+    const handleModalCancel = useCallback(() => {
+        pendingNavigation?.reset()
+        setShowModal(false)
+        setPendingNavigation(null)
+    }, [pendingNavigation])
 
     // Make label bolder when focusing on input/textarea
     const focusLabel = (label) => {
@@ -109,6 +179,7 @@ const Form = ()=>{
     const submitForm = async (e) => {
         e.preventDefault()
         setLoading(true)
+        setForceNavigate(true)
         try {
             const cleanedContent = cleanEditorContent(content)
             const response = await axios.post(`${process.env.REACT_APP_API}/create`, { title, content: cleanedContent }, { withCredentials: true })
@@ -116,12 +187,14 @@ const Form = ()=>{
             setContent("")
             setSubmit(true)
             setExtendTextarea(false)
+            setIsUnsaved(false)
+            localStorage.removeItem("blogDraft")
             setLoading(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
-            localStorage.removeItem("blogDraft")
             navigate(`/profile/${user.username}`)
         } catch (error) {
             setLoading(false)
+            setForceNavigate(false) // Re-enable navigation blocker
             if (!error.response) {
                 setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
             } else {
@@ -299,6 +372,20 @@ const Form = ()=>{
                     setShowPopupAlert={setShowPopupAlert}
                 />
             } 
+
+            {/* When leaving the page with unsaved changes */}
+            <Modal
+                showModal={showModal}
+                setShowModal={setShowModal}
+                action="Leave"
+                cancelLabel="Stay"
+                title="Unsaved Draft"
+                content={
+                    <p>You have unsaved changes. If you leave now, your draft will be lost.</p>
+                }
+                onConfirm={handleModalConfirm}
+                onCancel={handleModalCancel}
+            />
         </div>
     )
 }

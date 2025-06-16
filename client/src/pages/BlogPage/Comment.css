@@ -192,7 +192,7 @@
 .footer-utilities{
     display: flex;
 }
-.viewReply-button{
+.view-reply-button{
     margin-left: 0.6rem;
     background: transparent;
     border: none;
@@ -204,7 +204,7 @@
     align-items: center;
     width: fit-content;
 }
-.viewReply-button .viewReply-icon{ /* View-reply icon */
+.view-reply-button .view-reply-icon{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -213,7 +213,7 @@
     font-size: 0.95rem;
     margin: 0 0.15rem;
 }
-.viewReply-button:hover{
+.view-reply-button:hover{
     opacity: 1;
 }
 

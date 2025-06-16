@@ -10,6 +10,7 @@ import NotFound from "../NotFound/NotFound";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
 import PopupAlert from "../../components/Popups/PopupAlert";
 import { handleEmptyLine } from "../../utils/contentUtils";
+import Footer from "../../components/Layout/Footer";
 
 const Preview = () => {
     const { slug } = useParams()
@@ -174,9 +175,7 @@ const Preview = () => {
                 }
                 <label>{sessionValid ? "Previewing" : "Preview Disconnected"}</label>
             </div>
-            <footer className="copyright">
-                <small>&copy; 2025 Pitipat Pattamawilai. All Rights Reserved.</small>
-            </footer>
+            <Footer />
             <PopupAlert 
                 popupContent={`This preview tab is disconnected and no longer reflects your updates. To continue previewing live changes, simply close this tab and re-open a new one.`}
                 showPopupAlert={showPopupAlert}

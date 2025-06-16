@@ -88,6 +88,12 @@ const Comment = memo((props) => { // Prevent unnecessary re-renders when its pro
         // eslint-disable-next-line 
     }, [viewReply]) 
 
+    const canDeleteComment = !comment.isDeleted && (
+        user?.username === comment.user?.username ||
+        user?.role === "admin" ||
+        user?.username === blogAuthor
+    )
+    
     // Delete comment
     const deleteComment = async (commentId) => {
         setLoading(true)
@@ -202,7 +208,7 @@ const Comment = memo((props) => { // Prevent unnecessary re-renders when its pro
                         </span>
                     </small>
                 }
-                { ((!comment.isDeleted && user?.username === comment.user?.username) || (!comment.isDeleted && user?.role === "admin")) &&
+                { canDeleteComment &&
                     <>
                         <div className="setting">
                             <span className="comment-setting-icon" onClick={()=>toggleCommentOption(comment._id)}>
@@ -215,9 +221,10 @@ const Comment = memo((props) => { // Prevent unnecessary re-renders when its pro
                             }
                         </div>
                         <Modal
-                            showModal={showCommentModal}
+                            showModal={showCommentModal === comment._id} // Show for only one comment, preventing every modal overlay stacking
                             setShowModal={setShowCommentModal}
                             action="Delete"
+                            cancelLabel="Cancel"
                             title="Confirm Delete"
                             content={
                                 <p>Are you sure you want to delete this comment?</p>
@@ -246,8 +253,8 @@ const Comment = memo((props) => { // Prevent unnecessary re-renders when its pro
                         </div>
                     }
                     {replies.length > 0 &&
-                        <div onClick={toggleReply} className="viewReply-button">
-                            <span className="viewReply-icon">
+                        <div onClick={toggleReply} className="view-reply-button">
+                            <span className="view-reply-icon">
                                 <BiSolidMessageRounded />
                             </span>
                             {individualViewReply
