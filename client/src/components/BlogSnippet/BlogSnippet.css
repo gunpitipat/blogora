@@ -4,7 +4,7 @@
     border-radius: 0.25rem 0.25rem 0 0;
 }
 .BlogSnippet .title h2{
-    display: inline-block; /* Prevent excessive clickable area */
+    display: inline; /* Prevent excessive clickable area */
     font-weight: 900;
     color: var(--accent-color);
     word-break: break-word; /* Break title if too long one exists */
@@ -58,6 +58,11 @@
 .BlogSnippet small.footer .timestamp{
     opacity: 0.7; 
     color: var(--neutral-color-dark);
+}
+/* Pinned blogs */
+.BlogSnippet .pin-icon{
+    font-size: 0.8em;
+    margin-right: 0.5rem;
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

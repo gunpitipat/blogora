@@ -167,14 +167,16 @@ const HeroSection = () => {
                                 See quick tips
                             </BubbleChat>
 
-                            <BubbleChat className="third">
-                                How Blogora works
-                                <span className="new-tab">
-                                    <FiArrowUpRight />
-                                </span>
+                            <BubbleChat className="third link">
+                                <a href="/blog/how-blogora-works" target="_blank" rel="noopener noreferrer">
+                                    How Blogora works
+                                    <span className="new-tab">
+                                        <FiArrowUpRight />
+                                    </span>
+                                </a>
                             </BubbleChat>
 
-                            <BubbleChat className="fourth">
+                            <BubbleChat className="fourth link">
                                 <a href="https://github.com/gunpitipat/blogora" target="_blank" rel="noopener noreferrer">
                                     View on Github
                                     <span className="new-tab">

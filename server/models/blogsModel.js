@@ -19,6 +19,10 @@ const blogSchema = mongoose.Schema({
         lowercase: true,
         unique: true
     },
+    isPinned: {
+        type: Boolean,
+        default: false
+    },
     comments: [{ // Referenced documents: an array of ObjectIds
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comments" // Reference to the Comment model

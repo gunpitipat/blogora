@@ -67,7 +67,7 @@ exports.getAllBlogs = async (req,res) => {
     try {
         const filter = req.blogFilter
         const blogs = await Blogs.find(filter)
-            .sort({ createdAt: -1 }) // Newest first
+            .sort({ isPinned: -1, createdAt: -1 }) // Newest first
             .populate({ path: "author", select: "username" })
 
         res.status(200).json(blogs)

@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom"
 import axios from "axios"
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import "./BlogPage.css"
@@ -44,6 +44,7 @@ const BlogPage = () => {
 
     const { setAlertState } = useAlertContext()
     const navigate = useNavigate()
+    const location = useLocation()
     
     const { setLoading } = useLoadingContext()
 
@@ -435,6 +436,15 @@ const BlogPage = () => {
         setShowCommentTooltip(section)
     }
 
+    // Go-back button handler
+    const handleGoBack = () => {
+        if (location.key !== "default") {
+            navigate(-1)
+        } else {
+            navigate("/explore")
+        }
+    }
+
     if (blogExists === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
     if (blogExists && blog) {
@@ -446,7 +456,7 @@ const BlogPage = () => {
                     {blog && 
                     <div className="blog-section">
                         <header>
-                            <div className="goback-icon" onClick={()=>navigate(-1)}> {/* For easily go back on mobile screen */}
+                            <div className="goback-icon" onClick={handleGoBack}>
                                 <IoChevronBackOutline />
                             </div>
                             <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>

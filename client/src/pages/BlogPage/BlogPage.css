@@ -162,6 +162,11 @@
     padding: 0 2rem;
     margin: 0.5rem 0;
 }
+.TipTap-Result span.fake-br{
+    display: block;
+    width: 100%;
+    height: 1em;
+}
 
 /* Comment Input */
 section.blog-comment{

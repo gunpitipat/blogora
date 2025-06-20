@@ -125,6 +125,9 @@
     border: 1px solid rgba(101, 92, 85, 0.15);
     transform-origin: center;
 }
+.HeroSection .hero-visual .bubble-chat.link{
+    padding: 0;
+}
 .HeroSection .hero-visual .bubble-chat:hover{
     box-shadow: 0 0 8px 2px rgba(188, 184, 177, 0.4);
     transition: box-shadow 0.3s ease;
@@ -148,6 +151,10 @@
 .HeroSection .hero-visual .bubble-chat a{
     text-decoration: none;
     color: var(--accent-color);
+    display: block;
+    padding: 0.75rem 1.5rem;
+    width: 100%;
+    height: 100%;
 }
 .HeroSection .hero-visual .bubble-chat .new-tab{
     color: var(--accent-color);

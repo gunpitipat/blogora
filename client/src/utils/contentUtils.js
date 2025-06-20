@@ -92,7 +92,9 @@ export const extractSubsections = (htmlContent) => {
 export const handleEmptyLine = (htmlContent) => {
     if (!htmlContent) return htmlContent
 
-    return htmlContent.replace(/<p>\s*<\/p>/gi, "<br>") // Empty <p> will take up height of zero
+    return htmlContent
+        .replace(/<p>(\s|&nbsp;)*<\/p>/gi, "<br>") // Fix -> Empty <p> will take up zero height
+        .replace(/<br\s*\/?>/gi, `<span className="fake-br"></span>`) // Fix -> Alone <br> at the end of a block has no visual effect when rendering
 }
 
 // Form & EditBlog

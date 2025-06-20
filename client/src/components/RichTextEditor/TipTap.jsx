@@ -186,8 +186,8 @@ const TipTap = (props) => {
 
     // Disallow leading empty <p> inside list items (edge case) caused by inserting list between content and pressing Shift+Enter twice
     cleanedContent = cleanedContent.replace(
-      /<li>\s*(<p>[\s\S]*<\/p>)\s*<p>[\s\S]*<\/li>/gi, // Capture something like <li><p></p><p><br>Text</p></li>
-      '<li>$1</li>'
+      /<li>\s*<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>\s*(<p>[\s\S]*?<\/p>)\s*<\/li>/gi,
+      '<li>$2</li>'
     )
 
     // Sync editor content displayed only if cleaned up

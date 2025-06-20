@@ -5,6 +5,7 @@ import { formatDayMonth } from "../../utils/formatDateUtils";
 import { getLineHeight } from "../../utils/layoutUtils";
 import { useEffect, useMemo, useRef, useState } from "react"
 import { debounce } from "lodash"
+import { BsPinAngleFill } from "react-icons/bs";
 
 const BlogSnippet = (props) => {
     const { blog, disableInnerLink } = props
@@ -67,12 +68,24 @@ const BlogSnippet = (props) => {
             {disableInnerLink ? (
                 <span className="title">
                     <h2 ref={titleRef}>
+                        { blog.isPinned &&
+                            <span className="pin-icon">
+                                <BsPinAngleFill />
+                            </span>
+                        }
                         {blog.title}
                     </h2>
                 </span>
             ) : (
                 <Link to={`/blog/${blog.slug}`} className="title">
-                    <h2>{blog.title}</h2>
+                    <h2>
+                        { blog.isPinned &&
+                            <span className="pin-icon">
+                                <BsPinAngleFill />
+                            </span>
+                        }
+                        {blog.title}
+                    </h2>
                 </Link>
             )}
 
