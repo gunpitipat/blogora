@@ -12,6 +12,8 @@ import { useGSAP } from "@gsap/react"
 import { FiArrowUpRight } from "react-icons/fi";
 import BubbleChat from "./BubbleChat";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+gsap.registerPlugin(ScrollToPlugin)
 
 const HeroSection = () => {
     const [tryDemoLoading, setTryDemoLoading] = useState(false)
@@ -117,6 +119,14 @@ const HeroSection = () => {
         })
     }, [])
 
+    const scrollToFeature = () => {
+        gsap.to(window, {
+            duration: 1,
+            scrollTo: "#feature-section",
+            ease: "power2.out"
+        })
+    }
+
     return (
         <section className="HeroSection">
             <div className="container">
@@ -159,7 +169,7 @@ const HeroSection = () => {
                     <div className="globe-container">
                         <img src={BlogoraGlobe} alt="BlogoraGlobe" id="blogora-globe"/>
                         <div id="orbit">
-                            <BubbleChat className="first">
+                            <BubbleChat className="first" onClick={scrollToFeature}>
                                 Learn the features
                             </BubbleChat>
 

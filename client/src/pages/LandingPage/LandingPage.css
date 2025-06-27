@@ -2,6 +2,11 @@
     --max-screen-width: 1512px;
     --max-screen-height: 900px;
 }
+.LandingPage{
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
 .LandingPage section{
     height: calc(100vh - 80px);
     width: 100vw;

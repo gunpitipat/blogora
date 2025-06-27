@@ -22,6 +22,14 @@ const Navbar = () => {
         setShowTooltip(hoveredMenu)
     }
 
+    // Handle brand logo click
+    const handleLogoClick = () => {
+        setIsOpen(false)
+        if (location.pathname === "/") {
+            window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top if already on landing page
+        }
+    }
+
     // Handle logout click
     const handleLogout = () => {
         setIsOpen(false) // Close sidebar on mobile
@@ -50,7 +58,7 @@ const Navbar = () => {
                 <ul>
                     <div className="menu-group">
                         <li className="nav-logo">
-                            <Link to="/" onClick={() => setIsOpen(false)}>
+                            <Link to="/" onClick={handleLogoClick}>
                                 <span className="blog">BLOG</span><span className="ora">ORA</span>
                             </Link>
                         </li>

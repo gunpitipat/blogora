@@ -4,7 +4,7 @@ import { useMediaQuery } from "../../hooks/useMediaQuery"
 
 
 const BubbleChat = (props) => {
-    const { className, children } = props
+    const { className, children, onClick = () => {} } = props
     const ref = useRef()
     const { scrollY } = useScroll()
 
@@ -14,7 +14,12 @@ const BubbleChat = (props) => {
     const y = useTransform(scrollY, [0, 300], [0, isSmallDevice ? -15 : -30])
 
     return (
-        <motion.div ref={ref} className={`bubble-chat ${className ?? ""}`} style={{ y }}>
+        <motion.div 
+            ref={ref} 
+            className={`bubble-chat ${className ?? ""}`} 
+            style={{ y }} 
+            onClick={onClick}
+        >
             {children}
         </motion.div>
     )

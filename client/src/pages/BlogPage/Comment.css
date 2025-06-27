@@ -58,7 +58,7 @@
     max-height: none;
 }
 .comment-container .comment .reference-author{
-    color: #88726b;
+    color: rgba(70, 63, 58, 0.85);
     font-size: 0.95rem;
     font-weight: 900;
 }
