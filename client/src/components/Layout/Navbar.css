@@ -8,6 +8,7 @@
     display: flex;
     padding: 0 1rem;
     z-index: 999;
+    transition: opacity 0.3s ease, transform 0.5s ease; /* For hiding navbar during horizontal scroll */
 }
 .Navbar ul{
     list-style: none;
@@ -151,6 +152,12 @@
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0); /* Moves back to normal position */
+}
+/* Hide navbar during horizontal scroll on the landing page */
+.Navbar.hide{
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
 }
 
 /* Mobile Screen */

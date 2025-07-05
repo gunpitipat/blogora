@@ -1,11 +1,12 @@
 const FeaturePanel = (props) => {
-    const { dataSrc, subtitle, bodyText } = props
+    const { isFirst = false, dataSrc, subtitle, bodyText } = props
 
     return (
         <div className="feature-panel">
             <div className="feature-visual">
                 <video
-                    autoPlay muted loop playsInline
+                    autoPlay={isFirst}
+                    muted loop playsInline
                     preload="none" data-src={dataSrc} // For lazy loading
                 >
                     <source type="video/mp4"/>

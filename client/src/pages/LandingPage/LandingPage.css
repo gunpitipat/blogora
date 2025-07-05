@@ -5,21 +5,12 @@
 .LandingPage{
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    align-items: center; /* Vertically center sections when screen width is over 1512px */
 }
 .LandingPage section{
-    height: calc(100vh - 80px);
     width: 100vw;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-}
-
-/* Stacked Layout */
-@media (max-width: 1081px) {
-    .LandingPage section{
-        height: auto;
-    }
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

@@ -10,13 +10,15 @@ import BlogoraGlobe from "../../assets/images/BlogoraGlobe.png"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { FiArrowUpRight } from "react-icons/fi";
+import { FaAngleDown } from "react-icons/fa6";
 import BubbleChat from "./BubbleChat";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-gsap.registerPlugin(ScrollToPlugin)
+import { ScrollToPlugin, ScrollTrigger } from "gsap/all";
+gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
 const HeroSection = () => {
     const [tryDemoLoading, setTryDemoLoading] = useState(false)
+    const [hideScrollHint, setHideScrollHint] = useState(false)
     const isMobile = useMediaQuery("(max-width: 550px)")
 
     const { setAlertState } = useAlertContext()
@@ -95,6 +97,12 @@ const HeroSection = () => {
         gsap.from(".btn", { opacity: 0, y: 8, ease: "power2.out" })
         // gsap.from("#blogora-globe", { scale: 0.97, duration: 1, ease: "power3.out" })
         gsap.from("#orbit", { opacity: 0, duration: 0.5, ease: "power3.out" })
+        gsap.from("#scroll-hint", { opacity: 0, duration: 1.8, delay: 1.2, ease: "power4.in" })
+        ScrollTrigger.create({
+            trigger: "#feature-headline",
+            start: "top 80%",
+            onEnter: () => setHideScrollHint(true)
+        })
 
         // Stagger each bubble-chat animation by 0.15s
         // In side-by-side and stacked layouts, the sequence is 1 -> 2 -> 4 -> 3 around the orbit
@@ -196,6 +204,12 @@ const HeroSection = () => {
                             </BubbleChat>
                         </div>
                     </div>
+                </div>
+     
+                <div id="scroll-hint" className={`${hideScrollHint ? "hide" : ""}`}>
+                    <span>
+                        <FaAngleDown />
+                    </span>      
                 </div>
             </div>
         </section>

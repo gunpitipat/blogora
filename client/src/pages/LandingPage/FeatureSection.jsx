@@ -4,13 +4,18 @@ import featureVideo1 from "../../assets/videos/blogora-feature-1.mp4"
 import featureVideo2 from "../../assets/videos/blogora-feature-2.mp4"
 import featureVideo3 from "../../assets/videos/blogora-feature-3.mp4"
 import { lazyLoadVideos } from "../../utils/lazyVideoLoader"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/all"
+import { debounce } from "lodash"
 gsap.registerPlugin(ScrollTrigger)
 
 const FeatureSection = () => {
+    const containerRef = useRef(null)
+    const wrapperRef = useRef(null)
+    const isSmallDevice = useMediaQuery("(max-width: 768px)")
 
     useEffect(() => {
         lazyLoadVideos()
@@ -31,42 +36,47 @@ const FeatureSection = () => {
                 toggleActions: "play none none none"
             }
         })
+    }, [])
 
-        // Horizontal scroll
+    // Horizontal scroll
+    useGSAP(() => {
         const panels = gsap.utils.toArray(".feature-panel")
         const videos = gsap.utils.toArray(".feature-panel video")
         const scrollDots = gsap.utils.toArray(".scroll-dot")
-        const featureWrapper = document.querySelector(".feature-wrapper")
-        const container = document.getElementById("feature-container")
+        const featureWrapper = wrapperRef.current
+        const container = containerRef.current
 
-        if (featureWrapper && container) {
-            const horizontalDistance = featureWrapper.scrollWidth - container.offsetWidth // Full content width - visible viewport width
-            container.style.marginBottom = horizontalDistance + "px" // Add vertical space for GSAP to finish the entire horizontal scroll
+        let currentIndex = -1 // Track current visible panel
+        let videoTimeout // Slight delay before playing/pausing video
+        let hasPausedAtStart = false
 
-            let currentIndex = -1 // Track current visible panel
-            let videoTimeout // Slight delay before playing/pausing video
+        const playVideoAtIndex = (index) => {
+            if (!videos.length || index === currentIndex) return // Avoid restarting if the panel index doesn't change
+            currentIndex = index
 
-            const playVideoAtIndex = (index) => {
-                if (index === currentIndex) return // Avoid restarting if the panel index doesn't change
-                currentIndex = index
-
-                clearTimeout(videoTimeout)
-                videoTimeout = setTimeout(() => {
-                    videos.forEach((video, i) => {
-                        // Play the one currently in view
-                        if (i === index) {
-                            if (video.paused) { // Prevent restarting if it's already playing
-                                video.currentTime = 0
-                                video.play().catch(() => {}) // catch autoplay errors (e.g. if paused too soon or not ready)
-                            }
-                        } else {
-                            // Pause all other videos
-                            video.pause()
+            clearTimeout(videoTimeout)
+            videoTimeout = setTimeout(() => {
+                videos.forEach((video, i) => {
+                    // Play the one currently in view
+                    if (i === index) {
+                        if (video.paused) { // Prevent restarting if it's already playing
                             video.currentTime = 0
+                            video.play().catch(() => {}) // catch autoplay errors (e.g. if paused too soon or not ready)
                         }
-                    })
-                }, 300)
-            }
+                    } else {
+                        // Pause all other videos
+                        video.pause()
+                        video.currentTime = 0
+                    }
+                })
+            }, 300)
+        }
+
+        const setupScroll = () => {
+            if (!featureWrapper || !container) return
+
+            const horizontalDistance = featureWrapper.scrollWidth - container.offsetWidth // Full content width - visible viewport width
+            container.style.marginBottom = horizontalDistance + "px" // Add vertical scroll space for GSAP to finish the full horizontal animation
 
             gsap.to(".feature-wrapper", {
                 x: () => -1 * horizontalDistance,
@@ -74,7 +84,7 @@ const FeatureSection = () => {
                 scrollTrigger: {
                     id: "horizontal-scroll",
                     trigger: container,
-                    start: "bottom bottom",
+                    start: "center center",
                     end: () => "+=" + horizontalDistance,
                     pin: true,
                     scrub: 0.5,
@@ -98,14 +108,13 @@ const FeatureSection = () => {
                         playVideoAtIndex(index)
                     }
                 }
-            })
+            })          
 
-            // Briefly pause at the first and last panels on initial visit to prevent skipping the entire section
-            let hasPausedAtStart = false
-
+            // Briefly pause at first and last panels on initial visit to prevent skipping the entire section
             ScrollTrigger.create({
+                id: "pause-scroll",
                 trigger: container,
-                start: "bottom bottom",
+                start: "center center",
                 end: () => "+=" + horizontalDistance,
                 onEnter: () => {
                     if (hasPausedAtStart) return
@@ -128,11 +137,59 @@ const FeatureSection = () => {
                 }
             })
         }
+
+        // Initial setup
+        setupScroll()
+
+        const handleResize = debounce(() => {
+            // Kill stale scroll triggers
+            ScrollTrigger.getById("horizontal-scroll")?.kill()
+            ScrollTrigger.getById("pause-scroll")?.kill()
+
+            setupScroll() // Recreate ScrollTriggers
+            
+            requestAnimationFrame(() => {
+                ScrollTrigger.refresh() // Recalculate and update everything after layout changes
+            })
+        }, 300)
+
+        window.addEventListener("resize", handleResize)
+
+        return () => {
+            window.removeEventListener("resize", handleResize)
+            handleResize.cancel?.() // In case debounce is still pending
+            clearTimeout(videoTimeout)
+        }
     }, [])
+
+    // Hide navbar during horizontal scroll on laptop and desktop
+    useEffect(() => {
+        if (isSmallDevice) return
+
+        const checkIfCentered = () => {
+            const navbar = document.querySelector(".Navbar")
+            const container = containerRef.current
+            if (!navbar || !container) return
+
+            const rect = container.getBoundingClientRect()
+            const containerCenter = rect.top + rect.height / 2
+            const viewportCenter = window.innerHeight / 2
+            const threshold = 80
+
+            if (Math.abs(containerCenter - viewportCenter) < threshold) { // Check how close the centers of container and viewport are to the threshold
+                navbar.classList.add("hide")
+            } else {
+                navbar.classList.remove("hide")
+            }
+        }
+
+        window.addEventListener("scroll", checkIfCentered)
+        return () => window.removeEventListener("scroll", checkIfCentered)
+    }, [isSmallDevice])
 
     return (
         <section className="FeatureSection" id="feature-section">
-            <div className="container" id="feature-container">
+            <div className="container" id="feature-container" ref={containerRef}>
                 <h2 id="feature-headline">
                     What you can do {" "}
                     <span className="headline-sm-split"><br /></span>
@@ -141,12 +198,14 @@ const FeatureSection = () => {
                         Blogora
                     </span>
                 </h2>
+                
                 <div id="feature-animate-in"> {/* For slide-in animation; separated from .feature-wrapper to avoid conflicting x-transitions with horizontal scroll */}
-                    <div className="feature-wrapper">
+                    <div className="feature-wrapper" ref={wrapperRef}>
                         <FeaturePanel 
+                            isFirst
                             dataSrc={featureVideo1}
                             subtitle={`Create Your Blog`}
-                            bodyText={`Compose your thoughts and format your content with a rich text editor designed to help you express ideas clearly.`}
+                            bodyText={`Compose your thoughts and format your content with a rich text editor designed to help you express ideas freely whether by making your blog more structured, adding your style, or keeping it simple.`}
                         />
                         <FeaturePanel
                             dataSrc={featureVideo2}
@@ -160,8 +219,9 @@ const FeatureSection = () => {
                         />
                     </div>
                 </div>
+
                 <div className="scroll-progress">
-                    <span className="scroll-dot"></span>
+                    <span className="scroll-dot active"></span>
                     <span className="scroll-dot"></span>
                     <span className="scroll-dot"></span>
                 </div>

@@ -1,14 +1,20 @@
 /* Side-by-side layout (desktop) */
+.HeroSection{
+    height: calc(100vh - 80px);
+    max-width: var(--max-screen-width);
+    max-height: calc(var(--max-screen-height) - 80px); /* max screen height = navbar height + section height */
+}
 .HeroSection .container{
     height: 100%;
     width: 100%;
+    padding-inline: 3rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
     display: flex;
     align-items: center;    
     justify-content: space-between;
     gap: 3rem;
-    padding-inline: 3rem;
-    max-width: var(--max-screen-width);
-    max-height: calc(var(--max-screen-height) - 80px);
+    position: relative; /* Reference for scroll hint positioning */
 }
 .HeroSection .hero-content{
     flex: 1 0 50%;
@@ -163,9 +169,38 @@
     top: 0;
     right: 0;
 }
+/* Subtle scroll hint */
+.HeroSection #scroll-hint{
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2; /* Prevent .hero-visual from overlapping */
+    opacity: 0.25;
+}
+.HeroSection #scroll-hint.hide{
+    opacity: 0 !important;
+    transition: opacity 0.2s ease-out;
+}
+.HeroSection #scroll-hint span{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--accent-color);
+    font-size: 1.4rem;
+    animation: bounce 1.5s ease-in-out infinite;
+}
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(4px);
+    }
+}
 
 /* Responsive Design */
-@media (max-width: 1426px) { /* For 1366px screen */
+@media (max-width: 1426px) {
     .HeroSection .hero-content #hero-headline{
         font-size: 2.5rem;
     }
@@ -176,7 +211,7 @@
         width: 334px;
     }
 }
-@media (max-width: 1285px) { /* For 1280px screen */
+@media (max-width: 1285px) {
     .HeroSection .hero-content #hero-headline{
         font-size: 2.2rem;
     }
@@ -212,12 +247,14 @@
     }
 }
 /* Stacked Layout (tablet) */
-@media (max-width: 1081px) { /* For 1024px screen */
+@media (max-width: 1081px) {
+    .HeroSection{
+        height: auto;
+        max-height: none;
+    }
     .HeroSection .container{
         flex-direction: column;
         justify-content: flex-start;
-        height: auto;
-        max-height: none;
         padding-top: 5rem;
     }
     .HeroSection .hero-content{
@@ -255,6 +292,9 @@
     .HeroSection .hero-visual .bubble-chat.fourth{
         bottom: 10%;
         right: -8%;
+    }
+    .HeroSection #scroll-hint{
+        bottom: 0.5rem;
     }
 }
 @media (max-width: 860px) { /* For 800px screen */

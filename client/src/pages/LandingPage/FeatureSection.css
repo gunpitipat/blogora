@@ -1,9 +1,12 @@
-/* Mobile-first design (375px width) */
+/* Stacked Layout (Mobile-first) */
+.FeatureSection{
+    height: auto; /* Allows dynamic height to respect .container's bottom margin for horizontal scroll */
+}
 .FeatureSection .container{
     width: 100%;
     height: 100%;
-    padding-top: 2.5rem;
-    border-bottom: 1px solid red;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
     display: flex;
     flex-direction: column;
     gap: 3rem;
@@ -27,26 +30,26 @@
     display: flex;
     gap: 1.5rem;
     width: fit-content;
-    height: 475px; /* Prevents panel from stretching .feature-wrapper and pushing scroll dots down when content has more lines */
+    height: 480px; /* Prevents panel from stretching .feature-wrapper and pushing scroll dots down when content has more lines */
 }
 /* Feature panels */
 .FeatureSection .feature-panel{
     min-width: 100vw;
+    height: 100%;
     padding-block: 2rem;
     border-radius: 0.75rem;
     border: 1px solid rgba(101, 92, 85, 0.3);
     box-shadow: 0 0 8px 2px rgba(188, 184, 177, 0.3);
-}
-.FeatureSection .feature-visual{
-    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: var(--neutral-color-light);
 }
 .FeatureSection .feature-visual video{
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;;
     pointer-events: none;
-    /* border-radius: 0.5rem; */
-    /* border: 1px solid rgba(101, 92, 85, 0.15); */
 }
 .FeatureSection .feature-content{
     padding-inline: 3rem;
@@ -81,6 +84,162 @@
 }
 .FeatureSection .scroll-progress .scroll-dot.active{
     width: 28px;
+}
+
+/* Responsive Design */
+@media (max-width: 374px) {
+    .FeatureSection .feature-wrapper{
+        height: 485px;
+    }
+    .FeatureSection .feature-content{
+        padding-inline: 2.5rem;
+    }
+}
+@media (min-width: 396px) {
+    .FeatureSection .feature-wrapper{
+        height: 500px;
+    }
+}
+@media (min-width: 415px) { /* Make it consistent with .hero-content padding-left */
+    .FeatureSection #feature-headline{
+        padding-left: 4rem;
+    }
+}
+@media (min-width: 468px) {
+    .FeatureSection .feature-wrapper{
+        height: 525px;
+    }
+}
+@media (min-width: 551px) { /* Align #feature-headline with #hero-headline */
+    .FeatureSection #feature-headline{
+        text-align: center;
+        padding-left: 0;
+    }
+    .FeatureSection .headline-sm-split{
+        display: none;
+    }
+    .FeatureSection .feature-wrapper{
+        padding-inline: 2rem;
+        gap: 2rem;
+    }
+    .FeatureSection .feature-panel{
+        min-width: 90vw;
+    }
+}
+@media (min-width: 600px) {
+    .FeatureSection .feature-visual{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+    .FeatureSection .feature-visual::before{ /* Subtle frame for video, avoiding extra inline space when screen widens */
+        content: "";
+        z-index: -1;
+        width: calc(100% - 4rem); /* Simulate 2rem padding-inline */
+        height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 0.25rem;
+        background-color: rgba(101, 92, 85, 0.05);
+    }
+    .FeatureSection .feature-visual video{
+        width: 538px;
+        height: 303px;
+        border: 0.5px solid rgba(101, 92, 85, 0.15);
+    }
+}
+@media (min-width: 861px) {
+    .FeatureSection #feature-headline{
+        font-size: 2.1rem;
+    }
+    .FeatureSection .feature-wrapper{
+        padding-inline: 3rem;
+        gap: 3rem;
+        height: 506px;
+    }
+}
+/* Side-by-side layout (desktop) */
+@media (min-width: 1082px) {
+    .FeatureSection .feature-wrapper{
+        padding-inline: 4rem;
+        gap: 4rem;
+        height: 416px;
+    }
+    .FeatureSection .feature-panel{
+        padding-inline: 3.5rem;
+        padding-block: 3.5rem;
+        flex-direction: row;
+        gap: 3rem;
+    }
+    .FeatureSection .feature-visual::before{
+        display: none;
+    }
+    .FeatureSection .feature-visual video{
+        width: fit-content;
+        border-radius: 0.25rem;
+        border-width: 1px;
+    }
+    .FeatureSection .feature-content{
+        padding-inline: 0;
+        gap: 1rem;
+        justify-content: center;
+    }
+    .FeatureSection .feature-content .feature-subtitle{
+        font-size: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(101, 92, 85, 0.15);
+    }
+    .FeatureSection .feature-content .feature-body{
+        font-size: 1.1rem;
+    }
+}
+@media (min-width: 1280px) {
+    .FeatureSection .feature-wrapper{
+        padding-inline: 8rem;
+        gap: 5rem;
+        height: 456px;
+    }
+    .FeatureSection .feature-panel{
+        min-width: 80vw;
+    }
+    .FeatureSection .feature-visual video{
+        height: 340px;
+    }
+}
+@media (min-width: 1440px) {
+    .FeatureSection .feature-wrapper{
+        padding-inline: 10rem;
+        gap: 6rem;
+    }
+    .FeatureSection .feature-panel{
+        min-width: 75vw;
+    } 
+}
+/* Full HD Desktop (1920x1080) */
+@media (min-width: 1900px) {
+    .FeatureSection #feature-headline{
+        font-size: 2.4rem;
+    }
+    .FeatureSection .feature-wrapper{
+        padding-inline: 14rem;
+        gap: 8rem;
+        height: 512px;
+    }
+    .FeatureSection .feature-panel{
+        min-width: 1400px;
+    }
+    .FeatureSection .feature-visual video{
+        height: 400px;
+    }
+    .FeatureSection .feature-content .feature-subtitle{
+        font-size: 1.8rem;
+    }
+    .FeatureSection .feature-content .feature-body{
+        font-size: 1.4rem;
+    }
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */
