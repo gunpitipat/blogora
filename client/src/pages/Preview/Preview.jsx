@@ -1,38 +1,36 @@
 import "./Preview.css"
-import { useState, useEffect } from "react"
-import { IoChevronBackOutline } from "react-icons/io5";
 import parser from "html-react-parser"
+import { useState, useEffect } from "react"
+import { useLocation, useParams } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { formatDayMonth } from "../../utils/formatDateUtils";
-import { LuCirclePlus } from "react-icons/lu";
-import { useLocation, useParams } from "react-router-dom";
-import NotFound from "../NotFound/NotFound";
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
-import PopupAlert from "../../components/Popups/PopupAlert";
 import { handleEmptyLine } from "../../utils/contentUtils";
+import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
+import NotFound from "../NotFound/NotFound";
+import PopupAlert from "../../components/Popups/PopupAlert";
 import Footer from "../../components/Layout/Footer";
+import { IoChevronBackOutline } from "react-icons/io5";
+import { LuCirclePlus } from "react-icons/lu";
 
 const Preview = () => {
     const { slug } = useParams()
     const [sessionValid, setSessionValid] = useState(null)
-    const location = useLocation()
-
     const [previewData, setPreviewData] = useState({ title: "", content: "" })
+    const [showPopupAlert, setShowPopupAlert] = useState(false)
 
-    const [ showPopupAlert, setShowPopupAlert ] = useState(false)
-
+    const location = useLocation()
     const { user } = useAuthContext()
 
     // Validate and set a flag when preview opens
     useEffect(() => {        
-        sessionStorage.setItem("previewSync", slug) // To verify sync between Form and Preview
+        sessionStorage.setItem("previewSync", slug) // To verify sync between CreateBlog/EditBlog and Preview
 
-        // Check if preview is opened and controllable by Form
+        // Check if preview is open and controllable by CreateBlog/EditBlog
         const validatePreview = () => {
             // If a user navigates away regardless of whether they return or not
             if (sessionStorage.getItem("previousPath") && (sessionStorage.getItem("previousPath") !== sessionStorage.getItem("previewSync"))) {
                 setSessionValid(false)
-                localStorage.setItem("previewOpen", "false") // Notify Form
+                localStorage.setItem("previewOpen", "false") // Notify CreateBlog/EditBlog
             } else if (localStorage.getItem("formSync") === sessionStorage.getItem("previewSync")) {
                 localStorage.setItem("previewOpen", "true") // Set a flag if it's controllable
                 setSessionValid(true)
@@ -41,7 +39,7 @@ const Preview = () => {
             }
         }
         
-        // Listen for formSync removing on Form unmount
+        // Listen for formSync removing on CreateBlog/EditBlog unmount
         const handleStorageChange = (event) => {
             if (event.key === "formSync" && !event.newValue) {
                 setSessionValid(false)
@@ -100,7 +98,7 @@ const Preview = () => {
         return () => window.removeEventListener("storage", handleStorageChange)
     }, [sessionValid])
 
-    // Clean up localStorage by notifying Form
+    // Clean up localStorage by notifying CreateBlog/EditBlog
     useEffect(() => {
         const handleBeforeUnload = () => {
             if (sessionValid) {
@@ -115,9 +113,7 @@ const Preview = () => {
     // Show PopupAlert when sessionValid is false
     useEffect(() => {
         if (sessionValid === null) return
-        if (sessionValid === false) {
-            setShowPopupAlert(true)
-        }
+        if (sessionValid === false) setShowPopupAlert(true)
     }, [sessionValid])
 
     if (sessionValid === null) return <LoadingScreen />
@@ -126,56 +122,73 @@ const Preview = () => {
     }
     
     return (
-        <div className="Preview">
-            <div className="preview-overlay"></div>
-            <div className="BlogPage">
-                <div className="blog-section">
+        <div className="preview">
+            <div className="preview-overlay" />
+            <div className="blog-page">
+                <section className="blog-content">
                     <header>
+                        { previewData.title?.trim() === "" 
+                            ?   <h1 className="title placeholder">
+                                    Enter Your Title
+                                </h1>
+                            :   <h1 className="title">
+                                    {previewData.title.trim().substring(0, 60)}
+                                </h1>
+                        }
                         <div className="goback-icon">
                             <IoChevronBackOutline />
                         </div>
-                        {previewData.title?.trim() === "" 
-                            ? <h1 className="title placeholder">Enter Your Title</h1>
-                            : <h1 className="title">
-                                {previewData.title.trim().substring(0, 60)}
-                              </h1>
-                        }
                     </header>
-                    <main className="TipTap-Result">
-                        {previewData.content?.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/gi, "").trim().length === 0
-                            ? <p className="placeholder">Write your content...</p>
-                            : parser(handleEmptyLine(previewData.content)) || <p className="placeholder">Write your content...</p>
+                    
+                    <main className="tiptap-result">
+                        { previewData.content?.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/gi, "").trim().length === 0
+                            ?   <p className="placeholder">
+                                    Write your content...
+                                </p>
+                            :   parser(handleEmptyLine(previewData.content)) || 
+                                <p className="placeholder">
+                                    Write your content...
+                                </p>
                         }
                     </main>
+
                     <footer>
                         <span className="author">
                             {user?.username}
                         </span>
                         <span className="timestamp">
-                            <label>{formatDayMonth(Date.now())}</label>
+                            <label>
+                                {formatDayMonth(Date.now())}
+                            </label>
                         </span>
                     </footer>
-                </div>
-                <section className="blog-comment">
-                    <button className="comment-button">
-                        <span className="comment-icon">
+                </section>
+
+                <section className="add-comment">
+                    <button className="add-comment-btn">
+                        <span className="add-comment-icon">
                             <LuCirclePlus />
                         </span>
                         <span>Comment</span>
                     </button>
                 </section>
-                <section className="comments no-children"></section>
+
+                <section className="comments no-children" />
+                <Footer />
             </div>
+
             <div className={`indicator ${sessionValid ? "" : "disconnected"}`}>
-                {sessionValid &&
-                <div>
-                    <div className="outer-circle"></div>
-                    <div className="inner-circle"></div>
-                </div>
+                { sessionValid &&
+                    <div>
+                        <div className="outer-circle" />
+                        <div className="inner-circle" />
+                    </div>
                 }
-                <label>{sessionValid ? "Previewing" : "Preview Disconnected"}</label>
+                <label>
+                    {sessionValid ? "Previewing" : "Preview Disconnected"}
+                </label>
             </div>
-            <Footer />
+
             <PopupAlert 
                 popupContent={`This preview tab is disconnected and no longer reflects your updates. To continue previewing live changes, simply close this tab and re-open a new one.`}
                 showPopupAlert={showPopupAlert}

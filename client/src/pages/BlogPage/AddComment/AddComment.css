@@ -1,0 +1,43 @@
+.add-comment .add-comment-btn {
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--accent-color);
+    border: 1px solid var(--neutral-color-heavy);
+    border-radius: 17px; /* Circular shaped corner => (height / 2) px */
+    background-color: var(--neutral-color-light);
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.add-comment .add-comment-btn:hover {
+    box-shadow: 1px 1px 8px rgba(170, 170, 170,0.2);
+}
+.add-comment .add-comment-btn.active {
+    border-radius: 17px 17px 0 0;
+    border-bottom: none;
+}
+.add-comment .add-comment-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 0.25rem;
+}
+/* For users not logged in */
+.add-comment .add-comment-btn.disabled {
+    cursor: not-allowed;
+}
+.add-comment .add-comment-btn.disabled:hover {
+    box-shadow: none;
+}
+.add-comment .add-comment-btn.disabled.no-hover {
+    opacity: 0.5;
+}
+
+/* Tooltip */
+@media (max-width: 768px) {
+    .add-comment .tooltip {
+        display: none;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

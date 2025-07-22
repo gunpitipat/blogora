@@ -1,24 +1,23 @@
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { useParams, Link, useLocation } from "react-router-dom"
 import "./Profile.css"
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { useParams, Link, useLocation } from "react-router-dom"
+import { useAuthContext } from "../../contexts/AuthContext"
+import { useAlertContext } from "../../contexts/AlertContext"
 import { useLoadingContext } from "../../contexts/LoadingContext"
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
-import { useAuthContext } from "../../contexts/AuthContext"
-import { useAlertContext } from "../../contexts/AlertContext"
 import BlogSnippet from "../../components/BlogSnippet/BlogSnippet"
 
 const Profile = () => {
     const { username: usernameParam } = useParams()
-    const [ userData, setUserData ] = useState({ email: null, username: null })
-    const [ userBlogs, setUserBlogs ] = useState([])    
-    const [ profileExists, setProfileExists ] = useState(null)
+    const [userData, setUserData] = useState({ email: null, username: null })
+    const [userBlogs, setUserBlogs] = useState([])    
+    const [profileExists, setProfileExists] = useState(null)
 
     const { setLoading } = useLoadingContext()
     const { user, setSessionExpired } = useAuthContext()
     const { setAlertState } = useAlertContext()
-
     const location = useLocation()
 
     // Get personal user data
@@ -29,11 +28,10 @@ const Profile = () => {
                 signal: abortSignal // Pass abortController signal to link the request with abortController
             })
             return response.data // User exists -> { email ?, username }
+        
         } catch (error) {
             // Ignore request cancellation errors to avoid unnecessary logs
-            if (axios.isCancel(error)) { 
-                return null
-            }
+            if (axios.isCancel(error)) return null
 
             if (!error.response) {
                 setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
@@ -63,10 +61,10 @@ const Profile = () => {
                 signal: abortSignal 
             })
             return response.data // [ blog documents ]
+
         } catch (error) {
-            if (axios.isCancel(error)) {
-                return null
-            }
+            if (axios.isCancel(error)) return null
+            
             if (error.response && error.response.status === 404) {
                 throw error
             }
@@ -112,6 +110,7 @@ const Profile = () => {
                 if (userBlogsResult.status === "fulfilled" && userBlogsResult.value) {
                     setUserBlogs(userBlogsResult.value)
                 }
+                
             } finally {
                 setLoading(false)
             }
@@ -126,55 +125,57 @@ const Profile = () => {
     if (profileExists === null) return <LoadingScreen />
     if (profileExists === false) return <NotFound />
     if (profileExists && userData.username) {
-        // User has no blog
-        if (userBlogs.length === 0) { 
-            return (
-                <div className="Profile No-Blog">
-                    <div className="container">
-                        <header>
-                            <h2>{userData.username}</h2>
-                            <p>{userData.email}</p>
-                        </header>
-                        <main> 
-                            { user?.username === userData.username
-                            ?   <div>
-                                    <p>You do not have any blogs.</p>
-                                    <Link to="/create"><h4>Create Your Blog</h4></Link>
-                                </div>
-                            // When users visit other's profile whose blog hasn't been created yet
-                            :   <div>
-                                    <p>No blogs here yet!</p>
-                                    <Link to="/explore"><h4>Explore other blogs instead?</h4></Link>
-                                </div>
-                            }
-                        </main>
-                    </div>
-                </div>
-            )
-        }
+        const hasNoBlogs = userBlogs.length === 0
+        const isOwnProfile = user?.username === userData.username
+        const hasOneBlog = userBlogs.length === 1
 
-        // User has their own blogs
-        else {
-            return(
-                <div className="Profile">
-                    <div className="container">
-                        <header>
-                            <h2>{userData.username}</h2>
-                            <p>{userData.email}</p>
-                        </header>
-                        <main className={userBlogs.length === 1 ? "single-blog" : ""}>
-                            {userBlogs.map((blog, index) => {
-                                return (
-                                    <Link className="blog" key={index} to={`/blog/${blog.slug}`}>
-                                        <BlogSnippet blog={blog} disableInnerLink />
-                                    </Link>
-                                )
-                            })}
-                        </main>
-                    </div>
+        return (
+            <div className={`profile ${hasNoBlogs ? "no-blog" : ""}`}>
+                <div className="container">
+                    <header>
+                        <h2 className="username">
+                            {userData.username}
+                        </h2>
+                        <p className="email">
+                           {userData.email} 
+                        </p>
+                    </header>
+                    <main className={hasOneBlog ? "single-blog" : ""}>
+                        { hasNoBlogs ? (
+                            <div className="profile-card">
+                                { isOwnProfile ? (
+                                    <>
+                                        <p>You do not have any blogs.</p>
+                                        <Link to="/create">
+                                            <h4>Create Your Blog</h4>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p>No blogs here yet!</p>
+                                        <Link to="/explore">
+                                            <h4>Explore other blogs instead?</h4>
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        ) : (
+                            userBlogs.map((blog, index) => (
+                                <Link to={`/blog/${blog.slug}`}
+                                    key={index} 
+                                    className="profile-card link" 
+                                >
+                                    <BlogSnippet 
+                                        blog={blog} 
+                                        disableInnerLink 
+                                    />
+                                </Link>
+                            ))
+                        )}
+                    </main>
                 </div>
-            )
-        }
+            </div>
+        )
     }
 }
 

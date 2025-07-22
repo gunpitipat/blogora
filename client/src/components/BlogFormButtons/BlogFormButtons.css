@@ -1,0 +1,132 @@
+.blog-form-btns {
+    display: flex;
+    gap: 1.25rem;
+    padding-top: 0.75rem;
+    justify-content: center;
+}
+.blog-form-btns button {
+    font-size: 1rem;
+    width: 120px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border: 1px solid var(--accent-color);
+    border-radius: 0.25rem;
+    outline: none;
+    color: var(--accent-color);
+    background: var(--neutral-color-light);
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.blog-form-btns span { /* Icons */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.blog-form-btns label {
+    font-weight: 400;
+    color: var(--accent-color);
+    cursor: pointer;
+}
+
+/* Save Draft Button */
+.blog-form-btns .savedraft-btn {
+    gap: 0.4rem;
+}
+.blog-form-btns .savedraft-btn label {
+    white-space: nowrap;
+}
+.blog-form-btns .savedraft-icon {
+    transform: scale(1.08);
+    margin-bottom: 1px;
+}
+
+/* Preview Button */
+.blog-form-btns .preview-btn {
+    gap: 0.7rem;
+}
+.blog-form-btns .preview-icon {
+    position: relative;
+    overflow: visible;
+}
+.blog-form-btns .preview-icon::after { /* background for replacing an arrow icon with eye one */
+    content: "";
+    background: var(--neutral-color-light);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 50%;
+    z-index: 1;
+}
+.blog-form-btns .preview-icon::before {
+    content: "";
+    background: var(--neutral-color-light);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 50%;
+    z-index: 1;
+}
+.blog-form-btns .eye-icon {
+    position: absolute;
+    font-size: 0.85rem;
+    top: -25%;
+    right: -40%;
+    transform: translate(-5%, 5%);
+    z-index: 2;
+}
+/* Previewing */
+.blog-form-btns .preview-btn.previewing {
+    background: var(--accent-color);
+    opacity: 0.9;
+}
+.blog-form-btns .preview-btn.previewing label {
+    color: var(--neutral-color-light);
+}
+
+/* Post/Update Button */
+.blog-form-btns .submit-btn {
+    background: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+}
+.blog-form-btns .submit-btn label {
+    color: var(--neutral-color-light);
+}
+
+.blog-form-btns button:hover,
+.blog-form-btns .preview-btn.previewing:hover {
+    opacity: 1;
+}
+.blog-form-btns button:hover label {
+    font-weight: 500;
+}
+
+@media (max-width: 528px) {
+    .blog-form-btns {
+        flex-wrap: wrap;
+    }
+    .blog-form-btns .savedraft-btn, 
+    .blog-form-btns .discard-btn,
+    .blog-form-btns .preview-btn {
+        width: calc(50% - (1.25rem / 2));
+    }
+    .blog-form-btns .submit-btn {
+        width: 100%;
+    }
+}
+@media (max-width: 348px) {
+    .blog-form-btns {
+        flex-direction: column;
+    }
+    .blog-form-btns button {
+        width: 100% !important;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

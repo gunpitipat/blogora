@@ -1,6 +1,9 @@
-const FeaturePanel = (props) => {
-    const { isFirst = false, dataSrc, subtitle, bodyText } = props
-
+const FeaturePanel = ({ 
+    isFirst = false, 
+    dataSrc, 
+    subtitle, 
+    bodyText 
+}) => {
     return (
         <div className="feature-panel">
             <div className="feature-visual">
@@ -9,7 +12,7 @@ const FeaturePanel = (props) => {
                     muted loop playsInline
                     preload="none" data-src={dataSrc} // For lazy loading
                 >
-                    <source type="video/mp4"/>
+                    <source type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>
             </div>

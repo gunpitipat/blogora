@@ -3,9 +3,7 @@ import { useLocation } from "react-router-dom";
 
 const ViewReplyContext = createContext()
 
-export const useViewReplyContext = () => {
-    return useContext(ViewReplyContext)
-}
+export const useViewReplyContext = () => useContext(ViewReplyContext)
 
 export const ViewReplyProvider = ({ children }) => {
     const [viewReply, setViewReply] = useState([]) // Initialize it when rendering BlogPage

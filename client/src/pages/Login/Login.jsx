@@ -1,27 +1,25 @@
 import "./Login.css"
-import { Link, useNavigate, Navigate } from "react-router-dom"
-import { useEffect, useState } from "react"
 import axios from "axios"
+import clsx from "clsx"
+import { useEffect, useState } from "react"
+import { Link, useNavigate, Navigate } from "react-router-dom"
 import { useAlertContext } from "../../contexts/AlertContext"
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useLoadingContext } from "../../contexts/LoadingContext"
 import { useAuthContext } from "../../contexts/AuthContext"
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
+import { useLoadingContext } from "../../contexts/LoadingContext"
 import { useDemoContext } from "../../contexts/DemoContext"
 import DemoPopup from "../../components/Popups/DemoPopup"
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
-    const [ username, setUsername ] = useState("")
-    const [ password, setPassword ] = useState("")
-
-    const [ showPassword, setShowPassword ] = useState(false)
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
 
     const initialErrorStatus = { message: "", field: "" }
-    const [ errorStatus, setErrorStatus ] = useState(initialErrorStatus)
+    const [errorStatus, setErrorStatus] = useState(initialErrorStatus)
 
     const navigate = useNavigate()
-    
-    const { loading, setLoading } = useLoadingContext()
+    const { setLoading } = useLoadingContext()
     const { setAlertState } = useAlertContext()
     const { isAuthenticated, user, checkAuth } = useAuthContext()
     const { prefillDemo, setPrefillDemo } = useDemoContext()
@@ -49,7 +47,7 @@ const Login = () => {
 
             setUsername(demoCredentials.username)
             setPassword(demoCredentials.password)
-
+        
         } catch {
             // In case of corrupted JSON
             localStorage.removeItem("demoCredentials") 
@@ -59,8 +57,8 @@ const Login = () => {
         // eslint-disable-next-line
     }, [])
 
-    // Submit form
-    const submitForm = async (e) => {
+    // Submit data
+    const handleFormSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         try {
@@ -72,14 +70,14 @@ const Login = () => {
             setUsername("")
             setPassword("")
             setErrorStatus(initialErrorStatus)
-            setAlertState({ display: true, type: "success", message: response.data.message })
             setLoading(false)
-            localStorage.setItem("isLogin", "true")
+            setAlertState({ display: true, type: "success", message: response.data.message })
+            localStorage.setItem("isLoggedIn", "true")
             localStorage.removeItem("demoCredentials")
             setPrefillDemo(false)
             navigate("/explore")
+            
         } catch (error) {
-            setLoading(false)
             if (!error.response) {
                 setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
                 return
@@ -90,48 +88,65 @@ const Login = () => {
                 const { message, field } = error.response.data
                 setErrorStatus({ message, field })    
             }
+        
+        } finally {
+            setLoading(false)
         }
     }
 
-    if (loading) return <LoadingScreen />
     if (isAuthenticated && user?.username) return <Navigate to="/explore" />
 
     return(
-        <div className="Login">
-            <div className="bg">
-                <h2 className="headline">Log In</h2>
-                <form onSubmit={submitForm}>
-                    <div className={errorStatus.field === "username" ? "showError" : null}>
+        <div className="login">
+            <div className="container">
+                <h2 className="headline">
+                    Log In
+                </h2>
+                <form onSubmit={handleFormSubmit}>
+                    <div className={clsx("form-group", errorStatus.field === "username" && "error")}>
                         <label>Username</label>
-                        <input type="text" 
+                        <input 
+                            type="text" 
                             value={username} 
-                            onChange={(e)=>setUsername(e.target.value)}
+                            onChange={(e) => setUsername(e.target.value)}
                             name="username"
                             autoComplete="username"   
                             inputMode="text" 
                         />
-                        <small>{errorStatus.message}</small>
+                        { errorStatus.field === "username" &&
+                            <small>{errorStatus.message}</small>
+                        }
                     </div>
-                    <div className={errorStatus.field === "password" ? "showError" : null}>
+
+                    <div className={clsx("form-group", errorStatus.field === "password" && "error")}>
                         <label>Password</label>
                         <div className="password-frame">
-                            <input type={showPassword ? "text" : "password"} 
+                            <input 
+                                type={showPassword ? "text" : "password"} 
                                 value={password} 
-                                onChange={(e)=>setPassword(e.target.value)} 
-                                id="password" 
+                                onChange={(e) => setPassword(e.target.value)} 
                                 autoComplete="current-password"
+                                className="password-field"
                             />
-                            <span className="password-icon" onClick={()=>setShowPassword(!showPassword)}>
-                                {showPassword ? <FaEye/> : <FaEyeSlash/>}
+                            <span className="password-icon" onClick={() => setShowPassword(!showPassword)}>
+                                {showPassword ? <FaEye /> : <FaEyeSlash />}
                             </span>
                         </div>
-                        <small>{errorStatus.message}</small>
+                        { errorStatus.field === "password" && 
+                            <small>{errorStatus.message}</small>
+                        }
                     </div>
-                    <button type="submit" className="btn">Log In</button>
-                    <div className="sign-up">
-                        <p>Don't have an account? &nbsp;</p>
-                        <span><Link to="/signup">Sign Up</Link></span>
-                    </div>
+
+                    <button type="submit" className="login-btn">
+                        Log In
+                    </button>
+
+                    <footer className="signup-link">
+                        <p>Don't have an account?&nbsp;</p>
+                        <Link to="/signup">
+                            Sign Up
+                        </Link>
+                    </footer>
                 </form>
             </div> 
             <DemoPopup />

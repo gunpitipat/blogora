@@ -1,125 +1,113 @@
-.Profile{
-    padding-bottom: 2rem;
+.profile {
+    padding-bottom: 2.5rem;
 }
-.Profile .container{
+.profile .container {
     width: 90vw;
-    margin: 0 auto;
-    display: grid;
-    padding: 1em 0;
-    grid-template-areas: 
-        "header"
-        "content";
-    grid-template-rows: auto 1fr;
-    grid-template-columns: 1fr;
+    margin-inline: auto;
+    padding-block: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
  }
-.Profile .container header{
-    grid-area: header;
-    place-items: center;
-    margin: 1.5rem 0 1rem;
+.profile header {
+    margin-top: 1.5rem;
+    text-align: center;
 }
-.Profile .container header h2{
+.profile .username {
     color: var(--accent-color);
     font-weight: 700;
 }
-.Profile .container header p{
-    opacity: 0.5;
+.profile .email {
     color: var(--neutral-color-dark);
+    opacity: 0.5;
 }
-.Profile .container main{
-    grid-area: content;
-    padding: 1rem;
+.profile main {
+    width: clamp(300px, 70vw, 600px);
+    padding-block: 1rem;
     display: grid;
-    grid-template-columns: 1fr; /* Default: single column */
+    grid-template-columns: 1fr; /* Small devices show only single column */
     gap: 1.5rem;
-    justify-self: center;
-    width: 80vw;
-    justify-items: center;
 }
-.Profile .container main .blog, .Profile.No-Blog .container main div{
+.profile .profile-card {
     padding: 1rem;
     border-radius: 0.25rem;
     background-color: var(--neutral-color-medium);
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    justify-self: center;
-    text-decoration: none;
 }
-/* Clickable blog container as a Link */
-.Profile .container main .blog{
+.profile .profile-card.link {
+    text-decoration: none;
     cursor: pointer;
 }
-
+/* Has no blogs */
+.profile.no-blog main {
+    grid-template-columns: 1fr; /* Always one column */
+    width: clamp(300px, 60vw, 500px);
+    padding-inline: 0; /* Prevent overriding of .profile main @1024px */
+}
+.profile.no-blog .profile-card {
+    text-align: center;
+    padding-bottom: 1.5rem;
+}
+.profile.no-blog .profile-card a {
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+}
+.profile.no-blog .profile-card p {
+    margin-block: 0.5rem;
+    font-size: 1rem;
+    color: var(--neutral-color-dark);
+    opacity: 0.7;
+}
 /* Modify BlogSnippet */
-.Profile .container main .blog .BlogSnippet{
+.profile .blog-snippet {
     padding: 0;
     border: none;
+    /* Ensure .footer stays at the bottom */
     height: 100%;
     display: flex;
     flex-direction: column;
 }
-.Profile .container main .blog .BlogSnippet .title h2{
+.profile .blog-snippet .title h2 {
     font-size: 1.1rem;
     font-weight: 700;
 }
-.Profile .container main .blog .BlogSnippet .content-container{
+.profile .blog-snippet .content-container {
     margin: 0.5rem 0;
     max-height: 68px; /* Default when there's only one column in a row */
 }
-.Profile .container main .blog .BlogSnippet .content-container .subtitle{
+.profile .blog-snippet .content-container .section-subtitle {
     font-size: 1.04rem;
 }
-.Profile .container main .blog .BlogSnippet small.footer{
-    margin-top: auto;
-}
-.Profile .container main .blog .BlogSnippet small.footer .author, .Profile .container main .blog .BlogSnippet small.footer .separator{
-    display: none;
-}
-.Profile .container main .blog .BlogSnippet .content-container .fade-overlay{
+.profile .blog-snippet .content-container .fade-overlay {
     background: linear-gradient(to bottom, rgba(241, 241, 241, 0), rgba(241, 241, 241, 1));
     height: 2rem;
 }
-
-.Profile.No-Blog .container main{
-    grid-template-columns: 1fr !important;
-    place-self: center;
-    width: 90%;
+.profile .blog-snippet .footer {
+    margin-top: auto;
 }
-.Profile.No-Blog .container main div{
-    text-align: center;
-    padding-bottom: 1.5rem;
-}
-.Profile.No-Blog .container main div a{
-    text-decoration: none;
-    cursor: pointer;
-    color: var(--accent-color);
-    font-size: 1.1rem;
-}
-.Profile.No-Blog .container main div p{
-    opacity: 0.7;
-    font-size: 1rem;
-    color: var(--neutral-color-dark);
-    margin: 0.5rem 0;
+.profile .blog-snippet .footer .author, 
+.profile .blog-snippet .footer .separator {
+    display: none;
 }
 
-/* Tablet & Laptop */
+@media (max-width: 374px) {
+    .profile main {
+        width: 280px;
+        padding-inline: 0;
+    }
+}
 @media (min-width: 1024px) {
-    .Profile .container main{
-        grid-template-columns: repeat(2, 1fr);
-        /* grid-template-columns: repeat(auto-fit, minmax(400px,1fr)); */
+    .profile main {
+        grid-template-columns: repeat(2, 1fr); /* Large devices show 2 columns if having multiple blogs */
+        width: 80vw;
+        padding-inline: 1rem;
     }
-    .Profile.No-Blog .container main{
-        width: 40%;
-    }
-
-    /* For users who have only one blog, make it center on desktop */
-    .Profile .container main.single-blog{
-        grid-template-columns: 1fr !important;
-        width: 40vw !important;
-    }
-}
-@media (max-width: 768px) {
-    .Profile{
-        min-height: 100vh;
+    .profile main.single-blog {
+        grid-template-columns: 1fr;
+        width: 600px;
     }
 }
 

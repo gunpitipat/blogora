@@ -1,4 +1,4 @@
-.SessionExpiration .modal-overlay{
+.session-expiration .modal-overlay {
     background: rgba(0,0,0,0.75);
     position: fixed;
     top: 0;
@@ -10,12 +10,12 @@
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
 }
-.SessionExpiration .modal-overlay.show{
+.session-expiration .modal-overlay.show {
     opacity: 1;
     visibility: visible;
     transition: opacity 0.15s ease-in-out;
 }
-.SessionExpiration .confirm-container{
+.session-expiration .modal-container {
     background: var(--neutral-color-medium);
     width: 75vw;
     max-width: 500px;
@@ -29,8 +29,7 @@
     transform: translate(-50%,-80%);
     padding: 1rem;
 }
-/* Icon */
-.SessionExpiration .icon-background{
+.session-expiration .icon-bg {
     background: #fff;
     border-radius: 100%;
     width: 50px;
@@ -40,63 +39,61 @@
     align-items: center;
     margin-bottom: 1rem;
 }
-.SessionExpiration .icon-background svg{
+.session-expiration .icon-bg svg {
     color: var(--accent-color);
     transform: scale(0.95);
     font-size: 1.5rem;
     opacity: 0.8;
 }
-.SessionExpiration .confirm-container h1{
+.session-expiration .modal-title {
     font-size: 1.5rem;
     color: var(--accent-color);
 }
-.SessionExpiration .confirm-container .content{
+.session-expiration .modal-content {
     margin: 0.5rem 0 1.5rem;
     text-align: center;
     color: var(--neutral-color-dark);
 }
-.SessionExpiration .confirm-container .content p{
+.session-expiration .modal-content p {
     display: inline-block;
 }
-.SessionExpiration .confirm-container .button-container{
+.session-expiration .btn-container {
     display: flex;
     gap: 0.75rem;
     padding-right: 11px; /* Offset due to different lengths of each button content */
 }
-.SessionExpiration .button-container button{
+.session-expiration .btn-container button {
     font-size: 1rem;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
     border: 1px solid var(--accent-color);
 }
-.SessionExpiration .button-container .confirm-button{
-    background: var(--accent-color);
-    color: var(--neutral-color-light);
-    opacity: 0.9;
-}
-.SessionExpiration .button-container .cancel-button{
+.session-expiration .btn-container .cancel-btn {
     background: var(--neutral-color-light);
     color: var(--accent-color);
     opacity: 0.8;
 }
-.SessionExpiration .button-container button:hover{
+.session-expiration .btn-container .confirm-btn {
+    background: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+}
+.session-expiration .btn-container button:hover {
     font-weight: 500;
     opacity: 1;
 }
 
-
-/* Responsive Design */
 @media (max-width: 485px) {
-    .SessionExpiration .confirm-container{
+    .session-expiration .modal-container {
         width: 85vw;
     }
 }
 @media (max-width: 430px) {
-    .SessionExpiration .confirm-container .content p{
+    .session-expiration .modal-content p {
         display: block;
     }
-    .SessionExpiration .confirm-container .content p:first-of-type{
+    .session-expiration .modal-content p:first-of-type {
         margin-bottom: 0.1rem;
     }
 }

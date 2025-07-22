@@ -1,54 +1,40 @@
-import { useParams, Link, useNavigate, useLocation } from "react-router-dom"
-import axios from "axios"
-import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import "./BlogPage.css"
-import Modal from "../../components/Modals/Modal"
+import axios from "axios"
+import { useParams, useNavigate } from "react-router-dom"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useAlertContext } from "../../contexts/AlertContext"
-import parser from "html-react-parser"
 import { useLoadingContext } from "../../contexts/LoadingContext"
 import { useAuthContext } from "../../contexts/AuthContext";
+import { useViewReplyContext } from "../../contexts/ViewReplyContext"
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
-import CommentInput from "./CommentInput"
-import Comment from "./Comment";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
-import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
-import { formatCommentTime, showFullDateTime } from "../../utils/formatDateUtils"
-import { useViewReplyContext } from "../../contexts/ViewReplyContext"
-import { IoChevronBackOutline } from "react-icons/io5";
-import { handleEmptyLine } from "../../utils/contentUtils"
+import BlogContent from "./Blog/BlogContent"
+import AddComment from "./AddComment/AddComment"
+import Comment from "./Comment/Comment";
 import Footer from "../../components/Layout/Footer"
 
 const BlogPage = () => {
+    // Blog
     const { slug } = useParams()
-    const [ blog, setBlog ] = useState(null)
-    const [ showOptions, setShowOptions ] = useState(false)
-    const [ showModal, setShowModal ] = useState(false)
-    const [ blogExists, setBlogExists ] = useState(null)
-    const [ showDateTooltip, setShowDateTooltip ] = useState(false)
-
+    const [blog, setBlog] = useState(null)
+    const [blogExists, setBlogExists] = useState(null)
+    
     // Comment
-    const [ showCommentInput, setShowCommentInput ] = useState(false)
-    const [ comments ,setComments ] = useState([])
-    const [ replyStatus, setReplyStatus ] = useState([])
-    const [ commentTrigger, setCommentTrigger ] = useState(false)
-    const [ commentLoading, setCommentLoading ] = useState(false) // Isolate comment loading state to avoid flickering with blog loading
+    const [showCommentInput, setShowCommentInput] = useState(false)
+    const [comments ,setComments] = useState([])
+    const [showReplyInput, setShowReplyInput] = useState([])
+    const [commentTrigger, setCommentTrigger] = useState(false)
+    const [commentLoading, setCommentLoading] = useState(false) // Isolate comment loading state to avoid flickering with blog loading
+    const [showCommentOption, setShowCommentOption] = useState(null) // Track which comment's setting button is open
+    const [showCommentModal, setShowCommentModal] = useState(null)
 
     const { viewReply, setViewReply } = useViewReplyContext()
-    const [ showCommentOption, setShowCommentOption ] = useState(null) // Track which comment's setting button is open
-    const [ showCommentModal, setShowCommentModal ] = useState(null)
-
-    const [ showCommentTooltip, setShowCommentTooltip ] = useState(null)
+    const { setAlertState } = useAlertContext()    
+    const { setLoading } = useLoadingContext()
+    const { user } = useAuthContext()   
+    const navigate = useNavigate()
 
     const scrollPositionRef = useRef(0)
-
-    const { setAlertState } = useAlertContext()
-    const navigate = useNavigate()
-    const location = useLocation()
-    
-    const { setLoading } = useLoadingContext()
-
-    const { user, isAuthenticated } = useAuthContext()
 
     // Retrieve a blog
     const getBlog = async (abortSignal) => {
@@ -58,6 +44,7 @@ const BlogPage = () => {
                 signal: abortSignal
             })
             return response.data
+
         } catch (error) {
             // Ignore request cancellation errors
             if (axios.isCancel(error)) {
@@ -96,14 +83,15 @@ const BlogPage = () => {
                     setBlog(blogData)
                     setBlogExists(true)
                 } // If using else block and setBlogExists(false), it will runs too early, and <NotFound /> will flicker
-                
+            
             } catch (error) {
                 if (error.response?.status === 404) {
                     setBlogExists(false) // Only set this when the blog is truly not found
                 } else {
                     // Prevent users from getting stuck in LoadingScreen in case of network / server error
                     setBlogExists(true) // Show a blank page with alert message
-                }
+                } 
+
             } finally {
                 setLoading(false);
             }
@@ -122,6 +110,7 @@ const BlogPage = () => {
                 signal: abortSignal 
             })
             return response.data
+
         } catch (error) {
             if (axios.isCancel(error)) {
                 return null
@@ -135,8 +124,181 @@ const BlogPage = () => {
         }
     }
 
-    // Convert a flat comment array to Nested Structure
-    const organizeComments = useCallback((comments) => {
+    useEffect(() => { // Runs when slug changes OR user posts a new comment
+        if (!slug) return;
+
+        const controller = new AbortController()
+        const { signal } = controller
+
+        const fetchComments = async () => {
+            setCommentLoading(true)
+            setComments([])
+
+            try {
+                const commentsData = await getComments(signal)
+                if (commentsData && commentsData.length > 0) {
+                    setComments(commentsData)
+
+                    const initialShowReplyInput = commentsData.map(comment => {
+                        return { id: comment._id, replyInput: false }
+                    })
+                    setShowReplyInput(initialShowReplyInput)
+
+                    // Initialize viewReply at the first render
+                    if (viewReply.length === 0) { // When url changes, viewReply will reset to an empty array
+                        const initialViewReply = commentsData.map(comment => {
+                            return { id: comment._id, viewReply: false }
+                        })
+                        setViewReply(initialViewReply)
+                    }
+                    // Update viewReply with current state
+                    if (viewReply.length > 0) {
+                        setViewReply(prev => {
+                            const newComment = commentsData[commentsData.length - 1] // The new comment is the last sorted by createdAt in Comments model
+                            return [ ...prev, { id: newComment._id, viewReply: false }]
+                        })
+                    }
+                }
+                
+            } finally {
+                setCommentLoading(false)
+            }
+        }
+
+        fetchComments()
+        return () => controller.abort()
+        // eslint-disable-next-line 
+    }, [slug, commentTrigger]) 
+
+    // Save scroll position when creating or deleting a comment
+    useEffect(() => {
+        scrollPositionRef.current = window.scrollY
+    }, [commentTrigger])
+
+    // Restore scroll position after comment update
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            requestAnimationFrame(() => {
+                if (document.querySelectorAll(".thread-container").length > 0) {
+                    window.scrollTo({ top: scrollPositionRef.current, behavior: "instant" })
+                }
+            })
+        }, 50)
+        return () => clearTimeout(timeout)
+    }, [comments])
+
+    // Function to toggle comment's delete button
+    const toggleCommentOption = useCallback((commentId) => {
+        setShowCommentOption(prev => (prev === commentId ? null : commentId))
+    }, [])
+
+    // Close comment setting button when clicking outside
+    useEffect(() => {
+        const handleClickOutSide = (e) => {
+            if (!showCommentOption) return
+
+            if (showCommentModal) {
+                if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-btn")) {
+                    setShowCommentOption(null)
+                    setShowCommentModal(null)
+                    console.log("test1")
+                }
+            } else {
+                if (!e.target.closest(".comment-setting") && !e.target.closest(".modal")) { // Setting tab has its own open-close handler Exclude comment Modal condition since it's written separately below
+                    setShowCommentOption(null)
+                    console.log("test2")
+                }   
+            }
+        }
+
+        document.addEventListener("click", handleClickOutSide)
+        return () => document.removeEventListener("click", handleClickOutSide)
+    }, [showCommentOption, showCommentModal])
+
+    // Delete Blog
+    const deleteBlog = async (slug, onCleanup = () => {}) => {
+        setLoading(true)
+        try {
+            const response = await axios.delete(`${process.env.REACT_APP_API}/blog/${slug}`, { 
+                withCredentials: true 
+            })
+            setLoading(false)
+            setAlertState({ display: true, type: "success", message: response.data.message })
+            navigate(`/profile/${user.username}`)
+        
+        } catch (error) {
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
+
+        } finally {
+            setLoading(false)
+            onCleanup?.()
+        }
+    }
+
+    const toggleCommentInput = () => {
+        setShowReplyInput(prev => prev.map(comment => {
+            return { ...comment, replyInput: false } // Collapse any expanding reply input elsewhere
+        }))
+        setShowCommentInput(!showCommentInput)
+    }
+
+    // Show only the clicked reply input; collapse any previously opened one
+    const toggleReplyInput = useCallback((commentId) => {
+        setShowCommentInput(false) // Collapse comment input if still open
+        setShowReplyInput(prev => prev.map(comment => {
+            if (comment.id === commentId) {
+                if (comment.replyInput) return { ...comment, replyInput: false} // Collapse the reply input if already open
+                return { ...comment, replyInput: true }
+            }
+            return { ...comment, replyInput: false }
+        }))
+    }, [])
+
+    // Create a comment and reply
+    const onSendComment = useCallback(async (commentContent, parentCommentId = null) => {
+        setCommentLoading(true)
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API}/blog/${slug}/comment`, 
+                { 
+                    content: commentContent,
+                    parentCommentId: parentCommentId || null
+                },
+                { withCredentials: true }
+            )
+            setAlertState({ display: true, type: "success", message: response.data.message })
+            setCommentTrigger(prev => !prev) // Toggle trigger to refresh comment
+
+            // Automatically show the reply the user has just created
+            if (parentCommentId) {
+                setViewReply(prev => prev.map(element => (
+                    element.id === parentCommentId 
+                        ? { ...element, viewReply: true } 
+                        : element
+                )))
+            }
+
+        } catch (error) {
+            setCommentLoading(false)
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
+
+        } finally {
+            setShowCommentInput(false)
+            setShowReplyInput(prev => prev.map(element => ({ ...element, replyInput: false })))
+            // setCommentLoading(false) is handled in useEffect after comment loading to avoid flickering
+        }
+        // eslint-disable-next-line
+    }, [slug]) 
+        
+    // Convert a flat comment array to nested structure
+    const organizeComments = (comments) => {
         const commentMap = {}; // Store comments by ID
 
         // Initialize all comments
@@ -157,212 +319,10 @@ const BlogPage = () => {
             }
         })
         return rootComments;
-    }, [])
-
-    // Fetching comments and replies
-    useEffect(() => { // Runs when slug changes OR user posts a new comment
-        if (!slug) return;
-
-        const controller = new AbortController()
-        const { signal } = controller
-
-        const fetchComments = async () => {
-            setCommentLoading(true)
-            setComments([])
-
-            try {
-                const commentsData = await getComments(signal)
-                if (commentsData && commentsData.length > 0) {
-                    setComments(commentsData)
-
-                    const addShowReplyInput = commentsData.map(comment => {
-                        return { id: comment._id, showReply: false }
-                    })
-                    setReplyStatus(addShowReplyInput)
-
-                    // Initialize viewReply at the first render
-                    if (viewReply.length === 0) { // When url changes, viewReply will reset to an empty array
-                        const initialViewReply = commentsData.map(comment => {
-                            return { id: comment._id, viewReply: false }
-                        })
-                        setViewReply(initialViewReply)
-                    }
-                    // Update viewReply with current status
-                    if (viewReply.length > 0) {
-                        setViewReply(prev => {
-                            const newComment = commentsData[commentsData.length - 1] // The new comment is the last sorted by createdAt in Comments model
-                            return [ ...prev, { id: newComment._id, viewReply: false }]
-                        })
-                    }
-                }
-            } finally {
-                setCommentLoading(false)
-            }
-        }
-
-        fetchComments()
-        return () => controller.abort()
-        // eslint-disable-next-line 
-    }, [slug, commentTrigger]) 
-
-    // Restore scroll position when creating or deleting a comment
-        // Save scroll position before comment update
-    useEffect(() => {
-        scrollPositionRef.current = window.scrollY
-    }, [commentTrigger])
-
-        // Restore scroll position
-    useEffect(() => {
-        setTimeout(() => {
-            requestAnimationFrame(() => {
-                if (document.querySelectorAll(".comment-container").length > 0) {
-                    window.scrollTo({ top: scrollPositionRef.current, behavior: "instant" })
-                }
-            })
-        }, 50)
-    }, [comments])
-
-    // Click anywhere to close setting tabs
-    const outOfFocus = (e) => {
-        // Blog setting tab
-        if (showOptions) {
-            if (showModal) {
-                if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")){
-                    setShowOptions(false)
-                }
-            } else {
-                if (!e.target.closest(".setting") || e.target.closest(".comment")) { // Setting icon has its own hanlder
-                    setShowOptions(false)
-                }
-            }
-        }
-        if (showModal) {
-            if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")) {
-                setShowModal(false)
-            }
-        }
     }
 
-    // Close comment's setting button when clicking anywhere outside of it
-    const handleClickOutSide = (e) => {
-        if (!showCommentOption) return // Exit early if no menu is open
-
-        // Check if the clicked element is not delete button and not the setting icon where has its own open-close handling
-        if (!e.target.classList.contains("delete") && !e.target.closest(".comment-setting-icon") && !e.target.closest(".Modal")) { // Exclude comment Modal condition since it'll be written separately below
-            setShowCommentOption(null)
-        }   
-        // Handle clicking when modal appears
-        if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-button")) {
-            setShowCommentOption(null)
-            setShowCommentModal(null)
-        }
-    }
-    useEffect(() => {
-        document.addEventListener("click", handleClickOutSide)
-        return () => document.removeEventListener("click", handleClickOutSide)
-        // eslint-disable-next-line
-    }, [showCommentOption])
-
-    // Function to toggle comment's delete button
-    const toggleCommentOption = useCallback((commentId) => {
-        setShowCommentOption(prev => (prev === commentId ? null : commentId))
-    }, [])
-
-
-    // Delete Blog
-    const deleteBlog = (slug) => {
-        setLoading(true)
-        axios.delete(`${process.env.REACT_APP_API}/blog/${slug}`, { withCredentials: true })
-        .then(response => {
-            setAlertState({ display: true, type: "success", message: response.data.message })
-            navigate(`/profile/${user.username}`)
-        })
-        .catch(error => {
-            if (!error.response) {
-                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
-            } else {
-                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
-            }
-        })
-        .finally(() => {
-            setLoading(false)
-            setShowModal(false) // In case session expires, prevent 2 modals' overlays from overlapping each other
-            setShowOptions(false)
-        })
-    }
-
-    const showComment = () => {
-        setReplyStatus(prev => prev.map(comment => {
-            return { ...comment, showReply: false } // Collapse the expanding reply input elsewhere
-        }))
-        setShowCommentInput(!showCommentInput)
-    }
-    // Show only clicked reply input (collapse others which were shown before)
-    const showReplyInput = useCallback((commentId) => {
-        setShowCommentInput(false) // If comment input is still unfolding, collapse it
-        setReplyStatus(prev => prev.map(comment => {
-            if (comment.id === commentId) {
-                if (comment.showReply) return { ...comment, showReply: false} // When clicking the same reply button which already unfolds, then collapse it
-                return { ...comment, showReply: true }
-            }
-            return { ...comment, showReply: false }
-        }))
-    }, [])
-
-    // Create a comment and reply
-    const onSendComment = useCallback((commentContent, parentCommentId = null) => {
-        setCommentLoading(true)
-        axios.post(`${process.env.REACT_APP_API}/blog/${slug}/comment`, 
-            { content: commentContent,
-              parentCommentId: parentCommentId || null
-            },
-            { withCredentials: true }
-        )
-        .then(response => {
-            setAlertState({ display: true, type: "success", message: response.data.message })
-            setCommentTrigger(prev => !prev) // Toggle trigger to refresh comment
-
-            // Automatically show reply the user has just created
-            if (parentCommentId) {
-                return setViewReply(prev => prev.map(element => {
-                    if (element.id === parentCommentId) return { ...element, viewReply: true }
-                    return element
-                }))
-            }
-        })
-        .catch(error => {
-            if (!error.response) {
-                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
-            } else {
-                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
-            }
-            setCommentLoading(false)
-        })
-        .finally(() => {
-            setShowCommentInput(false)
-            setReplyStatus(prev => prev.map(element => {
-                return { ...element, showReply: false }
-            }))
-            // setCommentLoading(false) in useEffect after comment loading to avoid flickering and ensure fresh comments are fetched before UI updates
-        })
-        // eslint-disable-next-line
-    }, [slug])
-
-    // Recursively find target comment's ID in nested structure
-    // const findTargetId = (nestedStructure, targetId) => {
-    //     for (const element of nestedStructure) {
-    //         if (element._id === targetId) { // Base case (found on top level)
-    //             return element;
-    //         }
-    //         if (element.replies.length !== 0) { // Be able to go deeper -> recursively call
-    //             const found = findTargetId(element.replies, targetId)
-    //             if (found) return found;
-    //         }
-    //     }
-    //     return false
-    // }
-
-    // Recursively get comment's ID and all nested replies
+    // Get a comment ID and all nested replies in the same thread 
+    // Used with viewReply to open only one direct reply and collapse all related nested ones
     const getAllRelatedReplies = useCallback((nestedStructure, targetId) => {
         let result = [];
         for (const element of nestedStructure) {
@@ -387,7 +347,7 @@ const BlogPage = () => {
                 }
                 return result; // Return once the target ID and all its replies are found
             }
-            if (element.replies?.length > 0) {
+            if (element.replies?.length > 0) { // If targetId hasn't matched element._id yet, search deeper in its replies
                 const recursiveResult = getAllRelatedReplies(element.replies, targetId)
                 result.push(...recursiveResult)
             }
@@ -395,179 +355,94 @@ const BlogPage = () => {
         return result
     }, [])
 
-    // Recursively mark hierarchy level to each comment
+    // Recursively assign hierarchy level to each comment
     const hierarchyLevel = useCallback((nestedStructure, level = 1) => {
         return nestedStructure.map(comment => {
             // If comment has no replies
-            if (comment.replies.length === 0) {
+            if (comment.replies?.length === 0) {
                 return { ...comment, level: level }
             }
-            // If comment has replies array
+            // If comment has a replies array
             else {
-                return { ...comment,
-                        level: level,
-                        replies: hierarchyLevel(comment.replies, level+1)
+                return { 
+                    ...comment,
+                    level: level,
+                    replies: hierarchyLevel(comment.replies, level + 1)
                 }
             }
         })
     }, [])
 
+    // Create nested comment tree
     const nestedComments = useMemo(() => {
         return organizeComments(comments)
         // eslint-disable-next-line 
-    }, [comments]) // Recomputes only if comments change
+    }, [comments]) // Recomputes only if comments changes
 
+    // Add hierarchy level to each comment in the nested tree
     const structuredComments  = useMemo(() => {
         return hierarchyLevel(organizeComments(comments), 1)
         // eslint-disable-next-line 
     }, [nestedComments])
 
-    // Attach individual reply input status
+    // Add reply-input state to each comment in the structured tree
     const memoizedComments = useMemo(() => {
         return structuredComments.map(comment => {
             return { ...comment, 
-                replyInput: replyStatus.find(element => element.id === comment._id)?.showReply ?? false 
+                replyInput: showReplyInput.find(element => element.id === comment._id)?.replyInput ?? false 
             }
         })
-    }, [structuredComments, replyStatus])
-
-    // Tooltip for not logged-in users when hovering add comment button
-    const toggleCommentTooltip = (section) => {
-        setShowCommentTooltip(section)
-    }
-
-    // Go-back button handler
-    const handleGoBack = () => {
-        if (location.key !== "default") {
-            navigate(-1)
-        } else {
-            navigate("/explore")
-        }
-    }
+    }, [structuredComments, showReplyInput])
 
     if (blogExists === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
     if (blogExists && blog) {
-        const formattedHtml = handleEmptyLine(blog.content)
-        const parsedContent = parser(formattedHtml)
-        return(
-            <>
-                <div className="BlogPage" onClick={outOfFocus}>
-                    {blog && 
-                    <div className="blog-section">
-                        <header>
-                            <div className="goback-icon" onClick={handleGoBack}>
-                                <IoChevronBackOutline />
-                            </div>
-                            <h1 className={`title ${showOptions ? "overlay" : ""}`}>{blog.title}</h1>
-                            { ((user?.username === blog.author?.username) || (user?.role === "admin" )) &&
-                                <>
-                                    <div className="setting">
-                                        <span onClick={()=>setShowOptions(!showOptions)} className="blog-setting-icon">
-                                            <BiDotsHorizontalRounded />
-                                        </span>
-                                        {showOptions && 
-                                            <ul className="options">
-                                                <Link to={`/blog/edit/${blog.slug}`} className="edit"><li>Edit</li></Link>
-                                                <li className="delete" onClick={()=>setShowModal(true)}>Delete</li>    
-                                            </ul>
-                                        }
-                                    </div>
-                                    <Modal
-                                        showModal={showModal}
-                                        setShowModal={setShowModal}
-                                        action="Delete"
-                                        cancelLabel="Cancel"
-                                        title="Confirm Delete"
-                                        content={
-                                            <p>Are you sure you want to delete "<span style={{fontWeight:"bolder"}}>{blog.title}</span>" blog?</p>
-                                        }
-                                        targetId={slug}
-                                        onConfirm={deleteBlog}
-                                    />
-                                </>
-                            }
-                        </header>
-                        <main className="TipTap-Result">
-                            {parsedContent}
-                        </main>
-                        <footer>
-                            <Link to={`/profile/${blog.author?.username}`} className="author">
-                                {blog.author?.username}
-                            </Link>
-                            <span className="timestamp"
-                                onMouseEnter={() => setShowDateTooltip(true)}
-                                onMouseLeave={() => setShowDateTooltip(false)}
-                            >
-                                <label>{formatCommentTime(blog.createdAt)}</label>
-                                <div className={`tooltip ${showDateTooltip ? "show" : ""}`}>
-                                    {showFullDateTime(blog.createdAt)}
-                                </div>
-                            </span>
-                        </footer>       
-                    </div>}
-                    <section className="blog-comment">
-                        { (user?.username && isAuthenticated)
-                        ?   <div>
-                                <button className={`comment-button ${showCommentInput ? "active" : ""}`} onClick={showComment}>
-                                    <span className="comment-icon">
-                                        { !showCommentInput ? <LuCirclePlus /> : <LuCircleMinus />}
-                                    </span>
-                                    <span>Comment</span>
-                                </button>
-                                { showCommentInput && <CommentInput onSendComment={onSendComment} />}
-                            </div>
-                        :   <button className="comment-button disable"
-                                onMouseEnter={() => toggleCommentTooltip("comment")}
-                                onMouseLeave={() => setShowCommentTooltip(null)}   
-                            >
-                                <span className="comment-icon">
-                                    <LuCirclePlus />
-                                </span>
-                                <span>
-                                    <p>Comment</p>
-                                    <div className={`tooltip ${showCommentTooltip === "comment" ? "show" : ""}`}>
-                                        <p>Join the conversation! Log in to share your thoughts</p>
-                                    </div>
-                                </span>
-                            </button>
-                        }
-                    </section>
-                    <section className={`comments ${memoizedComments.length > 0 ? "" : "no-children"}`} id="comments">                    
-                        {memoizedComments.map(comment => {
-                            return <Comment key={comment._id} 
-                                        // Comment and Reply Content
-                                        comment={comment}
-                                        replies={comment.replies}
-
-                                        // Show/hide Reply Input
-                                        showReplyInput={showReplyInput} 
-                                        individualReplyStatus={comment.replyInput}
-                                        replyStatus={replyStatus} // For nested replies
-                                        nestedStructure={nestedComments}
-                                        getAllRelatedReplies={getAllRelatedReplies}
-
-                                        blogAuthor={blog.author?.username} // Show "author" next to username if they comment on their own post
-                                        // Create a Reply
-                                        onSendComment={onSendComment}
-
-                                        // Delete Button and Modal
-                                        showCommentOption={showCommentOption}
-                                        toggleCommentOption={toggleCommentOption}
-                                        showCommentModal={showCommentModal}
-                                        setShowCommentModal={setShowCommentModal}
-                                        setCommentTrigger={setCommentTrigger}
-                                        setShowCommentOption={setShowCommentOption}
-
-                                        // Hierarchy level for UI design
-                                        level={comment.level}
-                                    />
-                        })}
-                        {commentLoading && <LoadingScreen /> }
-                    </section>
-                </div>
+        return (
+            <div className="blog-page">
+                <BlogContent 
+                    title={blog.title}
+                    content={blog.content}
+                    author={blog.author?.username}
+                    createdDate={blog.createdAt}
+                    slug={blog.slug}
+                    onDelete={deleteBlog}
+                />
+                <AddComment 
+                    showCommentInput={showCommentInput}
+                    toggleCommentInput={toggleCommentInput}
+                    onSend={onSendComment}
+                />
+                <section className={`comments ${memoizedComments.length === 0 ? "no-children" : ""}`}>                    
+                    {memoizedComments.map(comment => (
+                        <Comment 
+                            key={comment._id} 
+                            // Comment and Reply
+                            comment={comment}
+                            replies={comment.replies}
+                            // Reply Input
+                            toggleReplyInput={toggleReplyInput} 
+                            isReplyInputOpen={comment.replyInput}
+                            showReplyInput={showReplyInput} // For adding reply-input state to each reply when creating `memoizedReplies`
+                            // View/Hide Reply
+                            nestedStructure={nestedComments}
+                            getAllRelatedReplies={getAllRelatedReplies} 
+                            blogAuthor={blog.author?.username} // Show author icon next to username if commenter is the blog author
+                            level={comment.level} // Style based on comment nesting level
+                            onSendComment={onSendComment} // Create Reply
+                            // Comment Deletion and Modal
+                            showCommentOption={showCommentOption}
+                            setShowCommentOption={setShowCommentOption}
+                            toggleCommentOption={toggleCommentOption}
+                            showCommentModal={showCommentModal}
+                            setShowCommentModal={setShowCommentModal}
+                            setCommentTrigger={setCommentTrigger}
+                            setCommentLoading={setCommentLoading}
+                        />
+                    ))}
+                </section>
+                { commentLoading && <LoadingScreen /> }
                 <Footer />
-            </>
+            </div>
         )
     }
 }

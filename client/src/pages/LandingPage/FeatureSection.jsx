@@ -1,15 +1,15 @@
 import "./FeatureSection.css"
+import { useEffect, useRef } from "react"
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { lazyLoadVideos } from "../../utils/lazyVideoLoader"
+import { debounce } from "lodash"
 import FeaturePanel from "./FeaturePanel"
 import featureVideo1 from "../../assets/videos/blogora-feature-1.mp4"
 import featureVideo2 from "../../assets/videos/blogora-feature-2.mp4"
 import featureVideo3 from "../../assets/videos/blogora-feature-3.mp4"
-import { lazyLoadVideos } from "../../utils/lazyVideoLoader"
-import { useEffect, useRef } from "react"
-import { useMediaQuery } from "../../hooks/useMediaQuery";
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/all"
-import { debounce } from "lodash"
 gsap.registerPlugin(ScrollTrigger)
 
 const FeatureSection = () => {
@@ -142,15 +142,14 @@ const FeatureSection = () => {
         setupScroll()
 
         const handleResize = debounce(() => {
-            // Kill stale scroll triggers
-            ScrollTrigger.getById("horizontal-scroll")?.kill()
-            ScrollTrigger.getById("pause-scroll")?.kill()
-
-            setupScroll() // Recreate ScrollTriggers
-            
-            requestAnimationFrame(() => {
-                ScrollTrigger.refresh() // Recalculate and update everything after layout changes
+            // Kill stale triggers
+            ScrollTrigger.getAll().forEach(trigger => {
+                if (trigger.trigger === container) trigger.kill()
             })
+            // Recreate triggers
+            setupScroll() 
+            // Recalculate and update everything after layout changes
+            requestAnimationFrame(() => ScrollTrigger.refresh())
         }, 300)
 
         window.addEventListener("resize", handleResize)
@@ -159,6 +158,13 @@ const FeatureSection = () => {
             window.removeEventListener("resize", handleResize)
             handleResize.cancel?.() // In case debounce is still pending
             clearTimeout(videoTimeout)
+            ScrollTrigger.getAll().forEach(trigger => {
+                if (trigger.trigger === container) trigger.kill()
+            })
+            // Killing triggers ("horizontal-scroll" and "pause-scroll") separately via ScrollTrigger.getById()?.kill() 
+            // may not fully clean up GSAP's internal Observer, likely created due to snap, scrub, or pin behavior.
+            // A leftover Observer can leak to other pages and cause auto-scroll issues.
+            // To avoid this, I kill both triggers at once to ensure full cleanup.
         }
     }, [])
 
@@ -167,7 +173,7 @@ const FeatureSection = () => {
         if (isSmallDevice) return
 
         const checkIfCentered = () => {
-            const navbar = document.querySelector(".Navbar")
+            const navbar = document.querySelector(".navbar")
             const container = containerRef.current
             if (!navbar || !container) return
 
@@ -188,10 +194,10 @@ const FeatureSection = () => {
     }, [isSmallDevice])
 
     return (
-        <section className="FeatureSection" id="feature-section">
+        <section className="feature-section" id="feature-section">
             <div className="container" id="feature-container" ref={containerRef}>
-                <h2 id="feature-headline">
-                    What you can do {" "}
+                <h2 className="feature-headline" id="feature-headline">
+                    What you can do{" "}
                     <span className="headline-sm-split"><br /></span>
                     with{" "}
                     <span className="brandname">
@@ -221,9 +227,9 @@ const FeatureSection = () => {
                 </div>
 
                 <div className="scroll-progress">
-                    <span className="scroll-dot active"></span>
-                    <span className="scroll-dot"></span>
-                    <span className="scroll-dot"></span>
+                    <span className="scroll-dot active" />
+                    <span className="scroll-dot" />
+                    <span className="scroll-dot" />
                 </div>
             </div>
         </section>

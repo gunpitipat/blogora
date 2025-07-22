@@ -1,23 +1,36 @@
-.CommentInput-container{
+.comment-input{
     display: flex;
     align-items: center;
     border: 1px solid var(--neutral-color-heavy);
-    border-radius: 0 0.25rem 0.25rem 0.25rem;
     background: linear-gradient(to bottom, #fff, var(--neutral-color-light));
     padding: 0.5rem 2rem 0.5rem 1rem;
     position: relative;
+}
+.comment-input.comment-textarea{
+    border-radius: 0 0.25rem 0.25rem 0.25rem;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
 }
-.CommentInput-container textarea{
+.comment-input.reply-textarea{
+    border-radius: 19px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin: 0.5rem 0 0.25rem 1rem;
+}
+.comment-input textarea{
     flex: 1;
     font-size: 1rem;
     outline: none;
     resize: none;
     border: none;
     overflow-y: auto;
+}
+.comment-input.comment-textarea textarea{
     max-height: 150px;
 }
-.CommentInput-container .send-button{
+.comment-input.reply-textarea textarea{
+    max-height: 80px;
+    padding-right: 0.75rem; /* Prevent scroll bar from overlapping content */
+}
+.comment-input .send-button{
     color: var(--accent-color);
     display: flex;
     align-items: center;
@@ -31,7 +44,7 @@
     right: 0.5rem;
     bottom: 0.6rem;
 }
-.CommentInput-container .send-button:hover{
+.comment-input .send-button:hover{
     opacity: 1;
 }
 

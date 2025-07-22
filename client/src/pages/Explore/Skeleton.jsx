@@ -1,10 +1,8 @@
 import "./Skeleton.css"
 
-const Skeleton = (props) => {
-    const { contentLineCount=4 } = props
-
+const Skeleton = ({ contentLineCount = 4 }) => {
     const skeletonContent = Array.from({ length: contentLineCount })
-
+    
     return (
         <div className="skeleton">
             <div className="title" />
@@ -20,7 +18,7 @@ const Skeleton = (props) => {
                             }}
                         />
                     )
-                    })}
+                })}
             </div>
             <div className="footer" />
         </div>

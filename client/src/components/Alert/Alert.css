@@ -1,11 +1,11 @@
-.Alert{
+.alert {
     position: fixed;
     bottom: 3rem;
     left: 50%;
     transform: translate(-50%, 0);
     z-index: 1005; /* Highest level */
 }
-.Alert .message{
+.alert .message {
     padding: 0.7rem 2rem;
     display: flex;
     align-items: center;
@@ -13,31 +13,30 @@
     border-radius: 0.25rem;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
-.Alert .message span{
+.alert .message span {
     font-size: 17px;
     color: var(--neutral-color-dark);
 }
-.Alert .message.success{
+.alert .message.success {
     background-color: var(--success-color-light);
 }
-.Alert .message.success svg{
+.alert .message.success svg {
     color: var(--success-color);
 }
-.Alert .message.error{
+.alert .message.error {
     background-color: var(--error-color-light);
 }
-.Alert .message.error svg{
+.alert .message.error svg {
     color: var(--error-color);
     transform: scale(1.15);
 }
-.Alert svg{
+.alert .message svg {
     align-self: center;
     margin-left: 0.3rem;
 }
 
-/* Responsive Design */
 @media (max-width: 340px) {
-    .Alert .message{
+    .alert .message {
         font-size: 0.9rem;
     }
 }

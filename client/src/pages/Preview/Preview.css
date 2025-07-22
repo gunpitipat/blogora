@@ -1,4 +1,4 @@
-.Preview .preview-overlay{
+.preview .preview-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -7,15 +7,14 @@
     z-index: 1001; /* Cover navbar */
     pointer-events: auto;
 }
-
 /* Placeholders */
-.Preview .title.placeholder, .Preview main .placeholder{
+.preview .blog-content .title.placeholder, 
+.preview .tiptap-result .placeholder {
     font-style: italic;
     opacity: 0.5;
 }
-
 /* Animated indicator */
-.Preview .indicator{
+.preview .indicator {
     position: fixed;
     right: 1.25rem;
     bottom: 1.5rem;
@@ -28,8 +27,7 @@
     border-radius: 16px;
     z-index: 1000; /* Higher than copyright */
 }
-/* Outer circle */
-.Preview .indicator .outer-circle{
+.preview .indicator .outer-circle {
     position: absolute;
     height: 12px;
     width: 12px;
@@ -48,8 +46,7 @@
         opacity: 0;
     }
 }
-/* Inner circle */
-.Preview .indicator .inner-circle{
+.preview .indicator .inner-circle {
     height: 12px;
     width: 12px;
     border-radius: 100%;
@@ -67,24 +64,22 @@
         opacity: 0.75; 
     }
 }
-/* Label */
-.Preview .indicator label{
+.preview .indicator label {
     color: var(--accent-color);
     opacity: 0.8;
     font-weight: 500;
 }
 /* Disconnected */
-.Preview .indicator.disconnected{
+.preview .indicator.disconnected {
     background-color: var(--neutral-color-medium);
     border: 1px solid var(--neutral-color-heavy);
 }
-.Preview .indicator.disconnected label{
+.preview .indicator.disconnected label {
     opacity: 1;
 }
 
-/* Responsive Design */
 @media (max-width: 375px) {
-    .Preview .indicator{
+    .preview .indicator {
         right: 1rem;
     }
 }

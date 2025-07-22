@@ -1,4 +1,4 @@
-.loading-overlay{
+.loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,7 +10,7 @@
     align-items: center;
     z-index: 1003;
 }
-.loading-overlay .spinner{
+.loading-overlay .spinner {
     width: 3rem;
     height: 3rem;
     border: 0.4rem solid var(--accent-color);
@@ -18,7 +18,6 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;    
 }
-
 @keyframes spin {
     to {
         transform: rotate(360deg);

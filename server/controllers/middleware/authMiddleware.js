@@ -11,6 +11,7 @@ const authMiddleware = (req, res, next) => {
         req.username = decoded.username
         req.userRole = decoded.role
         next()
+        
     } catch (error) {
         res.status(403).json({ message: "Forbidden" }) // Invalid or expired token
     }

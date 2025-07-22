@@ -1,4 +1,4 @@
-.Modal .modal-overlay{
+.modal .modal-overlay {
     background: rgba(0, 0, 0, 0.75);
     position: fixed;
     top: 0;
@@ -10,12 +10,12 @@
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
 }
-.Modal .modal-overlay.show{
+.modal .modal-overlay.show {
     opacity: 1;
     visibility: visible;
     transition: opacity 0.15s ease-in-out;
 }
-.Modal .modal-container{
+.modal .modal-container {
     background: var(--neutral-color-medium);
     width: 75vw;
     max-width: 500px;
@@ -29,7 +29,7 @@
     transform: translate(-50%,-80%);
     padding: 1rem;    
 }
-.Modal .icon-background{
+.modal .icon-bg {
     background: #fff;
     border-radius: 100%;
     width: 50px;
@@ -39,86 +39,58 @@
     align-items: center;
     margin-bottom: 1rem;
 }
-.Modal .icon-background svg{
+.modal .icon-bg svg {
     color: var(--accent-color);
     transform: scale(0.95);
     font-size: 1.5rem;
     opacity: 0.8;
 }
-.Modal .icon-background .warning-icon{
+.modal .icon-bg .warning-icon {
     transform: scale(1);
 }
-.Modal .modal-container h1{
+.modal .modal-title {
     font-size: 1.5rem;
     color: var(--accent-color);
 }
-.Modal .modal-container .modal-content{
+.modal .modal-content {
     margin: 0.5rem 0 1.5rem;
     text-align: center;
     color: var(--neutral-color-dark);
 }
-.Modal .button-container{
+.modal .btn-container {
     display: flex;
     justify-content: space-between;
     gap: 0.75rem;
 }
-.Modal .button-container button{
+.modal .btn-container button {
     font-size: 1rem;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
     border: 1px solid var(--accent-color);
 }
-.Modal .button-container .cancel-button{
+.modal .btn-container .cancel-btn {
     background: var(--neutral-color-light);
     color: var(--accent-color);
     opacity: 0.8;
 }
-.Modal .button-container .confirm-button{
+.modal .btn-container .confirm-btn {
     background: var(--accent-color);
     color: var(--neutral-color-light);
     opacity: 0.9;
 }
-.Modal .button-container button:hover{
+.modal .btn-container button:hover {
     font-weight: 500;
     opacity: 1;
 }
 
-/* Modal in Form.jsx */
-.Form .Modal .modal-container{
-    max-width: 525px;
-}
-.Form .Modal .button-container .confirm-button{
-    padding: 5px 14px;
-}
-.Form .Modal .button-container .cancel-button{
-    padding: 5px 18px;
-}
-@media (max-width: 694px) {
-    .Form .Modal .modal-container{
-        width: 400px;
-    }
-    .Form .Modal .modal-container .modal-content{
-        max-width: 340px;
-    }
-}
 @media (max-width: 480px) {
-    .Form .Modal .modal-container{
-        width: 300px;
-    }
-    .Form .Modal .modal-container .modal-content{
-        max-width: 280px;
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-    .Modal .modal-container{
+    .modal .modal-container {
         width: 80vw;
     }
 }
 @media (max-width: 390px) {
-    .Modal .modal-container{
+    .modal .modal-container {
         width: 85vw;
     }
 }

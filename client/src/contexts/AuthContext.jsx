@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
-import { useLoadingContext } from "./LoadingContext"
-import { useAlertContext } from "../contexts/AlertContext";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAlertContext } from "../contexts/AlertContext";
+import { useLoadingContext } from "./LoadingContext"
 
 const AuthContext = createContext()
 
@@ -13,10 +13,9 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [sessionExpired, setSessionExpired] = useState(false)
     const loggingOutRef = useRef(false)
+
     const navigate = useNavigate()
-
     const { setLoading } = useLoadingContext()
-
     const { setAlertState } = useAlertContext()
 
     const checkAuth = useCallback(
@@ -32,13 +31,12 @@ export const AuthProvider = ({ children }) => {
             } catch (error) {
                 setIsAuthenticated(false)
                 setUser(null)
+
             } finally {
                 setLoading(false)
             }
-        },
-        // eslint-disable-next-line
-        []
-    )
+            // eslint-disable-next-line
+        }, [])
     
     useEffect(() => {
         checkAuth() // Checking if the session is still valid once the app loads or is refreshed
@@ -60,9 +58,7 @@ export const AuthProvider = ({ children }) => {
             }
         )
 
-        return () => {
-            axios.interceptors.response.eject(responseInterceptor) // Cleanup on unmount
-        }
+        return () => axios.interceptors.response.eject(responseInterceptor) // Cleanup on unmount
         // eslint-disable-next-line
     }, [isAuthenticated])
 
@@ -72,7 +68,7 @@ export const AuthProvider = ({ children }) => {
         try {
             loggingOutRef.current = true // Prevent session expiration modal from appearing
             const response = await axios.post(`${process.env.REACT_APP_API}/logout`, {}, { withCredentials: true })
-            localStorage.removeItem("isLogin")
+            localStorage.removeItem("isLoggedIn")
             await checkAuth()
             loggingOutRef.current = false
             setLoading(false)
@@ -80,9 +76,12 @@ export const AuthProvider = ({ children }) => {
             setTimeout(() => {
                 navigate("/login")
             }, 0)
+            
         } catch (error) {
-            setLoading(false)
             setAlertState({ display: true, type: "error", message: "Something went wrong. Please try again." })
+        
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -107,9 +106,9 @@ export const AuthProvider = ({ children }) => {
         // Avoid alerting if isAuthenticated is being initialized and not updated yet
         if (isAuthenticated === null) return
 
-        if (localStorage.getItem("isLogin") && !isAuthenticated) {
+        if (localStorage.getItem("isLoggedIn") && !isAuthenticated) {
             setAlertState({ display: true, type: "error", message: "Your session expired." })
-            localStorage.removeItem("isLogin")
+            localStorage.removeItem("isLoggedIn")
         }
         // eslint-disable-next-line
     }, [isAuthenticated])

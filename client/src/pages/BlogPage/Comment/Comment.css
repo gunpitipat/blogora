@@ -1,0 +1,296 @@
+.comment {
+    padding: 1rem 1.75rem 1rem 1rem;
+    border-radius: 0.25rem;
+    background-color: var(--neutral-color-medium);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+    border: 1px solid #dddddd;
+    position: relative;
+}
+/* Distinguish each comment heirarchically by using different left bar colors */
+.comment.level-2 {
+    border-left: 4px solid #cbc5c0;
+}
+.comment.level-3 {
+    border-left: 4px solid #a9a29c;
+}
+/* Fade comment when delete option is open */
+.comment.fade .comment-content, 
+.comment.fade .comment-footer, 
+.comment.fade .expand-toggle {
+    opacity: 0.25 !important;
+}
+
+/* Comment Content */
+.comment-content {
+    opacity: 0.9;
+    font-size: 1rem;
+    color: var(--neutral-color-dark);
+    margin: 0.25rem 0 0.75rem;
+    max-height: 150px; /* Limit height */
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+.comment-content.expanded {
+    max-height: none;
+}
+/* Soft deleted comment */
+.comment-content.is-deleted {
+    font-style: italic;
+    opacity: 0.5;
+    user-select: none;
+    margin-bottom: 0.25rem;
+    padding: 0.35rem 0;
+}
+.comment-content .reference-author {
+    color: rgba(70, 63, 58, 0.85);
+    font-size: 0.95rem;
+    font-weight: 900;
+    word-break: break-word; /* Break @username if too long */
+    overflow-wrap: break-word; /* Ensure wrapping in older browsers */
+}
+
+/* Comment Setting */
+.comment-setting {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+    color: var(--accent-color);
+}
+.comment-setting .setting-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+.comment-setting .setting-icon svg {
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+.comment-setting .setting-icon:hover svg {
+    opacity: 1;
+}
+.comment-setting .options {
+    list-style: none;
+    z-index: 3;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: calc(100% + 0.25rem);
+}
+.comment-setting .delete-option {
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    background-color: var(--neutral-color-light);
+    border: 1px solid var(--accent-color);
+    opacity: 0.8;
+}
+.comment-setting .delete-option:hover {
+    font-weight: 500;
+    opacity: 1;
+}
+
+/* Expand Toggle */
+.expand-toggle {
+    color: var(--accent-color);
+    opacity: 0.5;
+    position: absolute;
+    right: 1.75rem;
+    bottom: 0.9rem;
+    cursor: pointer;
+}
+.expand-toggle:hover {
+    opacity: 0.7;
+}
+.expand-toggle span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Comment Footer */
+.comment-footer {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+.comment-footer .author {
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+}
+.comment-footer .blog-author-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+}
+
+/* Comment Actions */
+.comment-actions {
+    display: flex;
+    padding: 0.5rem 1rem 1rem 2rem;
+    flex-direction: column;
+    position: relative; /* Reference for .connector--vertical */
+}
+.comment-actions.hidden .action-btns {
+    display: none;
+}
+.comment-actions .action-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+.comment-actions .reply-btn,
+.comment-actions .view-reply-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    cursor: pointer;
+    color: var(--accent-color);
+}
+.comment-actions .reply-btn .reply-icon,
+.comment-actions .view-reply-btn .view-reply-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.5;
+}
+.comment-actions .reply-btn .reply-icon {
+    align-self: start;
+}
+.comment-actions .reply-btn:hover .reply-icon,
+.comment-actions .view-reply-btn:hover .view-reply-icon {
+    opacity: 0.7;
+}
+.comment-actions .reply-btn .reply-label,
+.comment-actions .view-reply-btn .view-reply-label {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+.comment-actions .reply-btn:hover .reply-label,
+.comment-actions .view-reply-btn:hover .view-reply-label {
+    opacity: 1;
+}
+/* Disabled reply button */
+.comment-actions .reply-btn.disabled {
+    cursor: not-allowed;
+}
+.comment-actions .reply-btn.disabled .reply-label {
+    opacity: 0.5;
+}
+.comment-actions .reply-btn.disabled .reply-icon {
+    opacity: 0.35;
+}
+
+/* Visual connector */
+.connector--vertical {
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    border-left: 1px solid var(--neutral-color-heavy);
+    height: 100%;
+}
+.connector::before { /* Extended vertical line */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -1rem;
+    height: 100%; /* Extends beyond the last reply - visually erased using an overlapping element with the page background */
+    border-left: 1px solid var(--neutral-color-heavy);
+    z-index: -1;
+}
+.connector::after { /* L-shaped connecting line */
+    content: "";
+    position: absolute;
+    top: 1.5rem;
+    left: -1rem;
+    height: 1rem;
+    width: 0.95rem; /* Prevent completely attachment to reply */
+    border-bottom: 1px solid var(--neutral-color-heavy);
+    border-left: 1px solid var(--neutral-color-heavy);
+    border-bottom-left-radius: 0.25rem;
+    z-index: 2; /* z-index higher than erasing line */
+}
+
+/* Replies */
+.replies { 
+    margin-left: 2rem; /* Comment Indentation */
+}
+.reply-wrapper {
+    display: flex;
+    align-items: flex-start;
+}
+.reply-wrapper .thread-container { /* Nested Comments */
+    flex: 1;
+}
+.reply-wrapper.last-reply {
+    position: relative;
+}
+/* Remove excessive vertical line */
+.reply-wrapper.last-reply::before {
+    content: "";
+    position: absolute;
+    top: 2rem; /* Starts at bottom border of L-shaped connecting line (-0.25rem for border radius adjustment) */
+    left: -1rem;
+    width: 1px;
+    height: calc(100% - 2rem);
+    z-index: 1;
+    /* Make it thicker and center to completely cover visible line */
+    border-left: 3px solid var(--neutral-color-light);
+    transform: translateX(-20%);
+}
+
+@media (max-width: 768px) {
+    .comment-footer .timestamp .tooltip {
+        display: none;
+    }
+}
+@media (max-width: 712px) {
+    .expand-toggle {
+        bottom: calc(0.9rem + 18.5px + 0.75rem); /* Default space + comment footer height + offset spacing (content's margin-bottom) */
+        left: 1rem;
+        width: fit-content;
+        font-weight: 600;
+    }
+    .comment-footer.is-tablet-overflowing, 
+    .comment-footer.is-mobile-overflowing {
+        margin-top: calc(21px + 1rem); /* Expand-icon height (21px) + 1rem spacing */
+    }
+}
+@media (max-width: 575px) {
+    .expand-toggle {
+        bottom: calc(0.9rem + 18.5px + 0.75rem + 17.5px); /* Add another 17.5px of date height */
+    }
+    .comment-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+/* Fix ReplyInput making comment overflow */
+@media (max-width: 456px) {
+    .comment-actions {
+        padding-right: 0
+    }
+    .comment-actions .comment-input.reply-textarea {
+        margin-left: 0;
+    }
+}
+@media (max-width: 355px) {
+    .comment-actions {
+        padding-left: 1.5rem;
+    }
+    .comment-actions .action-btns {
+        padding-left: 0.5rem;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

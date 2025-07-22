@@ -8,16 +8,16 @@ const useAlertContext = () => {
 
 const AlertProvider = ({ children }) => {
     const initialAlertState = { display: false, type: "", message: "" }
-    const [ alertState, setAlertState ] = useState(initialAlertState)
+    const [alertState, setAlertState] = useState(initialAlertState)
 
     useEffect(() => {
-        let timer;
+        let timeout
         if (alertState.display) {
-            timer = setTimeout(() => {
+            timeout = setTimeout(() => {
                 setAlertState(initialAlertState)
             }, 3000)
         }
-        return () => clearTimeout(timer)
+        return () => clearTimeout(timeout)
         // eslint-disable-next-line
     }, [alertState.display, alertState.message])
     

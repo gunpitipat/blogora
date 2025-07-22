@@ -1,4 +1,4 @@
-.Navbar{
+.navbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,27 +10,28 @@
     z-index: 999;
     transition: opacity 0.3s ease, transform 0.5s ease; /* For hiding navbar during horizontal scroll */
 }
-.Navbar ul{
+.navbar ul {
     list-style: none;
     display: flex;
     width: 100%;
     justify-content: space-between;
 }
-.Navbar ul .menu-group{
+.navbar .menu-group {
     display: flex;
     align-items: flex-end;
 }
-.Navbar li{
+.navbar li {
     height: 100%;
 }
-.Navbar li:not(.nav-logo){
+.navbar .menu {
     margin: 0 0.5rem;
     padding: 0 1.25rem 0 1.25rem;
     display: flex;
     align-items: flex-end;
     position: relative;
 }
-.Navbar li:not(.nav-logo) a, .Navbar li span.logout-menu{
+.navbar .menu a, 
+.navbar .menu button {
     text-decoration: none;
     font-size: 1.25rem;
     font-weight: 600;
@@ -43,71 +44,27 @@
     display: flex;
     align-items: flex-end;
 }
-.Navbar li:not(.nav-logo) a:hover, .Navbar li:not(.nav-logo) span.logout-menu:hover .logout-btn{
-    font-weight: 900;
-}
-
-/* Brand Logo */
-.Navbar .nav-logo{
-    margin: 0 0.5rem;
-    padding: 0 1.25rem;
-}
-.Navbar .nav-logo a{
-    height: 100%;
-}
-.Navbar .nav-logo a, .Navbar .nav-logo a span{
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: 900;
-    letter-spacing: 1px;
-    font-size: 1.4rem;
-    color: var(--accent-color);
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-.Navbar .nav-logo a span.blog::after{
-    content: "BLOG";
-    font-size: 1.5rem;
-    position: absolute;
-    color: var(--secondary-color);
-    z-index: -1;
-    letter-spacing: normal;
-}
-.Navbar .nav-logo a span.ora{
-    color:#69615c;
-}
-.Navbar .nav-logo a span.ora::after{
-    content: "ORA";
-    font-size: 1.5rem;
-    position: absolute;
-    color: var(--secondary-color);
-    z-index: -1;
-    letter-spacing: normal;
-}
-
-/* Log out */
-.Navbar .menu-group .logout-btn{
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--accent-color);
+.navbar .menu button {
     border: none;
+    border-bottom: 4px solid transparent;
     background: transparent;
     cursor: pointer;
 }
-
-/* Selected menu */
-.Navbar li.selected a{
+.navbar .menu a:hover, 
+.navbar .menu button:hover {
+    font-weight: 900;
+}
+/* Menu Selected */
+.navbar .menu.selected a {
     font-weight: 900;
     border-bottom-color: var(--secondary-color);
 }
-
-/* Deactivate Create menu when not loggin */
-.Navbar li span.disable-menu{
+/* Menu Disabled */
+.navbar .menu.disabled span {
     position: relative;
     display: flex;
 }
-.Navbar li span.disable-menu label{
+.navbar .menu.disabled label {
     color: var(--accent-color);
     opacity: 0.5;
     font-weight: 600;
@@ -118,25 +75,48 @@
     cursor: not-allowed;
     user-select: none;
 }
-/* Tooltip for not logged-in users */
-.Navbar li span.disable-menu .tooltip{
-    position: absolute;
-    white-space: nowrap;
-    top: 120%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-8px);
-    background: rgba(70, 63, 58, 0.77);
-    color: var(--neutral-color-light);
-    font-weight: 500;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.9rem;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none; /* Prevents accidental interaction when hidden */
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease;
+/* Brand Logo */
+.navbar .nav-logo {
+    margin: 0 0.5rem;
+    padding: 0 1.25rem;
 }
-.Navbar li span.disable-menu .tooltip::after{
+.navbar .nav-logo a {
+    height: 100%;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 1px;
+    font-size: 1.4rem;
+    color: var(--accent-color);
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.navbar .nav-logo a span {
+    display: flex;
+    align-items: center;
+}
+.navbar .nav-logo .former::after {
+    content: "BLOG";
+    font-size: 1.5rem;
+    position: absolute;
+    color: var(--secondary-color);
+    z-index: -1;
+    letter-spacing: normal;
+}
+.navbar .nav-logo .latter {
+    color:#69615c;
+}
+.navbar .nav-logo .latter::after {
+    content: "ORA";
+    font-size: 1.5rem;
+    position: absolute;
+    color: var(--secondary-color);
+    z-index: -1;
+    letter-spacing: normal;
+}
+/* Decorate Tooltip */
+.navbar .tooltip::after {
     content: "";
     position: absolute;
     top: -8px;
@@ -148,21 +128,20 @@
     border-right: 6px solid transparent;
     border-bottom: 8px solid rgba(70, 63, 58, 0.77);
 }
-.Navbar li span.disable-menu .tooltip.show, .Navbar li span.disable-menu .tooltip.show::after{
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0); /* Moves back to normal position */
+.navbar .tooltip.show::after {
+    transform: translateX(-50%) translateY(0);
 }
+
 /* Hide navbar during horizontal scroll on the landing page */
-.Navbar.hide{
+.navbar.hide {
     opacity: 0;
     transform: translateY(-100%);
     pointer-events: none;
 }
 
-/* Mobile Screen */
+/* Mobile */
 @media (max-width: 768px) {
-    .menu-icon-overlay{
+    .menu-icon-overlay {
         width: calc(0.85rem + 23px + 0.85rem); /* 23px is an integer of icon width */
         height: calc(0.85rem + 23px + 0.85rem);
         position: fixed;
@@ -171,11 +150,11 @@
         z-index: 1000;
         background-color: rgba(188, 184, 177, 0.7);
     }
-    .menu-icon-overlay.hidden{
+    .menu-icon-overlay.hidden {
         background-color: transparent; /* Avoid overlapping selected menu background */
         transition: background-color 0.2s ease-in-out;
     }
-    .menu-icon{
+    .menu-icon {
         display: flex;
         align-items: center;
         position: fixed;
@@ -184,11 +163,11 @@
         cursor: pointer;
         z-index: 1000;
     }
-    .menu-icon svg{
+    .menu-icon svg {
         font-size: 1.4rem;
         color:#282828;
     }
-    .Navbar{
+    .navbar {
         left: -220px; /* Initially hidden */
         width: 220px;
         height: 100vh;
@@ -196,10 +175,10 @@
         align-items: flex-start;
         transition: left 0.2s ease-in-out;
     }
-    .Navbar.show-sidebar{
+    .navbar.show-sidebar {
         left: 0; /* Show sidebar when open */
     }
-    .sidebar-overlay{
+    .sidebar-overlay {
         position: fixed;
         top: 0;
         left: 220px;
@@ -207,52 +186,47 @@
         height: 100vh;
         z-index: 998; /* Under sidebar navbar */
     }
-    .Navbar ul{
+    .navbar ul {
         display: flex;
         flex-direction: column;
         height: 100%;
     }
-    .Navbar .menu-group{
+    .navbar .menu-group {
         display: flex;
         flex-direction: column;
         align-items: flex-start !important;
         padding: 0 !important;
     }
-    .Navbar .menu-group:first-of-type{
+    .navbar .menu-group:first-of-type {
         margin-top: 50px
     }
-    .Navbar .menu-group:last-of-type{
+    .navbar .menu-group:last-of-type {
         margin-bottom: 0.5rem;
     }
-    .Navbar li{
+    .navbar li {
         margin: 0 0 0.75rem !important;
         padding: 0 0 !important;
     }
-    .Navbar li:not(.nav-logo){
+    .navbar .menu {
         border-radius: 0.25rem;
         width: 100%;
     }
-    .Navbar li.nav-logo{
+    .navbar .nav-logo {
         width: 100%;
     }
-    .Navbar a, .Navbar span.logout-menu, .Navbar li span.disable-menu label{
+    .navbar .nav-logo a, 
+    .navbar .menu a, 
+    .navbar .menu button, 
+    .navbar .menu.disabled label {
         width: 100%;
-        padding: 1rem 2.25rem !important;
-        border: none !important;
+        padding: 1rem 2.25rem;
+        border: none;
     }
-    .Navbar li.selected{
+    .navbar .menu.selected {
         background: #ada9a3;
     }
-    .Navbar li span.disable-menu .tooltip{
-        top: 90%;
-        left: 2rem;
-        transform: translateX(0) translateY(-8px);
-    }
-    .Navbar li span.disable-menu .tooltip::after{
-        left: 2rem;
-    }
-    .Navbar li span.disable-menu .tooltip.show{
-        transform: translateX(0) translateY(0); /* Moves back to normal position */
+    .navbar .tooltip {
+        display: none;
     }
 }
 

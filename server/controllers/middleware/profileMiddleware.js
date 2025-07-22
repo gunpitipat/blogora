@@ -7,6 +7,7 @@ const profileMiddleware = (req, res, next) => {
             req.userId = decoded.userId // Attach userId for username synchronization check in profile
         }
         next()
+        
     } catch (error) {
         console.error("Error in profileMiddleware", error)
         next()

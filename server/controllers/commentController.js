@@ -41,6 +41,7 @@ exports.createComment = async (req, res) => {
         await Blogs.findByIdAndUpdate(blog._id, { $push: { comments: comment._id } })
         
         res.status(201).json({ message: "Comment has been post.", comment })
+    
     } catch (error) {
         console.error("Error creating comment:", error)
         res.status(500).json({ message: "Error creating a comment", error })
@@ -60,8 +61,8 @@ exports.getComments = async (req, res) => {
         .populate({ path: "user", select: "username" }) // Populate user details
         .sort({ createdAt: 1 }) // Sort by oldest comment first
 
-        res.status(200).json(comments)
-        
+        res.status(200).json(comments)        
+    
     } catch (error) {
         console.error("Error retrieving comments:", error)
         res.status(500).json({ message: "Error retrieving comments" })
@@ -122,7 +123,7 @@ exports.deleteComment = async (req, res) => {
             }
             return res.json({ message: "Comment has been deleted." })
         }
-
+    
     } catch (error) {
         console.error("Error deleting comment:", error)
         res.status(500).json({ message: "Error deleteing a comment", error })

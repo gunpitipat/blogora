@@ -1,15 +1,13 @@
 import "./BlogSnippet.css"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { extractSubsections } from "../../utils/contentUtils"
 import { formatDayMonth } from "../../utils/formatDateUtils";
 import { getLineHeight } from "../../utils/layoutUtils";
-import { useEffect, useMemo, useRef, useState } from "react"
 import { debounce } from "lodash"
 import { BsPinAngleFill } from "react-icons/bs";
 
-const BlogSnippet = (props) => {
-    const { blog, disableInnerLink } = props
-
+const BlogSnippet = ({ blog, disableInnerLink }) => {
     const contentRef = useRef(null)
     const [isOverflowing, setIsOverflowing] = useState(false)
 
@@ -64,60 +62,62 @@ const BlogSnippet = (props) => {
     }, [location.pathname, blog])
 
     return (
-        <div className="BlogSnippet">
-            {disableInnerLink ? (
-                <span className="title">
-                    <h2 ref={titleRef}>
-                        { blog.isPinned &&
-                            <span className="pin-icon">
-                                <BsPinAngleFill />
-                            </span>
-                        }
-                        {blog.title}
-                    </h2>
-                </span>
-            ) : (
-                <Link to={`/blog/${blog.slug}`} className="title">
-                    <h2>
-                        { blog.isPinned &&
-                            <span className="pin-icon">
-                                <BsPinAngleFill />
-                            </span>
-                        }
-                        {blog.title}
-                    </h2>
-                </Link>
-            )}
-
-            {blog.content &&
-             <div className="content-container" ref={contentRef}>
-                {sections.map((sec, index) => {
-                    return sec.subtitle ? (
-                            <div key={index} className="section">
-                                <p className="subtitle">{sec.subtitle}</p>
-                                <p className="content">{sec.content}</p>
-                            </div>
-                        ) : (
-                            <p key={index} className="content">{sec.content}</p>
-                        )
-                })}
-                {isOverflowing && <div className="fade-overlay"></div>}
-             </div>
+        <div className="blog-snippet">
+            {/* Blog Title */}
+            { disableInnerLink 
+                ?   <span className="title">
+                        <h2 ref={titleRef}>
+                            { blog.isPinned &&
+                                <span className="pin-icon">
+                                    <BsPinAngleFill />
+                                </span>
+                            }
+                            {blog.title}
+                        </h2>
+                    </span>
+                :   <Link to={`/blog/${blog.slug}`} className="title">
+                        <h2>
+                            { blog.isPinned &&
+                                <span className="pin-icon">
+                                    <BsPinAngleFill />
+                                </span>
+                            }
+                            {blog.title}
+                        </h2>
+                    </Link>
             }
 
+            {/* Blog Content */}
+            {blog.content &&
+                <div className="content-container" ref={contentRef}>
+                    {sections.map((sec, index) => {
+                        return sec.subtitle 
+                            ?   <div key={index} className="section">
+                                    <p className="section-subtitle">{sec.subtitle}</p>
+                                    <p className="section-content">{sec.content}</p>
+                                </div>
+                            :   <p key={index} className="section-content">
+                                    {sec.content}
+                                </p>
+                    })}
+                    { isOverflowing && <div className="fade-overlay" /> }
+                </div>
+            }
+
+            {/* Author and Date */}
             <small className="footer">
-                {disableInnerLink ? (
-                    <span className="author">
-                        {blog.author?.username}
-                    </span>
-                ) : (
-                    <Link to={`/profile/${blog.author?.username}`} className="author">
-                        {blog.author?.username}
-                    </Link>
-                )
+                { disableInnerLink 
+                    ?   <span className="author">
+                            {blog.author?.username}
+                        </span>
+                    :   <Link to={`/profile/${blog.author?.username}`} className="author">
+                            {blog.author?.username}
+                        </Link>
                 }
                 <span className="separator">&nbsp;&bull;&nbsp;</span>
-                <span className="timestamp">{formatDayMonth(blog.createdAt)}</span>
+                <span className="created-date">
+                    {formatDayMonth(blog.createdAt)}
+                </span>
             </small>
         </div>
     )

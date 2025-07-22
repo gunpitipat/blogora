@@ -1,18 +1,18 @@
 import "./HeroSection.css"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useAlertContext } from "../../contexts/AlertContext";
-import { useDemoContext } from "../../contexts/DemoContext"
-import { useAuthContext } from "../../contexts/AuthContext";
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import { useNavigate } from "react-router-dom"
+import { useAlertContext } from "../../contexts/AlertContext";
+import { useAuthContext } from "../../contexts/AuthContext";
+import { useDemoContext } from "../../contexts/DemoContext"
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import BlogoraGlobe from "../../assets/images/BlogoraGlobe.png"
-import gsap from "gsap"
-import { useGSAP } from "@gsap/react"
+import BubbleChat from "./BubbleChat";
 import { FiArrowUpRight } from "react-icons/fi";
 import { FaAngleDown } from "react-icons/fa6";
-import BubbleChat from "./BubbleChat";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollToPlugin, ScrollTrigger } from "gsap/all";
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
@@ -24,11 +24,11 @@ const HeroSection = () => {
     const { setAlertState } = useAlertContext()
     const { setPrefillDemo, setShowDemoPopup } = useDemoContext()
     const { isAuthenticated, user } = useAuthContext()
-    
     const navigate = useNavigate()
 
     const TTL_MINUTES_BEFORE_LOGIN = 15
     const LOGIN_BUFFER_MINUTES = 3
+    const isLoggedIn = isAuthenticated && user?.username
     
     // Cleanup demoCrendentials in localStorage
     useEffect(() => {
@@ -40,6 +40,7 @@ const HeroSection = () => {
             if (Date.now() - demoCredentials.createdAt > (TTL_MINUTES_BEFORE_LOGIN - LOGIN_BUFFER_MINUTES) * 60 * 1000) {
                 localStorage.removeItem("demoCredentials")
             }
+        
         } catch (error) {
             // In case of corrupted JSON, clean it up
             localStorage.removeItem("demoCredentials")
@@ -56,6 +57,7 @@ const HeroSection = () => {
                 demoCredentials = JSON.parse(localStorage.getItem("demoCredentials"))
                 reuseCredentials = demoCredentials && 
                     Date.now() - demoCredentials.createdAt <= (TTL_MINUTES_BEFORE_LOGIN - LOGIN_BUFFER_MINUTES) * 60 * 1000
+            
             } catch {
                 localStorage.removeItem("demoCredentials") // In case of corrupted JSON
             }
@@ -78,26 +80,31 @@ const HeroSection = () => {
             setPrefillDemo(true)
             setShowDemoPopup(true)
             navigate("/login")
-
+        
         } catch (error) {
             if (!error.response) {
                 setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
             } else {
                 setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
             }
+        
         } finally {
             setTryDemoLoading(false)
         }
     }
 
+    useEffect(() => {
+        setHideScrollHint(false) // React Router may not fully remount when re-entering, reusing the `true` value from last visit
+    }, [])
+
     // Animating elements
     useGSAP(() => {
         gsap.from("#hero-headline", { opacity: 0, y: 5, ease: "power2.out" })
         gsap.from("#hero-subtitle", { opacity: 0, y: 5, duration: 1, delay: 0.2, ease: "power3.out" })
-        gsap.from(".btn", { opacity: 0, y: 8, ease: "power2.out" })
+        gsap.from(".hero-cta", { opacity: 0, y: 8, ease: "power2.out" })
         // gsap.from("#blogora-globe", { scale: 0.97, duration: 1, ease: "power3.out" })
         gsap.from("#orbit", { opacity: 0, duration: 0.5, ease: "power3.out" })
-        gsap.from("#scroll-hint", { opacity: 0, duration: 1.8, delay: 1.2, ease: "power4.in" })
+        gsap.from("#scroll-hint", { opacity: 0, duration: 1.75, delay: 1, ease: "power4.in" })
         ScrollTrigger.create({
             trigger: "#feature-headline",
             start: "top 80%",
@@ -136,10 +143,11 @@ const HeroSection = () => {
     }
 
     return (
-        <section className="HeroSection">
+        <section className="hero-section">
+            { tryDemoLoading && <LoadingScreen /> }
             <div className="container">
                 <div className="hero-content">
-                    <h1 id="hero-headline">
+                    <h1 className="hero-headline" id="hero-headline">
                         <span className="headline-lg">
                             Share ideas,{" "}
                             <span className="headline-lg-split"><br /></span>
@@ -155,28 +163,37 @@ const HeroSection = () => {
                             Join the discussion
                         </span>
                     </h1>
-                    <p id="hero-subtitle" className={(isAuthenticated && user?.username) ? "subtitle-logged-in" : ""}>
-                        {(isAuthenticated && user?.username)
-                        ? <span>
-                            To get started with your own blog, just click below.
-                          </span>
-                        : <span>
-                            To try the full experience, just click below
-                            <span className="subtitle-sm-hide">{" "}and explore instantly. No signup needed.</span>
-                          </span>
+                    <p className={`hero-subtitle ${isLoggedIn ? "logged-in" : ""}`}
+                        id="hero-subtitle"
+                    >
+                        { isLoggedIn
+                            ?   <span>
+                                    To get started with your own blog, just click below.
+                                </span>
+                            :   <span>
+                                    To try the full experience, just click below
+                                    <span className="subtitle-sm-hide">
+                                        {" "}and explore instantly. No signup needed.
+                                    </span>
+                                </span>
                         }
                     </p>
-                    {(isAuthenticated && user?.username)
-                    ? <button className="btn create-blog" onClick={()=>navigate("/create")}>Create Blog</button>
-                    : <button className="btn try-demo" onClick={handleTryDemo}>Try Demo</button>  
+                    { isLoggedIn
+                        ?   <button className="hero-cta create-blog-btn" onClick={() => navigate("/create")}>
+                                Create Blog
+                            </button>
+                        :   <button className="hero-cta try-demo-btn" onClick={handleTryDemo}>
+                                Try Demo
+                            </button>  
                     }
-                    {tryDemoLoading && <LoadingScreen />}
                 </div>
 
                 <div className="hero-visual">
                     <div className="globe-container">
-                        <img src={BlogoraGlobe} alt="BlogoraGlobe" id="blogora-globe"/>
-                        <div id="orbit">
+                        <img src={BlogoraGlobe} alt="BlogoraGlobe" 
+                            className="blogora-globe" id="blogora-globe" 
+                        />
+                        <div className="orbit" id="orbit">
                             <BubbleChat className="first" onClick={scrollToFeature}>
                                 Learn the features
                             </BubbleChat>
@@ -188,7 +205,7 @@ const HeroSection = () => {
                             <BubbleChat className="third link">
                                 <a href="/blog/how-blogora-works" target="_blank" rel="noopener noreferrer">
                                     How Blogora works
-                                    <span className="new-tab">
+                                    <span className="new-tab-icon">
                                         <FiArrowUpRight />
                                     </span>
                                 </a>
@@ -197,7 +214,7 @@ const HeroSection = () => {
                             <BubbleChat className="fourth link">
                                 <a href="https://github.com/gunpitipat/blogora" target="_blank" rel="noopener noreferrer">
                                     View on Github
-                                    <span className="new-tab">
+                                    <span className="new-tab-icon">
                                         <FiArrowUpRight />
                                     </span>
                                 </a>
@@ -206,8 +223,10 @@ const HeroSection = () => {
                     </div>
                 </div>
      
-                <div id="scroll-hint" className={`${hideScrollHint ? "hide" : ""}`}>
-                    <span>
+                <div className={`scroll-hint ${hideScrollHint ? "hide" : ""}`}
+                    id="scroll-hint" 
+                >
+                    <span className="scroll-hint-icon">
                         <FaAngleDown />
                     </span>      
                 </div>

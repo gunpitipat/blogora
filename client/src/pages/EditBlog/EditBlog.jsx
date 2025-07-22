@@ -1,124 +1,124 @@
-import { useState, useEffect, useRef, useMemo } from "react"
 import "./EditBlog.css"
-import { Navigate, useParams } from "react-router-dom"
 import axios from "axios"
+import { useState, useEffect, useRef, useMemo, useCallback } from "react"
+import { Navigate, useParams } from "react-router-dom"
 import { useAlertContext } from "../../contexts/AlertContext"
-import { FaPen, FaEye } from "react-icons/fa";
-import { TfiArrowsCorner } from "react-icons/tfi";
-import { BsArrowsAngleContract } from "react-icons/bs";
-import TipTap from "../../components/RichTextEditor/TipTap"
+import { useAuthContext } from "../../contexts/AuthContext"
 import { useLoadingContext } from "../../contexts/LoadingContext" 
+import { cleanEditorContent } from "../../utils/contentUtils"
+import { debounce } from "lodash"
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
-import { useAuthContext } from "../../contexts/AuthContext"
-import { getTotalOffsetTop } from "../../utils/layoutUtils"
-import { FaUpRightFromSquare, FaBan } from "react-icons/fa6";
-import { debounce } from "lodash"
+import ContentEditor from "../../components/TextEditor/ContentEditor";
+import BlogFormButtons from "../../components/BlogFormButtons/BlogFormButtons"
 import PopupAlert from "../../components/Popups/PopupAlert";
-import { cleanEditorContent } from "../../utils/contentUtils"
+import { FaPen } from "react-icons/fa";
 
 const EditBlog = () => {
     const { slug } = useParams()
+    const [title, setTitle] = useState("")   
+    const [content, setContent] = useState(null)
+    const [blogExists, setBlogExists] = useState(null)
+    const [author, setAuthor] = useState(null)
 
-    const [ title, setTitle ] = useState("")   
-    const [ content, setContent ] = useState("")
-
-    let initialLabels = { titleLabel: false, contentLabel: false }
-    const [ labels, setLabels ] = useState(initialLabels) 
+    const initialLabels = useMemo(() => ({ titleLabel: false, contentLabel: false }), [])
+    const [labels, setLabels] = useState(initialLabels) 
 
     // Preview
-    const [ previewOpen, setPreviewOpen ] = useState(false)
-    const [ showPopupAlert, setShowPopupAlert ] = useState(false)
+    const [previewOpen, setPreviewOpen] = useState(false)
+    const [showPopupAlert, setShowPopupAlert] = useState(false)
     const previewWindowRef = useRef(null)
 
-    // Prop to TipTap component to clear content after submitting form
-    const [ submit, setSubmit ] = useState(false)
-
-    const [ blogExists, setBlogExists ] = useState(null)
-    const [ author, setAuthor] = useState(null)
+    // Pass to TipTap component to clear content after submitting form
+    const [submit, setSubmit] = useState(false)
 
     const { setLoading } = useLoadingContext()
     const { user } = useAuthContext()
-
-    // Alert popup
     const { setAlertState } = useAlertContext()
-
-    // Extend textarea
-    const [ extendTextarea, setExtendTextarea ] = useState(false)
 
     // Make label bolder when focusing on input/textarea   
     const focusLabel =(label) => {
-        initialLabels = { ...initialLabels, [label]: true }
-        setLabels(initialLabels) // Updating labels causes a re-render, resetting initialLabels to its initial value
+        setLabels(prev => ({ ...prev, [label]: true }))
     }
 
-    // Perform scrolling after extendTextarea set to true (the DOM updates)
+    // Create stable functions to pass to memoized child components
+    const handleFocus = useCallback(() => {
+        focusLabel("contentLabel")
+    }, [])
+
+    const handleBlur = useCallback(() => {
+        setLabels(initialLabels)
+    }, [initialLabels])
+
+    const handleDiscard = useCallback(() => {
+        window.history.back()
+    }, [])
+    
     useEffect(() => {
-        if (extendTextarea) {
-            const contentElement = document.getElementById("content")
-            const editorElement = document.getElementById("text-editor")
-                
-            if (contentElement && editorElement) { // Ensure contentElement not null and valid to prevent Reference Error
-                const handleTransitionEnd = ()=> {    
-                    const targetScrollY = getTotalOffsetTop(contentElement) - (window.innerWidth <= 768 ? 0 : 80) - (window.innerWidth <= 768 ? 20 : 16) // - fixed navbar height - spacing
-                    window.scrollTo({
-                        top: targetScrollY,
-                        behavior: "smooth"
-                    })
-                }
+        const controller = new AbortController()
 
-                // Textarea (text editor) has height-transition duration of 150ms
-                editorElement.addEventListener("transitionend",handleTransitionEnd)
+        const fetchBlog = async () => {
+            try {
+                setLoading(true)
+                setBlogExists(null)
+                setTitle("")
+                setContent("")
+                setAuthor(null)
 
-                // Cleanup: Remove the listener to prevent multiple event listeners from stacking up
-                return () => {
-                    editorElement.removeEventListener("transitionend", handleTransitionEnd);
-                };
-            }
-        }
-    }, [extendTextarea])
+                const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, 
+                    { withCredentials: true, signal: controller.signal })
 
-    useEffect(() => {
-        let isMounted = true;
-
-        setLoading(true)
-        setBlogExists(null)
-        setTitle("")
-        setContent("")
-        setAuthor(null)
-
-        axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, { withCredentials: true })
-        .then(response => {
-            if (isMounted) {
                 const { title: titleData, content: contentData, author: authorId } = response.data
                 setTitle(titleData)
                 setContent(contentData)
                 setBlogExists(true)
                 setAuthor(authorId?.username)
-            }
-        })
-        .catch(error => {
-            if (isMounted) {
+            
+            } catch (error) {
+                if (axios.isCancel(error)) return
                 if (error.response && error.response.status === 404) {
                     setBlogExists(false) // Blog not found
                 } else {
-                    console.error("Error fetching a blog")
+                    setAlertState({ display: true, type: "error", message: error.response?.data?.message || "Something went wrong. Please try again." })
                 }
-            }
-        })
-        .finally(() => {
-            if (isMounted) {
+
+            } finally {
                 setLoading(false)
             }
-        })
+        }
 
-        return () => { isMounted = false}
+        fetchBlog()
+
+        return () => controller.abort()
         // eslint-disable-next-line 
     }, [slug])
 
+    // Submit data
+    const handleFormSubmit = async (e) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            const cleanedContent = cleanEditorContent(content)
+            const response = await axios.put(`${process.env.REACT_APP_API}/blog/${slug}`,{ title, content: cleanedContent }, { withCredentials: true })
+            setLoading(false)
+            setAlertState({ display: true, type: "success", message: response.data.message })
+            window.history.back() // Go back to BlogPage
+        
+        } catch (error) {
+            if (!error.response) {
+                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
+            } else {
+                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
+            }
+        
+        } finally {
+            setLoading(false)
+        }
+    }
+
     // Preview Feature
     // Preview button hanlder
-    const previewBlog = () => {
+    const previewBlog = useCallback(() => {
         // Open a new tab if window reference is null or inaccessible, or the latest preview is closed
         if (!previewWindowRef.current || previewWindowRef.current.closed) {  
             const cleanedContent = cleanEditorContent(content)
@@ -137,7 +137,8 @@ const EditBlog = () => {
         } else {
             previewWindowRef.current.close()
         }
-    }
+        // eslint-disable-next-line 
+    }, [title, content])
 
     // Track if preview tab is open and controllable
     useEffect(() => {
@@ -158,6 +159,7 @@ const EditBlog = () => {
                                     return // Preview is just refreshed
                                 }
                             }
+
                         } catch (error) { // Preview is navigated away to an external domain
                             result = false
                         }
@@ -218,98 +220,53 @@ const EditBlog = () => {
         }
     }, [])
 
-    // Edit Form
-    const showEditForm = () => {
-        return (
-            <form onSubmit={submitForm}>
-                <div className="title">
-                    <label className={labels.titleLabel ? "bold" : null}>
-                        Title <FaPen visibility={labels.titleLabel ? "visible" : "hidden"}/>
-                    </label>
-                    <input type="text" value={title} 
-                        onFocus={() => focusLabel("titleLabel")}
-                        onBlur={() => setLabels(initialLabels)}
-                        onChange={(e) => setTitle(e.target.value)}/>
-                </div>
-                <div className="content" id="content">
-                    <label className={labels.contentLabel ? "bold" : null}>
-                        Content <FaPen visibility={labels.contentLabel ? "visible" : "hidden"}/>
-                    </label>
-                    <div className={extendTextarea ? "textarea-container extend" : "textarea-container"}>
-                        {content && // Ensure to pass actual content, not initial value, to TipTap
-                            <TipTap 
-                                content={content} 
-                                setContent={setContent} 
-                                submit={submit} 
-                                setSubmit={setSubmit} 
-                                isFocusing={labels.contentLabel} 
-                                onFocus={() => focusLabel("contentLabel")}
-                                onBlur={() => setLabels(initialLabels)}
-                            />
-                        }
-                        <div className="sizing" onClick={() => setExtendTextarea(!extendTextarea)}>
-                            { !extendTextarea ? <TfiArrowsCorner/> : <BsArrowsAngleContract style={{ transform: "scaleX(-1)" }}/>}
-                        </div>
-                    </div>
-                </div>
-                <footer className="button-group">
-                    <button className="btn discard" type="button" onClick={() => {window.history.back()}}>
-                        <span className="icon">
-                            <FaBan style={{ transform: "scaleX(-1)" }} />
-                        </span>
-                        <label>Discard</label>
-                    </button>
-                    <button className={`btn preview ${previewOpen ? "previewing" : ""}`} type="button" onClick={previewBlog}>
-                        {!previewOpen &&
-                        <span className="icon">
-                            <FaUpRightFromSquare />
-                            <FaEye className="eye" />
-                        </span>
-                        }
-                        <label>{!previewOpen ? "Preview" : "Previewing"}</label>
-                    </button>
-                    <button className="btn update" type="submit">
-                        <span className="icon">
-                            <FaUpRightFromSquare />
-                        </span>
-                        <label>Update</label>
-                    </button>
-                </footer>
-            </form>
-        )
-    }
-
-    // Submit form data
-    const submitForm = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        try {
-            const cleanedContent = cleanEditorContent(content)
-            const response = await axios.put(`${process.env.REACT_APP_API}/blog/${slug}`,{ title, content: cleanedContent }, { withCredentials: true })
-            setLoading(false)
-            setAlertState({ display: true, type: "success", message: response.data.message })
-            window.history.back() // Go back to BlogPage
-        } catch (error) {
-            setLoading(false)
-            if (!error.response) {
-                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
-            } else {
-                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
-            }
-        }
-    }
-
     if (blogExists === null || author === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
     if (user?.username !== author) return <Navigate to={`/blog/${slug}`} /> // Add check for author === null above to handle the case request hasn't finished yet, preventing premature redirection
 
     return(
-        <div className="EditBlog">
-            <h2>Edit Your Blog</h2>
-            {showEditForm()}
+        <div className="edit-blog">
+            <h2 className="headline">
+                Edit Your Blog
+            </h2>
+            <form onSubmit={handleFormSubmit}>
+                <div className="title-editor">
+                    <label className={`form-label ${labels.titleLabel ? "active" : ""}`}>
+                        Title
+                        { labels.titleLabel && 
+                            <span className="pen-icon">
+                                <FaPen />
+                            </span>
+                        }
+                    </label>
+                    <input 
+                        type="text" 
+                        value={title} 
+                        onFocus={() => focusLabel("titleLabel")}
+                        onBlur={() => setLabels(initialLabels)}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                </div>
+                <ContentEditor 
+                    content={content}
+                    setContent={setContent}
+                    submit={submit} 
+                    setSubmit={setSubmit}
+                    isLabelActive={labels.contentLabel}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                />
+                <BlogFormButtons 
+                    firstBtnLabel="Discard"
+                    onFirstClick={handleDiscard}
+                    previewOpen={previewOpen}
+                    previewBlog={previewBlog}
+                    thirdBtnLabel="Update"  
+                />
+            </form>
 
             {/* If preview couldn't open */}
-            {showPopupAlert && 
+            { showPopupAlert && 
                 <PopupAlert
                     popupContent={`Please allow pop-ups for this site in your browser settings to use the preview feature.`}
                     showPopupAlert={showPopupAlert}

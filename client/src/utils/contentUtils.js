@@ -97,7 +97,7 @@ export const handleEmptyLine = (htmlContent) => {
         .replace(/<br\s*\/?>/gi, `<span className="fake-br"></span>`) // Fix -> Alone <br> at the end of a block has no visual effect when rendering
 }
 
-// Form & EditBlog
+// CreateBlog & EditBlog
 // Clean content state before submitting
 export const cleanEditorContent = (htmlContent) => {
     if (!htmlContent) return htmlContent

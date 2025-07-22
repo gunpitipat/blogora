@@ -1,14 +1,11 @@
-import { motion, useScroll, useTransform } from "framer-motion"
 import { useRef } from "react"
 import { useMediaQuery } from "../../hooks/useMediaQuery"
+import { motion, useScroll, useTransform } from "framer-motion"
 
-
-const BubbleChat = (props) => {
-    const { className, children, onClick = () => {} } = props
+const BubbleChat = ({ className, children, onClick = () => {} }) => {
     const ref = useRef()
-    const { scrollY } = useScroll()
-
     const isSmallDevice = useMediaQuery("(max-width: 768px)")
+    const { scrollY } = useScroll()
 
     // Scroll 0-300px -> Move element up to -30px
     const y = useTransform(scrollY, [0, 300], [0, isSmallDevice ? -15 : -30])

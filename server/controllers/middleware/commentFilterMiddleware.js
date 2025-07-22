@@ -17,6 +17,7 @@ const commentFilterMiddleware = (req, res, next) => {
                     ]
                 }
             }
+            
         } catch (error) {
             // Invalid or expired token - fallback to default filter
         }

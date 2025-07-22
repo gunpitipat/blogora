@@ -1,19 +1,18 @@
+import "./CommentInput.css"
 import { useEffect, useRef, useState } from "react";
-import "./ReplyInput.css"
 import { BsSendFill } from "react-icons/bs";
 
-const ReplyInput = (props) => {
-    const { onSendReply } = props
-    const [replyContent, setReplyContent] = useState("")
+const CommentInput = ({ onSend, className }) => {
+    const [commentContent, setCommentContent] = useState("")
     const textareaRef = useRef(null)
 
     // Auto-expand textarea
     useEffect(() => {
         if (textareaRef.current) {
-            textareaRef.current.style.height = "0px" // Reset height
+            textareaRef.current.style.height = "auto" // Reset height
             textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
         }
-    }, [replyContent])
+    }, [commentContent])
 
     // Auto focus textarea when rendering
     useEffect(() => {
@@ -22,20 +21,20 @@ const ReplyInput = (props) => {
         }
     }, [])
 
-    // Handle sending reply
+    // Send Comment/Reply
     const handleSend = () => {
-        if (replyContent.trim() === "") return;
-        onSendReply(replyContent.trim())
-        setReplyContent("")
+        if (commentContent.trim() === "") return;
+        onSend(commentContent.trim())
+        setCommentContent("")
     }
-    
+
     return (
-        <div className="ReplyInput-container">
+        <div className={`comment-input ${className}`}>
             <textarea 
-                row = "1"
-                value = {replyContent}
-                onChange= {(e)=>setReplyContent(e.target.value)}
-                ref = {textareaRef}
+                rows="1"
+                ref={textareaRef}
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
             />
             <button className="send-button" onClick={handleSend}>
                 <BsSendFill />
@@ -44,6 +43,6 @@ const ReplyInput = (props) => {
     )
 }
 
-export default ReplyInput
+export default CommentInput
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

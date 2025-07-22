@@ -1,22 +1,28 @@
-import { useEffect } from "react";
-import { useAuthContext } from "../../contexts/AuthContext"
 import "./SessionExpiration.css"
-import { FaUserTimes } from "react-icons/fa";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom"
+import { useAuthContext } from "../../contexts/AuthContext"
+import { FaUserTimes } from "react-icons/fa";
 
 const SessionExpiration = () => {
-    const { sessionExpired, setSessionExpired, setIsAuthenticated, user, setUser } = useAuthContext()
+    const { 
+        sessionExpired, 
+        setSessionExpired, 
+        setIsAuthenticated, 
+        user, 
+        setUser 
+    } = useAuthContext()
     const navigate = useNavigate()
     
     const reAuthenticate = () => {
-        localStorage.removeItem("isLogin")
+        localStorage.removeItem("isLoggedIn")
         setIsAuthenticated(false)
         setUser(null)
         setSessionExpired(false)
         navigate("/login")
     }
 
-    // Save the user's draft, preventing losing user content, then restore it when they log back in
+    // Save the user's last page, then restore it when they log back in
     useEffect(() => {
         if (sessionExpired) {
             sessionStorage.setItem("lastPage", window.location.pathname)
@@ -26,18 +32,26 @@ const SessionExpiration = () => {
     }, [sessionExpired])
 
     return (
-        <div className="SessionExpiration">
+        <div className="session-expiration">
             <div className={`modal-overlay ${sessionExpired ? "show" : ""}`}>
-                <div className="confirm-container">
-                    <div className="icon-background"><FaUserTimes /></div>
-                    <h1>Session Expired</h1>
-                    <div className="content">
+                <div className="modal-container">
+                    <div className="icon-bg">
+                        <FaUserTimes />
+                    </div>
+                    <h1 className="modal-title">
+                        Session Expired
+                    </h1>
+                    <div className="modal-content">
                         <p>Your session has expired.&nbsp;</p>
                         <p>Please log in again.</p>
                     </div>
-                    <div className="button-container">
-                        <button onClick={()=>setSessionExpired(false)} className="cancel-button">Dismiss</button>
-                        <button onClick={reAuthenticate} className="confirm-button">Log in</button>
+                    <div className="btn-container">
+                        <button className="cancel-btn" onClick={() => setSessionExpired(false)}>
+                            Dismiss
+                        </button>
+                        <button className="confirm-btn" onClick={reAuthenticate}>
+                            Log in
+                        </button>
                     </div>
                 </div>
             </div>

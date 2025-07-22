@@ -1,0 +1,182 @@
+.blog-content header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--neutral-color-heavy);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+.blog-content .title {
+    color: var(--accent-color);
+    transition: opacity 0.14s ease-in-out;
+    word-break: break-word; /* Break title if too long one exists */
+    overflow-wrap: break-word; /* Ensures wrapping in older browsers */
+}
+.blog-content .title.fade {
+    opacity: 0.14;
+    transition: opacity 0.14s ease-in-out;
+}
+.blog-content .goback-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    right: calc(100% + 2.5rem);
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+.blog-content .goback-icon svg {
+    color: var(--accent-color);
+    opacity: 0.7;
+}
+.blog-content .goback-icon:hover svg {
+    opacity: 1;
+}
+.blog-content .blog-setting {
+    position: absolute;
+    left: calc(100% + 2.5rem);
+    height: 48px;
+    width: 48px;
+}
+.blog-content .blog-setting .setting-icon {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+.blog-content .blog-setting .setting-icon svg {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    opacity: 0.7;
+}
+.blog-content .blog-setting .setting-icon:hover svg {
+    opacity: 1;
+}
+.blog-content .blog-setting .options {
+    list-style: none;
+    z-index: 5;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: calc(100% + 2.5rem);
+    display: flex;
+    gap: 0.75rem;
+}
+.blog-content .blog-setting .options>* {
+    padding: 0.25rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--accent-color);
+    background-color: var(--neutral-color-light);
+    border: 1px solid var(--accent-color);
+    opacity: 0.8;
+}
+.blog-content .blog-setting .delete-option:hover {
+    font-weight: 500;
+    opacity: 1;
+}
+.blog-content .blog-setting .edit-option {
+    text-decoration: none;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+.blog-content .blog-setting .edit-option:hover {
+    font-weight: 500;
+    opacity: 1;
+}
+/* Modal */
+.blog-content .modal .modal-content span {
+    font-weight: 700;
+    word-break: break-word; /* Break title if too long */
+    overflow-wrap: break-word; /* Ensures wrapping in older browsers */
+}
+
+.blog-content main {
+    font-size: 1.1rem;
+    line-height: 2rem;
+    color: var(--neutral-color-dark);
+}
+.blog-content .tiptap-result :first-child {
+    margin-top: 0;
+}
+.blog-content .tiptap-result h1 {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: var(--accent-color);
+}
+.blog-content .tiptap-result ol, 
+.blog-content .tiptap-result ul {
+    padding: 0 2rem;
+    margin: 0.5rem 0;
+}
+.blog-content .tiptap-result span.fake-br {
+    display: block;
+    width: 100%;
+    height: 1em;
+}
+
+.blog-content footer {
+    margin: 2rem 0 0;
+    padding-bottom: 2rem;
+    margin-bottom: 1rem;
+}
+.blog-content .author {
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 900;
+    color: var(--accent-color);
+    display: inline-block;
+}
+/* Timestamp */
+.blog-content .timestamp {
+    margin-top: 0.2rem;
+    display: block;
+    width: fit-content;
+}
+
+@media (max-width: 768px) {
+    .blog-content header {
+        position: static;
+    }
+    .blog-content .goback-icon {
+        top: 0;
+        left: 51px;
+    }
+    .blog-content .blog-setting {
+        top: 0;
+        left: 100%;
+        transform: translateX(calc(-100% - 26px));
+    }
+    .blog-content .blog-setting .options {
+        right: calc(100% + 26px);
+    }
+}
+@media (max-width: 672px) {
+    .blog-content .title {
+        font-size: 1.9rem;
+    }
+    .blog-content .blog-setting .options {
+        right: calc(100%);
+    }    
+}
+@media (max-width: 560px) {
+    .blog-content .title {
+        font-size: 1.8rem;
+    }
+    .blog-content .blog-setting {
+        transform: translateX(calc(-100% - 12px));
+    }    
+}
+@media (max-width: 480px) {
+    .blog-content .title {
+        font-size: 1.7rem;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

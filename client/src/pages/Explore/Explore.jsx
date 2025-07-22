@@ -1,27 +1,30 @@
 import "./Explore.css"
-import { useState, useEffect, useMemo, useRef } from "react"
 import axios from "axios"
-import WelcomeTooltip from "./WelcomeTooltip";
-import SearchFilter from "./SearchFilter";
-import { useAuthContext } from "../../contexts/AuthContext";
-import { LuArrowUpToLine } from "react-icons/lu";
+import { useState, useEffect, useMemo, useRef } from "react"
+import { useLocation } from "react-router-dom";
 import { useAlertContext } from "../../contexts/AlertContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { debounce } from "lodash"
-import BlogSnippet from "../../components/BlogSnippet/BlogSnippet";
 import Skeleton from "./Skeleton";
+import SearchBar from "./SearchBar";
+import WelcomeTooltip from "./WelcomeTooltip";
+import BlogSnippet from "../../components/BlogSnippet/BlogSnippet";
 import Footer from "../../components/Layout/Footer";
+import { LuArrowUpToLine } from "react-icons/lu";
 
 function Explore() {
-  const [ blogs, setBlogs ] = useState([])
-  const [ showTooltip, setShowTooltip ] = useState(false)
-  const [ searchInput, setSearchInput ] = useState("")
-  const [ showBackToTop, setShowBackToTop ] = useState(false)
-  const [ isLoading, setIsLoading ] = useState(true)
-
+  const [blogs, setBlogs] = useState([])
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [searchInput, setSearchInput] = useState("")
+  const [showBackToTop, setShowBackToTop] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const hasRestoredScroll = useRef(false)
 
   const { isAuthenticated, user } = useAuthContext()
   const { setAlertState } = useAlertContext()
+  const location = useLocation()
+
+  const isLoggedIn = isAuthenticated && user?.username
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -30,12 +33,14 @@ function Explore() {
         withCredentials: true
       })
       setBlogs(response.data)
+    
     } catch (error) {
       if (!error.response) {
         setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
       } else {
         setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
       }
+    
     } finally {
       setIsLoading(false)
     }
@@ -46,13 +51,12 @@ function Explore() {
     // eslint-disable-next-line
   },[])
 
-  // Showing ToopTip once when opening browser
+  // Show Tooptip once per session
   useEffect(() => {
     const hasSeenTooltip = sessionStorage.getItem("tooltip_shown")
     if (!hasSeenTooltip) {
-      setShowTooltip(true) // Show tooltip only if it hasn’t been seen
+      setShowTooltip(true)
     }
-    // eslint-disable-next-line
   }, [])
 
   const closeTooltip = () => {
@@ -60,45 +64,38 @@ function Explore() {
     sessionStorage.setItem("tooltip_shown", "true") // Set a flag to ensure it will only be shown once per each session
   }
 
-  const filteredBlogs = useMemo(() => {
-    if (!searchInput) return blogs
-
-    const lowerInput = searchInput.toLowerCase()
-
-    return blogs.filter(blog => {
-      return (
-        blog.title?.toLowerCase().includes(lowerInput) ||
-        blog.content?.toLowerCase().includes(lowerInput) ||
-        blog.author?.username?.toLowerCase().includes(lowerInput)
-      )
-    })
-  }, [searchInput, blogs])
-
   // Save scroll position
   useEffect(() => {
     const saveScroll = debounce(() => {
-      if (hasRestoredScroll.current) {
-        sessionStorage.setItem("scrollPosition", window.scrollY)
+      if (location.pathname === "/explore" && hasRestoredScroll.current) {
+        sessionStorage.setItem("/explore-scrollY", window.scrollY.toString())
       }
     }, 100)
 
-    if (blogs.length > 0) { // Prevent storing (overwriting) new scroll position before restoring the previous one properly
+    if (blogs.length > 0) { // Prevent overwriting new scroll position before restoring the previous one properly
       window.addEventListener("scroll", saveScroll)
     }
 
-    return () => window.removeEventListener("scroll", saveScroll)
-  }, [blogs])
+    return () => {
+      window.removeEventListener("scroll", saveScroll)
+      saveScroll.cancel?.()
+    }
+  }, [blogs, location.pathname])
 
   // Restore scroll position
   useEffect(() => {
-    if (blogs.length > 0 && !hasRestoredScroll.current) {
-      const storedScroll = sessionStorage.getItem("scrollPosition") || 0
+    let timeout
+    if (location.pathname === "/explore" && blogs.length > 0 && !hasRestoredScroll.current) {
+      const storedScroll = sessionStorage.getItem("/explore-scrollY") || 0
       if (storedScroll) {
-        window.scrollTo(0, parseFloat(storedScroll))
+        timeout = setTimeout(() => {
+          window.scrollTo(0, parseFloat(storedScroll))
+        }, 0) // Ensure DOM layout updated
       }
       hasRestoredScroll.current = true
     }
-}, [blogs])
+    return () => clearTimeout(timeout)
+  }, [blogs, location.pathname])
 
   // Show/hide back-to-top button
   useEffect(() => {
@@ -118,31 +115,50 @@ function Explore() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  const filteredBlogs = useMemo(() => {
+    if (!searchInput) return blogs
+
+    const lowerInput = searchInput.toLowerCase()
+
+    return blogs.filter(blog => (
+        blog.title?.toLowerCase().includes(lowerInput) ||
+        blog.content?.toLowerCase().includes(lowerInput) ||
+        blog.author?.username?.toLowerCase().includes(lowerInput)
+    ))
+  }, [searchInput, blogs])
+
   return (
-    <>
-      <div className="Explore">
-        <SearchFilter searchInput={searchInput} setSearchInput={setSearchInput}/>
-
-        {isLoading ? (
-          Array.from({ length: 2 }).map((_, index) => (
-            <Skeleton key={index} contentLineCount={6} />
+    <div className="explore">
+      <SearchBar 
+        searchInput={searchInput} 
+        setSearchInput={setSearchInput}
+      />
+      { isLoading 
+        ? Array.from({ length: 2 }).map((_, index) => (
+            <Skeleton 
+              key={index} 
+              contentLineCount={6} 
+            />
           ))
-        ) : (
-          filteredBlogs.length > 0 && filteredBlogs.map((blog, index) => {
-            return <BlogSnippet key={index} blog={blog} />
-          })
-        )}
-
-        {/* For new users who have not logged in yet */}
-        { !(isAuthenticated && user?.username) && blogs.length > 0 && (showTooltip && <WelcomeTooltip closeTooltip={closeTooltip}/>)}
-        
-        <div className={`back-to-top-button ${showBackToTop ? "show" : ""}`} onClick={backToTop}>
-          <LuArrowUpToLine />
-        </div>
+        : filteredBlogs.length > 0 && 
+          filteredBlogs.map((blog, index) => (
+            <BlogSnippet 
+              key={index} 
+              blog={blog} 
+            />
+          ))
+      }
+      <div className={`back-to-top-btn ${showBackToTop ? "show" : ""}`} 
+        onClick={backToTop} 
+      >
+        <LuArrowUpToLine />
       </div>
-      
+      {/* For users not logged in */}
+      { !isLoggedIn && blogs.length > 0 && showTooltip && 
+        <WelcomeTooltip closeTooltip={closeTooltip} />
+      }
       <Footer />
-    </>
+    </div>
   );
 }
 

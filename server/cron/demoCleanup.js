@@ -72,6 +72,7 @@ cron.schedule("*/10 * * * *", async () => {
         } else {
             console.log(`[Cron] ${new Date().toISOString()} - No orphaned demo comments found`)
         }
+        
     } catch (error) {
         console.error("[Cron] Error cleaning up demo", error)
     }

@@ -32,7 +32,7 @@ exports.createBlog = async (req,res) => {
             return res.status(400).json({ message: "Please fill in your blog's title." })
         case trimmedTitle.length < 5:
             return res.status(400).json({ message: "Your title is too short." })
-        case trimmedTitle.length > 60:
+        case trimmedTitle.length > 70:
             return res.status(400).json({ message: "Your title is too long." })
         case content // Content stores as html. Empty character will be <p></p>, not ""
             .replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
@@ -55,7 +55,7 @@ exports.createBlog = async (req,res) => {
             demoAuthor
         })
         res.status(201).json({ blog, message: "Your blog has been posted!" })
-
+    
     } catch (error) {
         console.error("Error creating blog", error)
         res.status(500).json({ message: "Error creating a blog" })
@@ -71,7 +71,7 @@ exports.getAllBlogs = async (req,res) => {
             .populate({ path: "author", select: "username" })
 
         res.status(200).json(blogs)
-
+    
     } catch (error) {
         console.error("Error retrieving all blogs", error)
         res.status(500).json({ message: "Error retrieving data from server" })
@@ -87,7 +87,7 @@ exports.getBlog = async (req,res) => {
             return res.status(404).json({ message: "Blog not found" })
         }
         res.status(200).json(blog)
-
+    
     } catch (error) {
         console.error("Error retrieving single blog", error)
         res.status(500).json({ message: "Error retrieving data from server" })
@@ -116,7 +116,7 @@ exports.deleteBlog = async (req,res) => {
         await Comments.deleteMany({ blog: blog._id })
 
         res.json({ message: "Deleted successfully" })
-
+    
     } catch (error) {
         console.error("Error deleting single data", error)
         res.status(500).json({ message: "Error deleting data" })
@@ -133,7 +133,7 @@ exports.updateBlog = async (req,res) => {
 
         if (trimmedTitle.length === 0) return res.status(400).json({ message: "Title cannot be blank." })
         if (trimmedTitle.length < 5) return res.status(400).json({ message: "Your title is too short." })
-        if (trimmedTitle.length > 60) return res.status(400).json({ message: "Your title is too long." })
+        if (trimmedTitle.length > 70) return res.status(400).json({ message: "Your title is too long." })
         if (content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/gi, "").trim().length === 0) {
             return res.status(400).json({ message: "Content is entirely blank." })
         }

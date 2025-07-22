@@ -1,8 +1,8 @@
 /* Stacked Layout (Mobile-first) */
-.FeatureSection{
+.feature-section {
     height: auto; /* Allows dynamic height to respect .container's bottom margin for horizontal scroll */
 }
-.FeatureSection .container{
+.feature-section .container {
     width: 100%;
     height: 100%;
     padding-top: 2rem;
@@ -12,13 +12,13 @@
     gap: 3rem;
     overflow: hidden;
 }
-.FeatureSection #feature-headline{
+.feature-section .feature-headline {
     font-size: 1.8rem;
     font-weight: 800;
     color: var(--accent-color);
     padding-left: 3rem;
 }
-.FeatureSection #feature-headline .brandname{
+.feature-section .feature-headline .brandname {
     background: linear-gradient(to right, var(--accent-color), var(--secondary-color), var(--primary-color));
     background-size: 200%;
     background-clip: text;
@@ -26,14 +26,14 @@
     color: transparent;
     -webkit-text-fill-color: transparent;
 }
-.FeatureSection .feature-wrapper{
+.feature-section .feature-wrapper {
     display: flex;
     gap: 1.5rem;
     width: fit-content;
     height: 480px; /* Prevents panel from stretching .feature-wrapper and pushing scroll dots down when content has more lines */
 }
 /* Feature panels */
-.FeatureSection .feature-panel{
+.feature-section .feature-panel {
     min-width: 100vw;
     height: 100%;
     padding-block: 2rem;
@@ -45,27 +45,27 @@
     gap: 2rem;
     background-color: var(--neutral-color-light);
 }
-.FeatureSection .feature-visual video{
+.feature-section .feature-visual video {
     display: block;
     width: 100%;
     height: 100%;;
     pointer-events: none;
 }
-.FeatureSection .feature-content{
+.feature-section .feature-content {
     padding-inline: 3rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
-.FeatureSection .feature-content .feature-subtitle{
+.feature-section .feature-content .feature-subtitle {
     font-size: 1.4rem;
     color: var(--accent-color);
 }
-.FeatureSection .feature-content .feature-body{
+.feature-section .feature-content .feature-body {
     font-size: 1rem;
     color: var(--neutral-color-dark);
 }
-.FeatureSection .scroll-progress{
+.feature-section .scroll-progress {
     align-self: center;
     display: flex;
     gap: 8px;
@@ -74,7 +74,7 @@
     border-radius: 20px;
     padding: 12px 18px;
 }
-.FeatureSection .scroll-progress .scroll-dot{
+.feature-section .scroll-dot {
     width: 8px;
     height: 8px;
     background-color: rgba(101, 92, 85, 0.5);
@@ -82,58 +82,57 @@
     border-radius: 4px;
     transition: width 300ms ease-out;
 }
-.FeatureSection .scroll-progress .scroll-dot.active{
+.feature-section .scroll-dot.active {
     width: 28px;
 }
 
-/* Responsive Design */
 @media (max-width: 374px) {
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         height: 485px;
     }
-    .FeatureSection .feature-content{
+    .feature-section .feature-content {
         padding-inline: 2.5rem;
     }
 }
 @media (min-width: 396px) {
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         height: 500px;
     }
 }
 @media (min-width: 415px) { /* Make it consistent with .hero-content padding-left */
-    .FeatureSection #feature-headline{
+    .feature-section .feature-headline {
         padding-left: 4rem;
     }
 }
 @media (min-width: 468px) {
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         height: 525px;
     }
 }
-@media (min-width: 551px) { /* Align #feature-headline with #hero-headline */
-    .FeatureSection #feature-headline{
+@media (min-width: 551px) { /* Align .feature-headline with .hero-headline */
+    .feature-section .feature-headline {
         text-align: center;
         padding-left: 0;
     }
-    .FeatureSection .headline-sm-split{
+    .feature-section .headline-sm-split {
         display: none;
     }
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         padding-inline: 2rem;
         gap: 2rem;
     }
-    .FeatureSection .feature-panel{
+    .feature-section .feature-panel {
         min-width: 90vw;
     }
 }
 @media (min-width: 600px) {
-    .FeatureSection .feature-visual{
+    .feature-section .feature-visual {
         display: flex;
         justify-content: center;
         align-items: center;
         position: relative;
     }
-    .FeatureSection .feature-visual::before{ /* Subtle frame for video, avoiding extra inline space when screen widens */
+    .feature-section .feature-visual::before { /* Subtle frame for video, avoiding extra inline space when screen widens */
         content: "";
         z-index: -1;
         width: calc(100% - 4rem); /* Simulate 2rem padding-inline */
@@ -145,17 +144,17 @@
         border-radius: 0.25rem;
         background-color: rgba(101, 92, 85, 0.05);
     }
-    .FeatureSection .feature-visual video{
+    .feature-section .feature-visual video {
         width: 538px;
         height: 303px;
         border: 0.5px solid rgba(101, 92, 85, 0.15);
     }
 }
 @media (min-width: 861px) {
-    .FeatureSection #feature-headline{
+    .feature-section .feature-headline {
         font-size: 2.1rem;
     }
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         padding-inline: 3rem;
         gap: 3rem;
         height: 506px;
@@ -163,81 +162,81 @@
 }
 /* Side-by-side layout (desktop) */
 @media (min-width: 1082px) {
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         padding-inline: 4rem;
         gap: 4rem;
         height: 416px;
     }
-    .FeatureSection .feature-panel{
+    .feature-section .feature-panel {
         padding-inline: 3.5rem;
         padding-block: 3.5rem;
         flex-direction: row;
         gap: 3rem;
     }
-    .FeatureSection .feature-visual::before{
+    .feature-section .feature-visual::before {
         display: none;
     }
-    .FeatureSection .feature-visual video{
+    .feature-section .feature-visual video {
         width: fit-content;
         border-radius: 0.25rem;
         border-width: 1px;
     }
-    .FeatureSection .feature-content{
+    .feature-section .feature-content {
         padding-inline: 0;
         gap: 1rem;
         justify-content: center;
     }
-    .FeatureSection .feature-content .feature-subtitle{
+    .feature-section .feature-content .feature-subtitle {
         font-size: 1.5rem;
         padding-bottom: 0.5rem;
         border-bottom: 1px solid rgba(101, 92, 85, 0.15);
     }
-    .FeatureSection .feature-content .feature-body{
+    .feature-section .feature-content .feature-body {
         font-size: 1.1rem;
     }
 }
 @media (min-width: 1280px) {
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         padding-inline: 8rem;
         gap: 5rem;
         height: 456px;
     }
-    .FeatureSection .feature-panel{
+    .feature-section .feature-panel {
         min-width: 80vw;
     }
-    .FeatureSection .feature-visual video{
+    .feature-section .feature-visual video {
         height: 340px;
     }
 }
 @media (min-width: 1440px) {
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         padding-inline: 10rem;
         gap: 6rem;
     }
-    .FeatureSection .feature-panel{
+    .feature-section .feature-panel {
         min-width: 75vw;
     } 
 }
 /* Full HD Desktop (1920x1080) */
 @media (min-width: 1900px) {
-    .FeatureSection #feature-headline{
+    .feature-section .feature-headline {
         font-size: 2.4rem;
     }
-    .FeatureSection .feature-wrapper{
+    .feature-section .feature-wrapper {
         padding-inline: 14rem;
         gap: 8rem;
         height: 512px;
     }
-    .FeatureSection .feature-panel{
+    .feature-section .feature-panel {
         min-width: 1400px;
     }
-    .FeatureSection .feature-visual video{
+    .feature-section .feature-visual video {
         height: 400px;
     }
-    .FeatureSection .feature-content .feature-subtitle{
+    .feature-section .feature-content .feature-subtitle {
         font-size: 1.8rem;
     }
-    .FeatureSection .feature-content .feature-body{
+    .feature-section .feature-content .feature-body {
         font-size: 1.4rem;
     }
 }

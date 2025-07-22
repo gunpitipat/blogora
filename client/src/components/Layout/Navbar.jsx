@@ -1,26 +1,22 @@
 import "./Navbar.css"
-import { Link, useLocation } from 'react-router-dom'
+import clsx from "clsx"
 import { useState } from "react"
+import { Link, useLocation } from 'react-router-dom'
 import { useAuthContext } from "../../contexts/AuthContext"
-import { FiMenu } from "react-icons/fi";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import Tooltip from "../Tooltip/Tooltip";
+import { FiMenu } from "react-icons/fi";
 
 const Navbar = () => {
-    const location = useLocation()
-
-    const { isAuthenticated, user, logout } = useAuthContext()
-
     // Tooltip for not logged-in users
-    const [ showTooltip, setShowTooltip ] = useState(null)
+    const [showTooltip, setShowTooltip] = useState(null)
 
     // Responsive navbar on mobile
-    const [ isOpen, setIsOpen ] = useState(false)
+    const [isOpen, setIsOpen] = useState(false)
     const isMobile = useMediaQuery("(max-width: 768px)")
 
-    // Function to toggle Tooltip
-    const toggleTooltip = (hoveredMenu) => {
-        setShowTooltip(hoveredMenu)
-    }
+    const { isAuthenticated, user, logout } = useAuthContext()
+    const location = useLocation()
 
     // Handle brand logo click
     const handleLogoClick = () => {
@@ -36,9 +32,11 @@ const Navbar = () => {
         logout()
     }
 
-    return(
+    const isLoggedIn = isAuthenticated && user?.username
+
+    return (
         <>
-            {/* Show menu icon only on mobile and tablet */}
+            {/* Menu Icon shown only on mobile */}
             { isMobile &&
                 <div className={`menu-icon-overlay ${isOpen ? "hidden" : ""}`}
                     onClick={() => setIsOpen(!isOpen)}
@@ -48,68 +46,96 @@ const Navbar = () => {
                     </div>
                 </div>
             }
+
             {/* Overlay to close sidebar when clicking outside */}
             { isOpen &&
-                <div className="sidebar-overlay" onClick={() => setIsOpen(false)}></div>
+                <div className="sidebar-overlay" onClick={() => setIsOpen(false)} />
             }
             
-            {/* Navbar by default (laptop and desktop) */}
-            <nav className={`Navbar ${isOpen ? "show-sidebar" : ""}`}>
+            {/* Navbar */}
+            <nav className={`navbar ${isOpen ? "show-sidebar" : ""}`}>
                 <ul>
                     <div className="menu-group">
                         <li className="nav-logo">
                             <Link to="/" onClick={handleLogoClick}>
-                                <span className="blog">BLOG</span><span className="ora">ORA</span>
+                                <span className="former">
+                                    BLOG
+                                </span>
+                                <span className="latter">
+                                    ORA
+                                </span>
                             </Link>
                         </li>
-                        <li className={ location.pathname === "/explore" ? "selected" : null }>
-                            <Link to="/explore" onClick={() => setIsOpen(false)}>Explore</Link>
+
+                        <li className={`menu ${location.pathname === "/explore" ? "selected" : ""}`}>
+                            <Link to="/explore" onClick={() => setIsOpen(false)}>
+                                Explore
+                            </Link>
                         </li>
-                        <li className={ location.pathname === "/create" ? "selected" : null }>
-                            { (isAuthenticated && user?.username) ? (
-                                <Link to="/create" onClick={() => setIsOpen(false)}>Create Blog</Link>
-                            ) : (
-                                <span className="disable-menu"
-                                    onMouseEnter={() => toggleTooltip("Create-Blog")}
-                                    onMouseLeave={() => setShowTooltip(null)}
-                                >
-                                    <label>Create Blog</label>
-                                    <div className={`tooltip ${showTooltip === "Create-Blog" ? "show" : ""}`}>
-                                        <p>Log in to create your own blog</p>
-                                    </div>
-                                </span>
-                            )}                    
-                        </li>
-                        <li className={((location.pathname.split("/")[2] === user?.username) && user?.username) ? "selected" : null }>
-                            { (isAuthenticated && user?.username) ? (
-                                <Link to={`/profile/${user.username}`} onClick={() => setIsOpen(false)}>Profile</Link>
-                            ) : (
-                                <span className="disable-menu"
-                                    onMouseEnter={() => toggleTooltip("Profile")}
-                                    onMouseLeave={() => setShowTooltip(null)}
-                                >
-                                    <label>Profile</label>
-                                    <div className={`tooltip ${showTooltip === "Profile" ? "show" : ""}`}>
-                                        <p>Log in to manage your blogs</p>
-                                    </div>
-                                </span>
-                            )}
-                        </li>
+
+                        { isLoggedIn
+                            ?   <li className={`menu ${location.pathname === "/create" ? "selected" : ""}`}>
+                                     <Link to="/create" onClick={() => setIsOpen(false)}>
+                                        Create Blog
+                                    </Link>
+                                </li>
+                            :   <li className="menu disabled">
+                                    <span onMouseEnter={() => setShowTooltip("create-blog")}
+                                        onMouseLeave={() => setShowTooltip(null)}
+                                    >
+                                        <label>Create Blog</label>
+                                        <Tooltip 
+                                            showTooltip={showTooltip === "create-blog"}
+                                            content={<p>Log in to create your own blog</p>}
+                                            style={{ fontSize: "0.9rem", top: "120%", left: "50%" }}
+                                            baseTransform="translateX(-50%) translateY(-8px)"
+                                            activeTransform="translateX(-50%) translateY(0)"
+                                            duration={0.3}
+                                        />
+                                    </span>
+                                </li> 
+                        }  
+
+                        { isLoggedIn
+                            ?   <li className={clsx("menu", 
+                                    (user?.username && location.pathname.split("/")[2] === user?.username) && "selected" // Only mark selected if username exists and matches path
+                                )}>
+                                    <Link to={`/profile/${user.username}`} onClick={() => setIsOpen(false)}>
+                                        Profile
+                                    </Link>
+                                </li>
+                            :   <li className="menu disabled">
+                                    <span onMouseEnter={() => setShowTooltip("profile")}
+                                        onMouseLeave={() => setShowTooltip(null)}
+                                    >
+                                        <label>Profile</label>
+                                        <Tooltip 
+                                            showTooltip={showTooltip === "profile"}
+                                            content={<p>Log in to manage your blogs</p>}
+                                            style={{ fontSize: "0.9rem", top: "120%", left: "50%" }}
+                                            baseTransform="translateX(-50%) translateY(-8px)"
+                                            activeTransform="translateX(-50%) translateY(0)"
+                                            duration={0.3}
+                                        />
+                                    </span>
+                                </li>
+                        }  
                     </div>
-                    { !(isAuthenticated && user?.username) && (
+
                     <div className="menu-group">
-                        <li className={ location.pathname === "/login" ? "selected" : null }>
-                            <Link to="/login" onClick={() => setIsOpen(false)}>Log In</Link>
-                        </li>
-                    </div>)}
-                    { (isAuthenticated && user?.username) && (
-                    <div className="menu-group">
-                        <li>
-                            <span className="logout-menu" onClick={handleLogout}>
-                                <button className="logout-btn">Log Out</button>
-                            </span>
-                        </li>
-                    </div>)}
+                        { !isLoggedIn
+                            ?   <li className={`menu ${location.pathname === "/login" ? "selected" : ""}`}>
+                                    <Link to="/login" onClick={() => setIsOpen(false)}>
+                                        Log In
+                                    </Link>
+                                </li>
+                            :   <li className="menu">
+                                    <button onClick={handleLogout}>
+                                        Log Out
+                                    </button>
+                                </li>
+                        }
+                    </div>
                 </ul>
             </nav>
         </>

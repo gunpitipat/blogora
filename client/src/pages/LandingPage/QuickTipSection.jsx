@@ -2,7 +2,7 @@ import  "./QuickTipSection.css"
 
 const QuickTipSection = () => {
     return (
-        <section className="QuickTipSection">
+        <section className="quicktip-section">
             <div className="container">
                 <h2 id="quicktip-headline">
                     Quick Tips

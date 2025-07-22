@@ -1,4 +1,4 @@
-.PopupAlert .overlay{
+.popup-alert .popup-overlay {
     background: rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 0;
@@ -10,12 +10,12 @@
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0s linear 0.15s;
 }
-.PopupAlert .overlay.show{
+.popup-alert .popup-overlay.show {
     opacity: 1;
     visibility: visible;
     transition: opacity 0.15s ease-in-out;
 }
-.PopupAlert .container{
+.popup-alert .container {
     background: var(--neutral-color-medium);
     max-width: 285px;
     border-radius: 0.5rem;
@@ -29,12 +29,12 @@
     padding: 1rem 1.15rem;
     box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.2);
 }
-.PopupAlert .container p{
+.popup-alert p {
     color: var(--neutral-color-dark);
 }
-.PopupAlert .container button{
+.popup-alert button {
     font-size: 1rem;
-    width: auto; /* Reset since Form button style afftects */
+    width: auto; /* Reset since CreateBlog button style afftects */
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
@@ -44,30 +44,19 @@
     opacity: 0.9;
     align-self: flex-end;
 }
-.PopupAlert .container button:hover{
+.popup-alert button:hover {
     font-weight: 500;
     opacity: 1;
 }
 
-/* Responsive Design */
 @media (min-width: 425px) {
-    .PopupAlert .container{
+    .popup-alert .container {
         max-width: 340px;
     }
 }
 @media (min-width: 1024px) {
-    .PopupAlert .container{
+    .popup-alert .container {
         max-width: 460px;
-    }
-}
-
-/* PopupAlert in Form */
-.Form .PopupAlert .container{
-    max-width: 285px;
-}
-@media (min-width: 768px) {
-    .Form .PopupAlert .container{
-        max-width: 400px;
     }
 }
 

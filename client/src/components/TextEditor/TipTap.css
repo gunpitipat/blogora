@@ -1,42 +1,36 @@
 /* Basic editor styles */
 .tiptap {
-    :first-child {
-      margin-top: 0;
-    }
+  :first-child {
+    margin-top: 0;
+  }
+  /* Paragraph styles */
+  p {
+    font-size: 1.1rem;
+  }
+  /* List styles */
+  ul, 
+  ol {
+    padding: 0 1rem;
+    margin: 0.75rem 1rem 0.75rem 0.4rem;
     
-    /* List styles */
-    ul, 
-    ol {
-      padding: 0 1rem;
-      margin: 0.75rem 1rem 0.75rem 0.4rem;
-      
-      li p {
-        margin-top: 0.25em;
-        margin-bottom: 0.25em;
-      }
-    }
-  
-    /* Heading styles */  
-    h1{
-      margin-top: 1rem;
-      margin-bottom: 0.75rem;
-      font-size: 1.5rem;
-    }
-    
-    hr {
-      border: none;
-      border-top: 1px solid var(--gray-2);
-      margin: 2rem 0;
+    li p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
     }
   }
-
-.text-editor{
+  /* Heading styles */  
+  h1 {
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+  }
+}
+.text-editor {
   border: 1px solid var(--neutral-color-heavy);
   border-radius: 0.25rem;
-  margin-top: 0.5rem;
   overflow: scroll;
 }
-.tiptap{
+.tiptap {
   font-size: 1.1rem;
   padding: 1rem;
   border-top: 1px solid var(--neutral-color-heavy);
@@ -47,81 +41,90 @@
   transition: height 150ms ease-out;
   overflow: scroll;
 }
-.MenuBar{
+.menu-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.3rem 0.4rem;
 }
-.MenuBar .button-group{
+.menu-bar .button-group {
   display: flex;
   gap: 0.75rem;
 }
-.MenuBar .button-group button{
+.menu-bar button {
   font-size: 1rem;
   outline: none;
   border: none;
-  background: none;
+  background: transparent;
   cursor: pointer; 
   width: 32px;
   height: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: var(--accent-color);
+  opacity: 0.8;
+  position: relative;
 }
-.MenuBar .button-group button.is-active{
+.menu-bar .paragraph-btn svg {
+  transform: scale(1.2);
+}
+.menu-bar button:hover {
+  opacity: 0.9;
+}
+.menu-bar button:hover::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-color: rgba(138, 129, 124, 0.1);
+  border-radius: 0.25rem;
+}
+.menu-bar button.active {
+  opacity: 0.9;
+}
+.menu-bar button.active::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
   background-color: rgba(138, 129, 124, 0.25);
   border-radius: 0.25rem;
 }
-.MenuBar .button-group button svg{ 
-  color: var(--accent-color);
-  opacity: 0.8;
-}
-.MenuBar .button-group button.paragraph svg{
-  color: var(--accent-color);
-  transform: scale(1.2);
-}
 
-/* Responsive Design */
 @media (max-width: 768px) {
-  .MenuBar{
+  .menu-bar {
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
     grid-template-rows: auto;
     place-items: center;
   }
-  .MenuBar .button-group{
+  .menu-bar .button-group {
     gap: 0;
   }
-  .MenuBar .button-group button{
+  .menu-bar button {
     width: 44px;
     height: 44px;
   }
-  .MenuBar .button-group button.is-active{
-    background: transparent;
-  }
-  .MenuBar .button-group button.is-active::after{
-    content: "";
-    background-color: rgba(138, 129, 124, 0.25);
-    width: 32px;
-    height: 34px;
-    border-radius: 0.25rem;
-    position: absolute;
-    z-index: -1;
-  }
-  .MenuBar .button-group:first-child{
+  .menu-bar .button-group:first-child {
     display: contents; /* Let child buttons inherit grid layout */
   }
-  .MenuBar .button-group:last-child{
+  .menu-bar .button-group:last-child {
     display: contents;
   }
 }
 @media (max-width: 570px) {
-  .MenuBar{
+  .menu-bar {
     grid-template-columns: repeat(5, minmax(44px, 1fr));
   }
-  .MenuBar .button-group:last-child::before{
+  .menu-bar .button-group:last-child::before {
     content: "";
     display: block;
     width: 100%;
@@ -132,7 +135,7 @@
   }
 }
 @media (max-width: 340px) {
-  .MenuBar{
+  .menu-bar {
     grid-template-columns: repeat(auto-fit, minmax(44px, 1fr))
   }
 }

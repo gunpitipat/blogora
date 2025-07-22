@@ -1,42 +1,45 @@
 import "./TipTap.css"
+import { memo, useEffect } from 'react'
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import {useEffect} from 'react'
 import Underline from "@tiptap/extension-underline"
-import { IoText } from "react-icons/io5";
 import Heading from "@tiptap/extension-heading";
+import { IoText } from "react-icons/io5";
 import { FaBold, FaItalic, FaStrikethrough, FaHeading, FaListUl, FaListOl, FaUndoAlt, FaRedoAlt, FaUnderline } from "react-icons/fa";
 
-export const MenuBar = (props) => {
+export const MenuBar = memo(({
+  submit, 
+  isLabelActive
+}) => {
   const { editor } = useCurrentEditor()
-
-  const { submit, isFocusing } = props
-
-  if (!editor) {
-    return null
-  }
+  
+  if (!editor) return null
 
   const isActive = (type) => {
-    if (!isFocusing) return false
+    if (!isLabelActive) return false
     return editor.isActive(type)
   }
 
   return (
-    <div className="MenuBar">
+    <div className="menu-bar">
       <div className="button-group">
-        {/* Paragraph button */}
+        {/* Paragraph */}
         <button type="button"
           onClick={() => editor.chain().focus().setParagraph().run()}
-          className={ isActive("paragraph") ? "paragraph is-active" : "paragraph" }
+          className={`paragraph-btn ${isActive("paragraph") ? "active" : ""}`}
         >
           <IoText />
         </button>
+
+        {/* Heading */}
         <button type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={ (isFocusing && editor.isActive('heading', { level: 1 })) ? 'is-active' : ''}
+          className={(isLabelActive && editor.isActive("heading", { level: 1 })) ? "active" : ""}
         >
           <FaHeading/>
         </button>
+
+        {/* Bold */}
         <button type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={
@@ -46,10 +49,12 @@ export const MenuBar = (props) => {
               .toggleBold()
               .run()
           }
-          className={isActive("bold") ? 'is-active' : ''}
+          className={isActive("bold") ? "active" : ""}
         >
           <FaBold/>
         </button>
+
+        {/* Italic */}
         <button type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={
@@ -59,16 +64,20 @@ export const MenuBar = (props) => {
               .toggleItalic()
               .run()
           }
-          className={isActive("italic") ? 'is-active' : ''}
+          className={isActive("italic") ? "active" : ""}
         >
           <FaItalic/>
         </button>
+
+        {/* Underline */}
         <button type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={isActive("underline") ? 'is-active' : ''}
+          className={isActive("underline") ? "active" : ""}
         >
           <FaUnderline/>
         </button>
+
+        {/* Strike */}
         <button type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={
@@ -78,23 +87,29 @@ export const MenuBar = (props) => {
               .toggleStrike()
               .run()
           }
-          className={isActive("strike") ? 'is-active' : ''}
+          className={isActive("strike") ? "active" : ""}
         >
           <FaStrikethrough/>
         </button>
+
+        {/* Unordered List */}
         <button type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={isActive("bulletList") ? 'is-active' : ''}
+          className={isActive("bulletList") ? "active" : ""}
         >
           <FaListUl/>
         </button>
+
+        {/* Ordered List */}
         <button type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={isActive("orderedList") ? 'is-active' : ''}
+          className={isActive("orderedList") ? "active" : ""}
         >
           <FaListOl/>
         </button>
       </div>
+
+      {/* Undo */}
       <div className="button-group">
         <button type="button"
           onClick={() => editor.chain().focus().undo().run()}
@@ -108,6 +123,8 @@ export const MenuBar = (props) => {
         >
           <FaUndoAlt/>
         </button>
+
+        {/* Redo */}
         <button type="button"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={
@@ -121,47 +138,55 @@ export const MenuBar = (props) => {
           <FaRedoAlt/>
         </button>
 
-        {/* To clear content after submitting form in Form.js */}
-        {submit ? setTimeout(()=>{
-          editor.commands.clearContent()
-        },0) : null }
-
+        {/* To clear content after submitting form in CreateBlog.jsx */}
+        { submit 
+        ? setTimeout(() => {
+            editor.commands.clearContent()
+          },0) 
+        : null 
+        }
       </div>
     </div>
   )
-}
+})
 
 const extensions = [
   StarterKit.configure({
     heading: false,
     bulletList: { 
       keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+      keepAttributes: false, // TODO : Making this as `false` because marks are not preserved when trying to preserve attrs, awaiting a bit of help
     },
     orderedList: {
       keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+      keepAttributes: false, // TODO : Making this as `false` because marks are not preserved when trying to preserve attrs, awaiting a bit of help
     },
     blockquote: false,
     codeBlock: false,
-  },{
+  }, {
     HTMLAttributes: {
-      allowedTags: [ 'p', 'h1', 'strong', 'i', 'ul', 'ol', 'li' ], // Only tags for menubar features
+      allowedTags: [ "p", "h1", "strong", "i", "ul", "ol", "li" ], // Only tags for menubar features
     },
   }),
   Underline.configure({
     HTMLAttributes: {
-      class: 'my-custom-class',
+      class: "my-custom-class",
     },
-    }),
+  }),
   Heading.configure({
     levels: [1], // Allow only h1, disable h2-h6
   }),
 ]
 
-const TipTap = (props) => {
-  const { content, setContent, submit, setSubmit, isFocusing, onFocus, onBlur } = props
-
+const TipTap = memo(({
+  content, 
+  setContent, 
+  submit, 
+  setSubmit, 
+  isLabelActive, 
+  onFocus, 
+  onBlur
+}) => {
   const onUpdate = ({ editor }) => {
     let htmlContent = editor.getHTML()
 
@@ -214,7 +239,7 @@ const TipTap = (props) => {
           <MenuBar 
             submit={submit} 
             setSubmit={setSubmit} 
-            isFocusing={isFocusing}
+            isLabelActive={isLabelActive}
           />
         }
         extensions={extensions} 
@@ -235,10 +260,10 @@ const TipTap = (props) => {
             }
           }
         }}
-       /> 
+      /> 
     </div>
   )
-}
+})
 
 export default TipTap
 

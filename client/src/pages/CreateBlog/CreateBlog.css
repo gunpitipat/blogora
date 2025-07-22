@@ -1,0 +1,140 @@
+.create-blog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 8rem 4rem;
+}
+.create-blog .headline {
+    font-weight: 700;
+    color: var(--accent-color);
+}
+.create-blog form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding-block: 1rem 0.5rem;
+}
+.create-blog form>* { /* .title-editor, .content-editor, .blog-form-btns */
+    width: 100%;
+}
+.create-blog .title-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.create-blog .title-editor input {
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--neutral-color-heavy);
+    border-radius: 0.25rem;
+    outline: none;
+    background: linear-gradient(to bottom, #fff, var(--neutral-color-light));
+}
+.create-blog .form-label {
+    color: rgba(70, 63, 58, 0.85);
+    font-weight: 400;
+    display: flex;
+    gap: 0.2rem;
+}
+.create-blog .form-label.active {
+    font-weight: 500;
+}
+.create-blog .pen-icon {
+    transform: scale(0.6);
+    display: flex;
+    align-items: center;
+}
+
+/* Modal for unsaved draft */
+.create-blog .modal .modal-container {
+    max-width: 525px;
+}
+.create-blog .modal .btn-container .confirm-btn {
+    padding: 5px 14px;
+}
+.create-blog .modal .btn-container .cancel-btn {
+    padding: 5px 18px;
+}
+
+/* PopupAlert */
+.create-blog .popup-alert .container {
+    max-width: 400px;
+}
+
+@media (min-width: 1100px) {
+    .create-blog {
+        padding-inline: 9rem;
+    }
+}
+@media (min-width: 1200px) {
+    .create-blog {
+        padding-inline: 10rem;
+    }
+}
+@media (min-width: 1300px) {
+    .create-blog {
+        padding-inline: 11rem;
+    }
+}
+@media (min-width: 1360px) {
+    .create-blog form {
+        max-width: 1000px;
+    }
+}
+
+@media (max-width: 972px) {
+    .create-blog {
+        padding-inline: 7rem;
+    }
+}
+@media (max-width: 860px) {
+    .create-blog {
+        padding-inline: 6rem;
+    }
+}
+@media (max-width: 768px) {
+    .create-blog {
+        padding-inline: 5rem;
+    }
+}
+@media (max-width: 694px) {
+    .create-blog .modal .modal-container {
+        width: 400px;
+    }
+    .create-blog .modal .modal-content {
+        max-width: 340px;
+    }
+}
+@media (max-width: 602px) {
+    .create-blog {
+        padding-inline: 4rem;
+    }
+}
+@media (max-width: 480px) {
+    .create-blog {
+        padding-inline: 3.5rem;
+    }
+    .create-blog .modal .modal-container {
+        width: 300px;
+    }
+    .create-blog .modal .modal-content {
+        max-width: 280px;
+    }
+    .create-blog .popup-alert .container {
+        max-width: 285px;
+    }
+}
+@media (max-width: 440px) {
+    .create-blog {
+        padding-inline: 3rem;
+    }
+}
+@media (max-width: 360px) {
+    .create-blog {
+        padding-inline: 2.5rem;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

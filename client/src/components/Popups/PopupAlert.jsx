@@ -1,15 +1,22 @@
 import "./PopupAlert.css"
 
-const PopupAlert = (props) => {
-    const { popupTitle = null, popupContent, showPopupAlert, setShowPopupAlert } = props
-
+const PopupAlert = ({ 
+    popupTitle = null, 
+    popupContent, 
+    showPopupAlert, 
+    setShowPopupAlert 
+}) => { 
     return (
-        <div className="PopupAlert">
-            <div className={`overlay ${showPopupAlert ? "show" : ""}`}>
+        <div className="popup-alert">
+            <div className={`popup-overlay ${showPopupAlert ? "show" : ""}`}>
                 <div className="container">
-                    <h2 style={{ display: popupTitle ? "block" : "none" }}>{popupTitle}</h2>
-                    <p>{popupContent}</p>
-                    <button className="btn okay" onClick={()=>setShowPopupAlert(false)}>Got it</button>
+                    { popupTitle && <h2>{popupTitle}</h2> }
+                    <p>
+                        {popupContent}
+                    </p>
+                    <button onClick={() => setShowPopupAlert(false)}>
+                        Got it
+                    </button>
                 </div>
             </div>
         </div>

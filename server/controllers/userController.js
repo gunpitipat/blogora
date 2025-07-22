@@ -105,6 +105,7 @@ exports.signup = async (req, res) => {
             password: hashedPassword,
         });
         res.status(201).json({ message: "Account created successfully", user: newUser });
+    
     } catch (err) {
         res.status(500).json({ message: "An error occurred while creating the user." });
     }
@@ -168,6 +169,7 @@ exports.createDemoUser = async (req, res) => {
             expiresAt
         })
         res.status(201).json({ username: newUsername, password: newPassword });
+    
     } catch (error) {
         res.status(500).json({ message: "Error creating demo user." });
     }
@@ -228,6 +230,7 @@ exports.login = async (req, res) => {
             message: "Login Successful",
             username: user.username
         })
+    
     } catch (error) {
         console.error(error)
         res.status(500).json({ message: "An error occurred while logging in." })
@@ -286,6 +289,7 @@ exports.logout = async (req, res) => {
                 await Comments.deleteMany({ isDemo: true, demoAuthor: decoded.username })
             }
         }
+
     } catch {
         // If cookie/token is expired or invalid, TTL already deleted demo user
     }
@@ -347,7 +351,7 @@ exports.getProfileBlogs = async (req, res) => {
         if (!blogs) return res.status(404).json({ message: "Blog not found" })
 
         res.status(200).json(blogs)
-
+        
     } catch (error) {
         console.error("Error retrieving user's blogs", error)
         res.status(500).json({ message: "Error retrieving data from server" })

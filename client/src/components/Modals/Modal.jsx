@@ -1,9 +1,16 @@
 import "./Modal.css"
 import { FaTrash, FaExclamation } from "react-icons/fa"
 
-const Modal = (props) => {
-    const { showModal, setShowModal, action, cancelLabel, title, content, targetId = null, onConfirm, onCancel = null } = props
-
+const Modal = ({ 
+    showModal, 
+    setShowModal = null, 
+    action, 
+    cancelLabel, 
+    title, 
+    content, 
+    onConfirm, 
+    onCancel = null 
+}) => {
     let icon
     switch (action) {
         case "Delete":
@@ -14,21 +21,28 @@ const Modal = (props) => {
     }
 
     return (
-        <div className="Modal">
+        <div className="modal">
             <div className={`modal-overlay ${showModal ? "show" : ""}`}>
                 <div className="modal-container">
-                    <div className="icon-background">
+                    <div className="icon-bg">
                         {icon}
                     </div>
-                    <h1>{title}</h1>
+                    <h1 className="modal-title">
+                        {title}
+                    </h1>
                     <div className="modal-content">
                         {content}
                     </div>
-                    <div className="button-container">
-                        <button className="cancel-button" onClick={!onCancel ? ()=>setShowModal(false) : onCancel}>
+                    <div className="btn-container">
+                        <button className="cancel-btn" 
+                            onClick={ !onCancel && setShowModal 
+                                ? () => setShowModal(false) 
+                                : onCancel
+                            }
+                        >
                             {cancelLabel}
                         </button>
-                        <button className="confirm-button" onClick={targetId ? ()=>onConfirm(targetId) : onConfirm}>
+                        <button className="confirm-btn" onClick={onConfirm}>
                             {action}
                         </button>
                     </div>
