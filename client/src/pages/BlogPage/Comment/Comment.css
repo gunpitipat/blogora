@@ -26,6 +26,8 @@
     font-size: 1rem;
     color: var(--neutral-color-dark);
     margin: 0.25rem 0 0.75rem;
+    overflow-wrap: anywhere; /* Break long content or @username when needed */
+    word-break: break-word; /* Fallback */
     max-height: 150px; /* Limit height */
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
@@ -45,8 +47,6 @@
     color: rgba(70, 63, 58, 0.85);
     font-size: 0.95rem;
     font-weight: 900;
-    word-break: break-word; /* Break @username if too long */
-    overflow-wrap: break-word; /* Ensure wrapping in older browsers */
 }
 
 /* Comment Setting */
@@ -228,12 +228,10 @@
 .reply-wrapper {
     display: flex;
     align-items: flex-start;
+    position: relative;
 }
 .reply-wrapper .thread-container { /* Nested Comments */
     flex: 1;
-}
-.reply-wrapper.last-reply {
-    position: relative;
 }
 /* Remove excessive vertical line */
 .reply-wrapper.last-reply::before {

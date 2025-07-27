@@ -7,7 +7,7 @@ import EditBlog from './pages/EditBlog/EditBlog'
 import Preview from './pages/Preview/Preview'
 import Profile from './pages/Profile/Profile'
 import Login from './pages/Login/Login'
-import Signup from './pages/Signup/Signup'
+import Signup from "./pages/Signup/Signup"
 import NotFound from './pages/NotFound/NotFound'
 import ProtectedRoute from './utils/ProtectedRoute'
 import Layout from './components/Layout/Layout'
@@ -15,7 +15,6 @@ import { AlertProvider } from './contexts/AlertContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { DemoProvider } from './contexts/DemoContext'
 import { LoadingProvider } from './contexts/LoadingContext'
-import { ViewReplyProvider } from './contexts/ViewReplyContext'
 
 const router = createBrowserRouter([
     {
@@ -51,9 +50,7 @@ function AppProviders() {
             <AlertProvider>
                 <AuthProvider>
                     <DemoProvider>
-                        <ViewReplyProvider>
-                            <Layout />
-                        </ViewReplyProvider>
+                        <Layout />
                     </DemoProvider>
                 </AuthProvider>
             </AlertProvider>

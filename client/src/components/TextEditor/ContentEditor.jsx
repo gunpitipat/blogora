@@ -34,7 +34,7 @@ const ContentEditor = memo(({
                         behavior: "smooth"
                     })
                     setTimeout(() => {
-                        editorElement.focus()
+                        editorElement.focus() // Auto-focus text editor after extending
                     }, 150)
                 }
 

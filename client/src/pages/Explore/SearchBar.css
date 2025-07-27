@@ -21,10 +21,12 @@
     position: absolute;
     right: 1rem;
     top: 50%;
-    transform: translate(0,-50%);
+    transform: translate(0, -50%);
     cursor: default;
     color: var(--secondary-color);
     font-size: 1.1rem;
+    display: flex;
+    align-items: center;
 }
 
 @media (max-width: 768px) {

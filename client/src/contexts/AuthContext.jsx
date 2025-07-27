@@ -18,25 +18,24 @@ export const AuthProvider = ({ children }) => {
     const { setLoading } = useLoadingContext()
     const { setAlertState } = useAlertContext()
 
-    const checkAuth = useCallback(
-        async () => {
-            setLoading(true)
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API}/check-auth`, {
-                    withCredentials: true, // Sends cookies with request
-                })
-                setIsAuthenticated(response.data.isAuthenticated)
-                setUser({ username: response.data.username, role: response.data.role })
+    const checkAuth = useCallback(async () => {
+        setLoading(true)
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API}/check-auth`, {
+                withCredentials: true, // Sends cookies with request
+            })
+            setIsAuthenticated(response.data.isAuthenticated)
+            setUser({ username: response.data.username, role: response.data.role })
 
-            } catch (error) {
-                setIsAuthenticated(false)
-                setUser(null)
+        } catch (error) {
+            setIsAuthenticated(false)
+            setUser(null)
 
-            } finally {
-                setLoading(false)
-            }
-            // eslint-disable-next-line
-        }, [])
+        } finally {
+            setLoading(false)
+        }
+        // eslint-disable-next-line
+    }, [])
     
     useEffect(() => {
         checkAuth() // Checking if the session is still valid once the app loads or is refreshed

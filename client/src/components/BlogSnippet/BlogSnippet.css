@@ -4,11 +4,11 @@
     border-radius: 0.25rem 0.25rem 0 0;
 }
 .blog-snippet .title h2 {
-    display: inline; /* Prevent excessive clickable area */
+    display: inline-block; /* Prevent excessive clickable area */
     font-weight: 900;
     color: var(--accent-color);
-    word-break: break-word; /* Break title if too long */
-    overflow-wrap: break-word; /* Ensures wrapping in older browsers */
+    overflow-wrap: anywhere; /* Break long titles when needed */
+    word-break: break-word; /* Fallback */
 }
 .blog-snippet a {
     text-decoration: none;
@@ -21,6 +21,8 @@
     max-height: 132px;
     position: relative; /* For placing fade-overlay absolutely */
     overflow: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 .blog-snippet .content-container .section {
     margin-bottom: 0.25rem;

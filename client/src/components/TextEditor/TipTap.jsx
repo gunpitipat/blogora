@@ -194,7 +194,7 @@ const TipTap = memo(({
     htmlContent = htmlContent.replace(/ {2,}/g, match => {
       return '&nbsp;'.repeat(match.length - 1) + ' ' // Add one real space at the end to prevent long unbreakable lines
     })
-    // Preseve a single leading space after opening tag, preventing editor from trimming whitespace
+    // Preserve a single leading space after opening tag, preventing editor from trimming whitespace
     htmlContent = htmlContent.replace(/(<[^>]+>) /g, '$1&nbsp;')
 
     // Disallow leading <br> inside list items (Shift+Enter on an empty list item)

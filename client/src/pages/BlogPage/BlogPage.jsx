@@ -1,11 +1,10 @@
 import "./BlogPage.css"
 import axios from "axios"
 import { useParams, useNavigate } from "react-router-dom"
-import { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useAlertContext } from "../../contexts/AlertContext"
 import { useLoadingContext } from "../../contexts/LoadingContext"
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useViewReplyContext } from "../../contexts/ViewReplyContext"
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
 import BlogContent from "./Blog/BlogContent"
@@ -23,18 +22,16 @@ const BlogPage = () => {
     const [showCommentInput, setShowCommentInput] = useState(false)
     const [comments ,setComments] = useState([])
     const [showReplyInput, setShowReplyInput] = useState([])
+    const [viewReply, setViewReply] = useState([])
     const [commentTrigger, setCommentTrigger] = useState(false)
     const [commentLoading, setCommentLoading] = useState(false) // Isolate comment loading state to avoid flickering with blog loading
     const [showCommentOption, setShowCommentOption] = useState(null) // Track which comment's setting button is open
     const [showCommentModal, setShowCommentModal] = useState(null)
 
-    const { viewReply, setViewReply } = useViewReplyContext()
     const { setAlertState } = useAlertContext()    
     const { setLoading } = useLoadingContext()
     const { user } = useAuthContext()   
     const navigate = useNavigate()
-
-    const scrollPositionRef = useRef(0)
 
     // Retrieve a blog
     const getBlog = async (abortSignal) => {
@@ -119,12 +116,11 @@ const BlogPage = () => {
                     return null // Skip logging
                 }
                 console.error("Error fetching comments")
-                // throw error // No catch block in fetchComments()   
             }
         }
     }
 
-    useEffect(() => { // Runs when slug changes OR user posts a new comment
+    useEffect(() => { // Runs when slug changes or user posts a new comment
         if (!slug) return;
 
         const controller = new AbortController()
@@ -132,7 +128,6 @@ const BlogPage = () => {
 
         const fetchComments = async () => {
             setCommentLoading(true)
-            setComments([])
 
             try {
                 const commentsData = await getComments(signal)
@@ -145,7 +140,7 @@ const BlogPage = () => {
                     setShowReplyInput(initialShowReplyInput)
 
                     // Initialize viewReply at the first render
-                    if (viewReply.length === 0) { // When url changes, viewReply will reset to an empty array
+                    if (viewReply.length === 0) {
                         const initialViewReply = commentsData.map(comment => {
                             return { id: comment._id, viewReply: false }
                         })
@@ -167,25 +162,8 @@ const BlogPage = () => {
 
         fetchComments()
         return () => controller.abort()
-        // eslint-disable-next-line 
-    }, [slug, commentTrigger]) 
-
-    // Save scroll position when creating or deleting a comment
-    useEffect(() => {
-        scrollPositionRef.current = window.scrollY
-    }, [commentTrigger])
-
-    // Restore scroll position after comment update
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            requestAnimationFrame(() => {
-                if (document.querySelectorAll(".thread-container").length > 0) {
-                    window.scrollTo({ top: scrollPositionRef.current, behavior: "instant" })
-                }
-            })
-        }, 50)
-        return () => clearTimeout(timeout)
-    }, [comments])
+        // eslint-disable-next-line
+    }, [slug, commentTrigger])
 
     // Function to toggle comment's delete button
     const toggleCommentOption = useCallback((commentId) => {
@@ -201,12 +179,10 @@ const BlogPage = () => {
                 if (e.target.classList.contains("modal-overlay") || e.target.classList.contains("cancel-btn")) {
                     setShowCommentOption(null)
                     setShowCommentModal(null)
-                    console.log("test1")
                 }
             } else {
                 if (!e.target.closest(".comment-setting") && !e.target.closest(".modal")) { // Setting tab has its own open-close handler Exclude comment Modal condition since it's written separately below
                     setShowCommentOption(null)
-                    console.log("test2")
                 }   
             }
         }
@@ -251,8 +227,9 @@ const BlogPage = () => {
         setShowCommentInput(false) // Collapse comment input if still open
         setShowReplyInput(prev => prev.map(comment => {
             if (comment.id === commentId) {
-                if (comment.replyInput) return { ...comment, replyInput: false} // Collapse the reply input if already open
-                return { ...comment, replyInput: true }
+                return comment.replyInput 
+                    ? { ...comment, replyInput: false } 
+                    : { ...comment, replyInput: true }
             }
             return { ...comment, replyInput: false }
         }))
@@ -424,6 +401,8 @@ const BlogPage = () => {
                             isReplyInputOpen={comment.replyInput}
                             showReplyInput={showReplyInput} // For adding reply-input state to each reply when creating `memoizedReplies`
                             // View/Hide Reply
+                            viewReply={viewReply}
+                            setViewReply={setViewReply}
                             nestedStructure={nestedComments}
                             getAllRelatedReplies={getAllRelatedReplies} 
                             blogAuthor={blog.author?.username} // Show author icon next to username if commenter is the blog author

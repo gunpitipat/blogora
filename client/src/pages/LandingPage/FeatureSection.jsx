@@ -4,9 +4,9 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { lazyLoadVideos } from "../../utils/lazyVideoLoader"
 import { debounce } from "lodash"
 import FeaturePanel from "./FeaturePanel"
-import featureVideo1 from "../../assets/videos/blogora-feature-1.mp4"
-import featureVideo2 from "../../assets/videos/blogora-feature-2.mp4"
-import featureVideo3 from "../../assets/videos/blogora-feature-3.mp4"
+import featureVideo1 from "../../assets/videos/blogora_feature_1.mp4"
+import featureVideo2 from "../../assets/videos/blogora_feature_2.mp4"
+import featureVideo3 from "../../assets/videos/blogora_feature_3.mp4"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/all"
@@ -190,7 +190,13 @@ const FeatureSection = () => {
         }
 
         window.addEventListener("scroll", checkIfCentered)
-        return () => window.removeEventListener("scroll", checkIfCentered)
+        checkIfCentered()
+
+        return () => {
+            window.removeEventListener("scroll", checkIfCentered)
+            // Ensure navbar is visible again if navigating away during horizontal scroll section
+            document.querySelector(".navbar")?.classList.remove("hide")
+        }
     }, [isSmallDevice])
 
     return (

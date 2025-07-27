@@ -10,8 +10,8 @@
 .blog-content .title {
     color: var(--accent-color);
     transition: opacity 0.14s ease-in-out;
-    word-break: break-word; /* Break title if too long one exists */
-    overflow-wrap: break-word; /* Ensures wrapping in older browsers */
+    overflow-wrap: anywhere; /* Break long titles when needed */
+    word-break: break-word; /* Fallback */
 }
 .blog-content .title.fade {
     opacity: 0.14;
@@ -90,32 +90,53 @@
     font-weight: 500;
     opacity: 1;
 }
+
 /* Modal */
 .blog-content .modal .modal-content span {
     font-weight: 700;
-    word-break: break-word; /* Break title if too long */
-    overflow-wrap: break-word; /* Ensures wrapping in older browsers */
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .blog-content main {
     font-size: 1.1rem;
     line-height: 2rem;
     color: var(--neutral-color-dark);
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
-.blog-content .tiptap-result :first-child {
+.tiptap-result :first-child {
     margin-top: 0;
 }
-.blog-content .tiptap-result h1 {
+.tiptap-result h1 {
     font-size: 1.5rem;
     margin: 1rem 0;
     color: var(--accent-color);
 }
-.blog-content .tiptap-result ol, 
-.blog-content .tiptap-result ul {
+.tiptap-result ol, 
+.tiptap-result ul {
     padding: 0 2rem;
     margin: 0.5rem 0;
 }
-.blog-content .tiptap-result span.fake-br {
+/* Nested unordered lists (bullets) */
+.tiptap-result ul ul,
+.tiptap-result ol ul {
+    list-style-type: disc;
+}
+.tiptap-result ul ul li::marker,
+.tiptap-result ol ul li::marker {
+    color: #a8a8a8;
+}
+/* Nested ordered lists */
+.tiptap-result ul ol,
+.tiptap-result ol ol {
+    list-style-type: decimal;
+}
+.tiptap-result ul ol li::marker,
+.tiptap-result ol ol li::marker {
+    color: #696969;
+}
+.tiptap-result span.fake-br {
     display: block;
     width: 100%;
     height: 1em;

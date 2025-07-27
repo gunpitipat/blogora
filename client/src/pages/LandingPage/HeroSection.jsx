@@ -7,7 +7,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { useDemoContext } from "../../contexts/DemoContext"
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
-import BlogoraGlobe from "../../assets/images/BlogoraGlobe.png"
+import blogora_globe from "../../assets/images/blogora_globe.png"
 import BubbleChat from "./BubbleChat";
 import { FiArrowUpRight } from "react-icons/fi";
 import { FaAngleDown } from "react-icons/fa6";
@@ -190,7 +190,7 @@ const HeroSection = () => {
 
                 <div className="hero-visual">
                     <div className="globe-container">
-                        <img src={BlogoraGlobe} alt="BlogoraGlobe" 
+                        <img src={blogora_globe} alt="blogora_globe" 
                             className="blogora-globe" id="blogora-globe" 
                         />
                         <div className="orbit" id="orbit">

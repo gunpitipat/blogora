@@ -2,7 +2,6 @@ import "./Comment.css"
 import axios from "axios";
 import clsx from "clsx"
 import { useState, useEffect, useRef, memo, useMemo } from "react"
-import { useViewReplyContext } from "../../../contexts/ViewReplyContext";
 import { useAuthContext } from "../../../contexts/AuthContext";
 import { useAlertContext } from "../../../contexts/AlertContext";
 import CommentContent from "./CommentContent";
@@ -18,6 +17,8 @@ const Comment = memo(({
     toggleReplyInput, 
     isReplyInputOpen, 
     showReplyInput, 
+    viewReply,
+    setViewReply,
     nestedStructure, 
     getAllRelatedReplies,
     blogAuthor,
@@ -38,7 +39,6 @@ const Comment = memo(({
     const [isExpanded, setIsExpanded] = useState(false)
     const contentRef = useRef(null)
 
-    const { viewReply, setViewReply } = useViewReplyContext()
     const { user } = useAuthContext()
     const { setAlertState } = useAlertContext()
 
@@ -49,12 +49,11 @@ const Comment = memo(({
     )
 
     useEffect(() => {
-        if (viewReply.length > 0) { // Initially viewReply is an empty array
+        if (viewReply) {
             const [viewReplyState] = viewReply.filter(element => element.id === comment._id).map(element => element.viewReply)
             setIndividualViewReply(viewReplyState)
         }
-        // eslint-disable-next-line 
-    }, [viewReply]) 
+    }, [viewReply, comment._id]) 
 
     const toggleViewReply = () => {
         const relatedReplies = new Set(getAllRelatedReplies(nestedStructure, comment._id))
@@ -220,6 +219,8 @@ const Comment = memo(({
                                 isReplyInputOpen={reply.replyInput}
                                 showReplyInput={showReplyInput}
                                 // View/Hide Reply
+                                viewReply={viewReply}
+                                setViewReply={setViewReply}
                                 nestedStructure={nestedStructure}
                                 getAllRelatedReplies={getAllRelatedReplies}
                                 blogAuthor={blogAuthor}

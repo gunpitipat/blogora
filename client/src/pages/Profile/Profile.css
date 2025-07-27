@@ -76,7 +76,6 @@
 }
 .profile .blog-snippet .content-container {
     margin: 0.5rem 0;
-    max-height: 68px; /* Default when there's only one column in a row */
 }
 .profile .blog-snippet .content-container .section-subtitle {
     font-size: 1.04rem;

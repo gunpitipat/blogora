@@ -32,40 +32,46 @@ const BlogSnippet = ({ blog, disableInnerLink }) => {
         return () => window.removeEventListener("resize", checkOverflowing)
     }, [blog])
 
-    // Fix uneven BlogSnippet heights in two-column layout on Profile page
+    // Fix uneven BlogSnippet heights on Profile page
     useEffect(() => {
         const updateMaxHeight = () => {
             const isProfilePage = location.pathname.split("/")[1] === "profile"
-            const isWideScreen = window.innerWidth >= 1024 // Two-column breakpoint
+            const titleEl = titleRef.current
+            const contentEl = contentRef.current
 
-            if (!isProfilePage || !isWideScreen || !titleRef.current || !contentRef.current) {
-                return
-            }
+            if (!isProfilePage || !titleEl || !contentEl) return
             
-            const titleLineHeight = getLineHeight(titleRef.current)
-            const titleLineCount = Math.round(titleRef.current.clientHeight / titleLineHeight) 
-            // The longest possible title (60 characters) only spans 2 lines on 1024px screen
+            const titleLineHeight = getLineHeight(titleEl)
+            const titleLineCount = Math.round(titleEl.clientHeight / titleLineHeight)
 
+            // The longest possible title (70 characters) can span 3 lines at 1024px (two-column layout breakpoint)
             if (titleLineCount === 1) {
-                // Compensate for .content-container max-height
-                const contentMaxHeight =  68 + 23.5 // Default maxHeight in CSS + actual rendered title line height
-                contentRef.current.style.maxHeight = `${contentMaxHeight}px`
+                // Default maxHeight + Compensation using actual rendered title line height 
+                contentEl.style.maxHeight = `${43 + 23.5 * 2}px`
+            } else if (titleLineCount === 2) {
+                contentEl.style.maxHeight = `${43 + 23.5}px`
+            } else if (titleLineCount === 3) {
+                contentEl.style.maxHeight = `43px`
+            } else {
+                contentEl.style.maxHeight = `28px` // In case title spans 4 lines on mobile
             }
         }
-
         const debouncedUpdateMaxHeight = debounce(updateMaxHeight, 100)
 
         updateMaxHeight() // Initial setup
         window.addEventListener("resize", debouncedUpdateMaxHeight)
 
-        return () => window.removeEventListener("resize", debouncedUpdateMaxHeight)
+        return () => {
+            window.removeEventListener("resize", debouncedUpdateMaxHeight)
+            debouncedUpdateMaxHeight.cancel?.()
+        }
     }, [location.pathname, blog])
 
     return (
         <div className="blog-snippet">
             {/* Blog Title */}
             { disableInnerLink 
-                ?   <span className="title">
+                ?   <div className="title">
                         <h2 ref={titleRef}>
                             { blog.isPinned &&
                                 <span className="pin-icon">
@@ -74,7 +80,7 @@ const BlogSnippet = ({ blog, disableInnerLink }) => {
                             }
                             {blog.title}
                         </h2>
-                    </span>
+                    </div>
                 :   <Link to={`/blog/${blog.slug}`} className="title">
                         <h2>
                             { blog.isPinned &&

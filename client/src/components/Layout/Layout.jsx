@@ -14,7 +14,7 @@ const Layout = () => {
             <ScrollToTop />
             <Navbar />
             { loading && <LoadingScreen /> }
-            { <SessionExpiration /> } {/* Session expiration modal */}
+            <SessionExpiration /> {/* Session expiration modal */}
             <Outlet /> {/* Render nested routes */}
             <Alert />
         </div>
