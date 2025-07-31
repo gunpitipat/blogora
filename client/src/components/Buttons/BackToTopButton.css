@@ -1,0 +1,44 @@
+.back-to-top-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    right: -2rem;
+    bottom: -2rem;
+    font-size: 1.4rem;
+    padding: 0.75rem 0.25rem;
+    background-color: var(--neutral-color-light);
+    color: var(--accent-color);
+    border: 1px solid var(--neutral-color-heavy);
+    border-radius: 17px;
+    cursor: pointer;
+    pointer-events: none;
+    opacity: 0;
+}
+.back-to-top-btn.show {
+    right: 2rem;
+    bottom: 2.5rem;
+    pointer-events: all;
+    opacity: 0.75;
+    transition: bottom 0.3s ease-out, opacity 0.5s ease-out;
+}
+
+@media (max-width: 768px) {
+    .back-to-top-btn.show {
+        right: 1.4rem;
+        bottom: 2.2rem;
+        padding-inline: 0.2rem;
+    }
+}
+@media (max-width: 560px) {
+    .back-to-top-btn.show {
+        right: 1rem;
+    }
+}
+@media (max-width: 490px) {
+    .back-to-top-btn.show {
+        right: 0.75rem;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

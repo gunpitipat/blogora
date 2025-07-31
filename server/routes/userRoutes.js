@@ -14,7 +14,7 @@ router.get("/profile/:username", profileMiddleware, getProfile)
 router.get("/profile/:username/blogs", profileMiddleware, getProfileBlogs)
 
 // Authentication status check for frontend usage
-router.get("/check-auth",noCacheMiddleware, authStatusCheck)
+router.get("/check-auth", noCacheMiddleware, authStatusCheck)
 
 module.exports = router
 

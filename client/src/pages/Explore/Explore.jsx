@@ -9,14 +9,13 @@ import Skeleton from "./Skeleton";
 import SearchBar from "./SearchBar";
 import WelcomeTooltip from "./WelcomeTooltip";
 import BlogSnippet from "../../components/BlogSnippet/BlogSnippet";
+import BackToTopButton from "../../components/Buttons/BackToTopButton";
 import Footer from "../../components/Layout/Footer";
-import { LuArrowUpToLine } from "react-icons/lu";
 
 function Explore() {
   const [blogs, setBlogs] = useState([])
   const [showTooltip, setShowTooltip] = useState(false)
   const [searchInput, setSearchInput] = useState("")
-  const [showBackToTop, setShowBackToTop] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const hasRestoredScroll = useRef(false)
 
@@ -97,24 +96,6 @@ function Explore() {
     return () => clearTimeout(timeout)
   }, [blogs, location.pathname])
 
-  // Show/hide back-to-top button
-  useEffect(() => {
-    const handleButton = () => {
-      if (window.scrollY > 200) {
-        setShowBackToTop(true)
-      } else {
-        setShowBackToTop(false)
-      }
-    }
-
-    window.addEventListener("scroll", handleButton)
-    return () => window.removeEventListener("scroll", handleButton)
-  }, [])
-
-  const backToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
   const filteredBlogs = useMemo(() => {
     if (!searchInput) return blogs
 
@@ -148,15 +129,11 @@ function Explore() {
             />
           ))
       }
-      <div className={`back-to-top-btn ${showBackToTop ? "show" : ""}`} 
-        onClick={backToTop} 
-      >
-        <LuArrowUpToLine />
-      </div>
       {/* For users not logged in */}
       { !isLoggedIn && blogs.length > 0 && showTooltip && 
         <WelcomeTooltip closeTooltip={closeTooltip} />
       }
+      <BackToTopButton />
       <Footer />
     </div>
   );

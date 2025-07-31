@@ -61,7 +61,7 @@ const Comment = memo(({
             // If it's showing, hide it and all its replies
             if (element.viewReply && relatedReplies.has(element.id)) {
                 return { ...element, viewReply: false }
-            } 
+            }
             // If it's hidden, show the direct replies of the clicked comment
             if (!element.viewReply && element.id === comment._id) {
                return { ...element, viewReply: true }
@@ -94,7 +94,7 @@ const Comment = memo(({
             }
             
         } finally {
-            // setLoading(false) will run in useEffect once comment fetching is complete
+            // setCommentLoading(false) will run in useEffect once comment fetching is complete
             setShowCommentModal(null)
             setShowCommentOption(null)
         }
@@ -102,45 +102,48 @@ const Comment = memo(({
 
     // Expandable comment content with smooth transition
     useEffect(() => {
-        // Check if content overflows
         const checkOverflowing = () => {
-            if (contentRef.current) {   
-                setTimeout(() => {                 
-                    setIsOverflowing(isExpanded || contentRef.current.scrollHeight > contentRef.current.clientHeight) // Check if total content height exceeds visible height
-                }, 100) // Delay before updating isOverflowing to prevent the show button from disappearing when collapsing it back after expanding
-                       // Cause: setIsExpanded in toggleExpand runs asynchronously, triggering useEffect to update isOverflowing while max-height was still "none" and had not been reset to "150px" yet, making isOverflowing false
-            }                   
-            // When resizing to mobile with content still expanded (isExpanded = true), the "Show less" button disappeared due to max-height: none; (isOverflowing = false)
-            // To fix this, keep isOverflowing true when expanding by including isExpanded in setIsOverflowing
+            if (contentRef.current) {
+                const BASE_MAX_HEIGHT = 108 // CSS default max-height
+                setIsOverflowing(contentRef.current.scrollHeight > BASE_MAX_HEIGHT)
+            } 
         }
+
         checkOverflowing()
-        window.addEventListener("resize", checkOverflowing) // Recheck on resize as screen width changes affect content height
+        window.addEventListener("resize", checkOverflowing)  // Recheck on resize as content may grow on narrower screens
 
         return () => window.removeEventListener("resize", checkOverflowing)
     }, [comment.content, isExpanded])
 
     const toggleExpand = () => {
-        if (contentRef.current) {
-            // Expanding (false -> true)
+        const el = contentRef.current
+        if (!el) return
+
+        const BASE_MAX_HEIGHT = 108
+
+        const handleTransitionEnd = () => {
+            el.removeEventListener("transitionend", handleTransitionEnd)
             if (!isExpanded) {
-                contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`
-
-                // After transition, remove max-height so it can adjust dynamically
-                setTimeout(() => {
-                    contentRef.current.style.maxHeight = "none"
-                }, 300) // CSS transition duration
+                el.style.maxHeight = "none" // Allow dynamic resizing after expanding
             }
-            // Collapsing (true -> false)
-            else {
-                contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px` // Assign a starting value instead of "none" for animating transition
-
-                // Small delay to let browser recognize current height and detect height change, ensuring transition works
-                setTimeout(() => {
-                    contentRef.current.style.maxHeight = "150px" // CSS default max-height
-                }, 10)
-            }
+            setIsExpanded(prev => !prev)
         }
-        setIsExpanded(!isExpanded)
+
+        // Expanding
+        if (!isExpanded) {
+            el.style.maxHeight = `${el.scrollHeight}px`
+            el.addEventListener("transitionend", handleTransitionEnd)
+        }
+        // Collapsing
+        else {
+            // Reset from "none" to current height to enable transition
+            el.style.maxHeight = `${el.scrollHeight}px`
+            // Slight delay to let browser recognize height, ensuring transition works
+            requestAnimationFrame(() => {
+                el.style.maxHeight = `${BASE_MAX_HEIGHT}px`
+                el.addEventListener("transitionend", handleTransitionEnd)
+            })
+        }
     }
 
     // Add reply-input state to each reply for passing isReplyInputOpen when rendering replies with Comment component
@@ -162,7 +165,7 @@ const Comment = memo(({
             )}>
                 <CommentContent 
                     ref={contentRef}
-                    className={`${comment.isDeleted ? "is-deleted" : ""} ${isExpanded ? "expanded" : ""}`}
+                    className={`${comment.isDeleted ? "is-deleted" : ""}`}
                     content={comment.content}
                     isDeleted={comment.isDeleted}
                     parentAuthor={parentAuthor}
@@ -193,16 +196,17 @@ const Comment = memo(({
                     />
                 }
             </div>
-            <CommentActions 
-                className={`level-${level} ${level > maxIndent ? "hidden" : ""}`}
-                isDeleted={comment.isDeleted}
-                toggleReplyInput={() => toggleReplyInput(comment._id)}
-                replyLength={replies.length}
-                toggleViewReply={toggleViewReply}
-                individualViewReply={individualViewReply}
-                isReplyInputOpen={isReplyInputOpen}
-                onSendReply={onSendReply}
-            />
+            { level <= maxIndent &&
+                <CommentActions 
+                    isDeleted={comment.isDeleted}
+                    toggleReplyInput={() => toggleReplyInput(comment._id)}
+                    replyLength={replies.length}
+                    toggleViewReply={toggleViewReply}
+                    individualViewReply={individualViewReply}
+                    isReplyInputOpen={isReplyInputOpen}
+                    onSendReply={onSendReply}
+                />
+            }
             <div className="replies">
                 { replies.length > 0 && individualViewReply && 
                     memoizedReplies.map((reply, index) => (

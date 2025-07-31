@@ -31,7 +31,7 @@ const commentSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    isDeleted: { // For soft deleting comment
+    isDeleted: { // Soft delete flag, used for conditional rendering on the frontend
         type: Boolean,
         default: false
     },

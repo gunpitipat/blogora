@@ -4,11 +4,11 @@ import { motion, useScroll, useTransform } from "framer-motion"
 
 const BubbleChat = ({ className, children, onClick = () => {} }) => {
     const ref = useRef()
-    const isSmallDevice = useMediaQuery("(max-width: 768px)")
+    const isSmallScreen = useMediaQuery("(max-width: 768px)")
     const { scrollY } = useScroll()
 
     // Scroll 0-300px -> Move element up to -30px
-    const y = useTransform(scrollY, [0, 300], [0, isSmallDevice ? -15 : -30])
+    const y = useTransform(scrollY, [0, 300], [0, isSmallScreen ? -15 : -30])
 
     return (
         <motion.div 

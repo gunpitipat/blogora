@@ -12,6 +12,7 @@
 }
 .comment.level-3 {
     border-left: 4px solid #a9a29c;
+    margin-bottom: 1.5rem; /* Add gap to replace missing CommentActions padding */
 }
 /* Fade comment when delete option is open */
 .comment.fade .comment-content, 
@@ -26,14 +27,12 @@
     font-size: 1rem;
     color: var(--neutral-color-dark);
     margin: 0.25rem 0 0.75rem;
+    white-space: pre-wrap;
     overflow-wrap: anywhere; /* Break long content or @username when needed */
     word-break: break-word; /* Fallback */
-    max-height: 150px; /* Limit height */
+    max-height: 108px;
     overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-}
-.comment-content.expanded {
-    max-height: none;
+    transition: max-height 200ms ease-in-out;
 }
 /* Soft deleted comment */
 .comment-content.is-deleted {
@@ -140,9 +139,6 @@
     padding: 0.5rem 1rem 1rem 2rem;
     flex-direction: column;
     position: relative; /* Reference for .connector--vertical */
-}
-.comment-actions.hidden .action-btns {
-    display: none;
 }
 .comment-actions .action-btns {
     display: flex;
@@ -259,8 +255,7 @@
         width: fit-content;
         font-weight: 600;
     }
-    .comment-footer.is-tablet-overflowing, 
-    .comment-footer.is-mobile-overflowing {
+    .comment-footer.sm-overflowing {
         margin-top: calc(21px + 1rem); /* Expand-icon height (21px) + 1rem spacing */
     }
 }

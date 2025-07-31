@@ -1,7 +1,7 @@
 .blog-page {
     padding: 3rem 8rem 6rem;
     min-height: calc(100vh - 80px + 40px); /* Make copyright footer off screen on short content pages */
-    position: relative; /* Reference for copyright positioning */
+    position: relative; /* Reference for copyright and back-to-top button positioning */
 }
 
 /* Comments section */
@@ -28,7 +28,7 @@
     .blog-page {
         padding-inline: 4rem;
         padding-top: calc(3.5rem + 3px);
-    } 
+    }
 }
 @media (max-width: 480px) {
     /* Blog padding-inline = 4rem / Comment padding-inline = 3.5rem */

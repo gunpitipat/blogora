@@ -18,7 +18,7 @@ const ContentEditor = memo(({
     onBlur
 }) => {
     const [extendTextarea, setExtendTextarea] = useState(false)
-    const isSmallDevice = useMediaQuery("(max-width: 768px)")
+    const isSmallScreen = useMediaQuery("(max-width: 768px)")
 
     // Perform scrolling after extendTextarea set to true
     useEffect(() => {
@@ -28,7 +28,7 @@ const ContentEditor = memo(({
                 
             if (contentElement && editorElement) {
                 const handleTransitionEnd = () => {    
-                    const targetScrollY = getTotalOffsetTop(contentElement) - (isSmallDevice ? 0 : 80) - (isSmallDevice ? 20 : 16) // - fixed navbar height - spacing
+                    const targetScrollY = getTotalOffsetTop(contentElement) - (isSmallScreen ? 0 : 80) - (isSmallScreen ? 20 : 16) // - fixed navbar height - spacing
                     window.scrollTo({
                         top: targetScrollY,
                         behavior: "smooth"
@@ -43,7 +43,7 @@ const ContentEditor = memo(({
                 return () => editorElement.removeEventListener("transitionend", handleTransitionEnd);
             }
         }
-    }, [extendTextarea, isSmallDevice])
+    }, [extendTextarea, isSmallScreen])
 
     return (
         <div className="content-editor" id="content-editor">

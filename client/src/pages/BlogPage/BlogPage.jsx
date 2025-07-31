@@ -11,6 +11,7 @@ import BlogContent from "./Blog/BlogContent"
 import AddComment from "./AddComment/AddComment"
 import Comment from "./Comment/Comment";
 import Footer from "../../components/Layout/Footer"
+import BackToTopButton from "../../components/Buttons/BackToTopButton"
 
 const BlogPage = () => {
     // Blog
@@ -420,6 +421,7 @@ const BlogPage = () => {
                     ))}
                 </section>
                 { commentLoading && <LoadingScreen /> }
+                <BackToTopButton />
                 <Footer />
             </div>
         )

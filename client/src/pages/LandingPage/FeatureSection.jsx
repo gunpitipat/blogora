@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger)
 const FeatureSection = () => {
     const containerRef = useRef(null)
     const wrapperRef = useRef(null)
-    const isSmallDevice = useMediaQuery("(max-width: 768px)")
+    const isSmallScreen = useMediaQuery("(max-width: 768px)")
 
     useEffect(() => {
         lazyLoadVideos()
@@ -170,7 +170,7 @@ const FeatureSection = () => {
 
     // Hide navbar during horizontal scroll on laptop and desktop
     useEffect(() => {
-        if (isSmallDevice) return
+        if (isSmallScreen) return
 
         const checkIfCentered = () => {
             const navbar = document.querySelector(".navbar")
@@ -197,7 +197,7 @@ const FeatureSection = () => {
             // Ensure navbar is visible again if navigating away during horizontal scroll section
             document.querySelector(".navbar")?.classList.remove("hide")
         }
-    }, [isSmallDevice])
+    }, [isSmallScreen])
 
     return (
         <section className="feature-section" id="feature-section">

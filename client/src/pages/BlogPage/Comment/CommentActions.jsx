@@ -4,7 +4,6 @@ import { FaReply } from "react-icons/fa";
 import { BiSolidMessageRounded } from "react-icons/bi";
 
 const CommentActions = ({ 
-    className, 
     isDeleted, 
     toggleReplyInput, 
     replyLength,
@@ -17,7 +16,7 @@ const CommentActions = ({
     const isLoggedIn = isAuthenticated && user?.username
 
     return (
-        <section className={`comment-actions ${className}`}>
+        <section className="comment-actions">
             <div className="action-btns">
                 <div className={`reply-btn ${!isLoggedIn || isDeleted ? "disabled" : ""}`}
                     onClick={(isLoggedIn && !isDeleted) ? toggleReplyInput : undefined}

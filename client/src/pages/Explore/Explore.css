@@ -1,39 +1,12 @@
 .explore {
   padding: 2rem 8rem 6rem;
   min-height: 100vh; /* Make copyright footer off screen on short content page */
-  position: relative; /* Reference for copyright positioning */
-}
-.explore .back-to-top-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  right: -2rem;
-  bottom: -2rem;
-  font-size: 1.4rem;
-  padding: 0.75rem 0.25rem;
-  background-color: var(--neutral-color-light);
-  border: 1px solid var(--neutral-color-heavy);
-  border-radius: 17px;
-  cursor: pointer;
-  pointer-events: none;
-  opacity: 0;
-}
-.explore .back-to-top-btn.show {
-  right: 2rem;
-  bottom: 2.5rem;
-  pointer-events: all;
-  opacity: 0.75;
-  transition: bottom 0.3s ease-out, opacity 0.5s ease-out;
+  position: relative; /* Reference for copyright and back-to-top button positioning */
 }
 
 @media (max-width: 768px) {
   .explore {
     padding: calc(0.5rem + 43px + 0.5rem) 5rem 6rem; /* padding-top = Tooltip spacing */
-  }
-  .explore .back-to-top-btn.show {
-    right: 1.4rem;
-    font-size: 1.2rem;
   }
 }
 @media (max-width: 560px) {
@@ -44,10 +17,6 @@
 @media (max-width: 490px) {
   .explore {
     padding-inline: 3rem;
-  }
-  .explore .back-to-top-btn.show {
-    right: 0.75rem;
-    padding: 0.75rem 0.2rem;
   }
 }
 @media (max-width: 389px) {

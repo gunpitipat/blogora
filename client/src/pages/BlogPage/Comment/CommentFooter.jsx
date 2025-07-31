@@ -11,13 +11,12 @@ const CommentFooter = memo(({
     createdDate, 
     isOverflowing 
 }) => {
+    const isSmallScreen = useMediaQuery("(max-width: 712px)")
     const isMobile = useMediaQuery("(max-width: 575px)")
-    const isTablet = useMediaQuery("(max-width: 712px) and (min-width: 576px)")
 
     return (
         <section className={clsx("comment-footer", {
-            "is-tablet-overflowing": isTablet && isOverflowing,
-            "is-mobile-overflowing": isMobile && isOverflowing
+            "sm-overflowing" : isOverflowing && isSmallScreen
         })}>
             <Link to={`/profile/${author}`} className="author">
                 {author}
