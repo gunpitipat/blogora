@@ -89,7 +89,8 @@ export const AuthProvider = ({ children }) => {
         if (isAuthenticated && user?.username) {
             const lastUser = sessionStorage.getItem("username")
             const lastPage = sessionStorage.getItem("lastPage")
-            if (user?.username === lastUser) {
+            
+            if (lastUser && lastPage && user?.username === lastUser) {
                 setTimeout(() => {
                     navigate(lastPage)
                     sessionStorage.removeItem("username") // Clear after restoring for the correct user

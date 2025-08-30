@@ -1,20 +1,108 @@
 import "./TipTap.css"
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from "@tiptap/extension-underline"
 import Heading from "@tiptap/extension-heading";
+import Link from '@tiptap/extension-link'
 import { IoText } from "react-icons/io5";
-import { FaBold, FaItalic, FaStrikethrough, FaHeading, FaListUl, FaListOl, FaUndoAlt, FaRedoAlt, FaUnderline } from "react-icons/fa";
+// eslint-disable-next-line
+import { FaBold, FaItalic, FaStrikethrough, FaLink, FaCheck, FaHeading, FaListUl, FaListOl, FaUndoAlt, FaRedoAlt, FaUnderline } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 
 export const MenuBar = memo(({
   submit, 
-  isLabelActive
+  isLabelActive,
+  showLinkInput,
+  setShowLinkInput = () => {}
 }) => {
   const { editor } = useCurrentEditor()
-  
+  const [linkText, setLinkText] = useState("")
+  const [linkUrl, setLinkUrl] = useState("")
+  const internalPaths = ["/explore", "/blog/", "/profile/", "/login", "/signup", "/create"]
+
+  // Clear content after submitting form
+  useEffect(() => {
+    if (submit && editor) {
+      setTimeout(() => {
+        editor.commands.clearContent()
+      },0)
+    }
+  }, [submit, editor])
+
+  const resetLinkInput = () => {
+    setShowLinkInput(false)
+    setLinkText("")
+    setLinkUrl("")
+  }
+
+  // useEffect(() => {
+  //   const handleClickOutside = (e) => {
+  //     if (!showLinkInput) return
+
+  //     if (!e.target.closest(".link-container")) {
+  //       resetLinkInput()
+  //     }
+  //   }
+
+  //   document.addEventListener("click", handleClickOutside)
+  //   return () => document.removeEventListener("click", handleClickOutside)
+  // }, [showLinkInput])
+
   if (!editor) return null
 
+  const toggleLink = () => {
+    const { from, to } = editor.state.selection
+    const hasSelection = from !== to
+
+    if (showLinkInput) {
+      resetLinkInput()
+      return
+    }
+
+    if (editor.isActive("link")) {
+      editor.commands.unsetLink()
+      return
+    } 
+
+    if (hasSelection) {
+      const selectedText = editor.state.doc.textBetween(from, to).trim()
+      const isLikelyUrl = 
+        selectedText.startsWith("http://") || 
+        selectedText.startsWith("https://") || 
+        internalPaths.some(path => selectedText.startsWith(path))
+
+      isLikelyUrl ? setLinkUrl(selectedText) : setLinkText(selectedText)
+    }
+    setShowLinkInput(true)
+  }
+
+  const insertLink = () => {
+    const trimmedLinkUrl = linkUrl.trim()
+    const trimmedLinkText = linkText.trim()
+    
+    if (!trimmedLinkUrl) return
+
+    const isExternal = /^https?:\/\//.test(trimmedLinkUrl) &&
+                       !trimmedLinkUrl.includes(window.location.hostname)
+    const linkAttrs = isExternal 
+    ? { href: trimmedLinkUrl, target: "_blank", rel: "noopener noreferrer" }
+    : { href: trimmedLinkUrl, target: "_self" }
+
+    editor
+      .chain()
+      .focus()
+      .insertContent([{ 
+        type: "text", 
+        text: trimmedLinkText ? trimmedLinkText : trimmedLinkUrl, 
+        marks: [{ type: "link", attrs: linkAttrs }]
+      }])
+      .unsetMark("link")
+      .run()
+
+    resetLinkInput()
+  }
+  
   const isActive = (type) => {
     if (!isLabelActive) return false
     return editor.isActive(type)
@@ -26,9 +114,9 @@ export const MenuBar = memo(({
         {/* Paragraph */}
         <button type="button"
           onClick={() => editor.chain().focus().setParagraph().run()}
-          className={`paragraph-btn ${isActive("paragraph") ? "active" : ""}`}
+          className={isActive("paragraph") ? "active" : ""}
         >
-          <IoText />
+          <IoText style={{ transform: "scale(1.2)"}} />
         </button>
 
         {/* Heading */}
@@ -78,7 +166,7 @@ export const MenuBar = memo(({
         </button>
 
         {/* Strike */}
-        <button type="button"
+        {/* <button type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={
             !editor.can()
@@ -90,7 +178,45 @@ export const MenuBar = memo(({
           className={isActive("strike") ? "active" : ""}
         >
           <FaStrikethrough/>
-        </button>
+        </button> */}
+
+        {/* Link */}
+        <div className="link-container">
+          <button type="button"
+            onClick={toggleLink}
+            className={isActive("link") || showLinkInput ? "active" : ""}
+          >
+            <FaLink />
+          </button>
+          {/* Link Input */}
+          <div className={`link-input-panel ${showLinkInput ? "show" : ""}`}>
+            <div className="link-input-field">
+              <label>Display text <span>{'('}optional{')'}</span></label>
+              <input 
+                type="text"
+                value={linkText}
+                onChange={(e) => setLinkText(e.target.value)}
+              />
+            </div>
+            <div className="link-input-field">
+              <label>URL</label>
+              <input 
+                className="link-url-field"
+                type="text"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}              
+              />
+            </div>
+            <div className="link-input-actions">
+              <span onClick={resetLinkInput}>
+                <FaXmark style={{ fontSize: "1.4rem" }} />
+              </span>
+              <span onClick={insertLink}>
+                <FaCheck />
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Unordered List */}
         <button type="button"
@@ -137,14 +263,6 @@ export const MenuBar = memo(({
         >
           <FaRedoAlt/>
         </button>
-
-        {/* To clear content after submitting form in CreateBlog.jsx */}
-        { submit 
-        ? setTimeout(() => {
-            editor.commands.clearContent()
-          },0) 
-        : null 
-        }
       </div>
     </div>
   )
@@ -165,7 +283,7 @@ const extensions = [
     codeBlock: false,
   }, {
     HTMLAttributes: {
-      allowedTags: [ "p", "h1", "strong", "i", "ul", "ol", "li" ], // Only tags for menubar features
+      allowedTags: [ "p", "h1", "strong", "i", "a", "ul", "ol", "li" ], // Only tags for menubar features
     },
   }),
   Underline.configure({
@@ -175,6 +293,14 @@ const extensions = [
   }),
   Heading.configure({
     levels: [1], // Allow only h1, disable h2-h6
+  }),
+  Link.configure({
+    openOnClick: false,
+    autolink: true,
+    HTMLAttributes: {
+      rel: null,
+      target: null, // Let insertLink() decide
+    },
   }),
 ]
 
@@ -187,6 +313,8 @@ const TipTap = memo(({
   onFocus, 
   onBlur
 }) => {
+  const [showLinkInput, setShowLinkInput] = useState(false)
+
   const onUpdate = ({ editor }) => {
     let htmlContent = editor.getHTML()
 
@@ -199,7 +327,7 @@ const TipTap = memo(({
 
     // Disallow leading <br> inside list items (Shift+Enter on an empty list item)
     let cleanedContent = htmlContent.replace(
-      /(<li>\s*<p>)(?:<(strong|em|u|s)[^>]*>)*(?:&nbsp;|\s|<\/?(strong|em|u|s)[^>]*>)*(<br\s*\/?>\s*)+/gi, // Capture something like <li><p><br>, <li><p><u class=\"my-custom-class\">&nbsp; </u><br>
+      /(<li>\s*<p>)(?:<(strong|em|u|s|a)[^>]*>)*(?:&nbsp;|\s|<\/?(strong|em|u|s|a)[^>]*>)*(<br\s*\/?>\s*)+/gi, // Capture something like <li><p><br>, <li><p><u class=\"my-custom-class\">&nbsp; </u><br>
       '$1'
     )
 
@@ -234,12 +362,15 @@ const TipTap = memo(({
 
   return (
     <div className="text-editor">
+      {showLinkInput && <div className="link-input-overlay" />}
       <EditorProvider 
         slotBefore={
           <MenuBar 
             submit={submit} 
             setSubmit={setSubmit} 
             isLabelActive={isLabelActive}
+            showLinkInput={showLinkInput}
+            setShowLinkInput={setShowLinkInput}
           />
         }
         extensions={extensions} 
@@ -247,7 +378,8 @@ const TipTap = memo(({
         onUpdate={onUpdate}
         editorProps={{
           attributes: {
-            id: "text-editor",
+            id: "tiptap",
+            class: `tiptap ${showLinkInput ? "disabled" : ""}`
           },
           handleDOMEvents: {
             focus: () => {

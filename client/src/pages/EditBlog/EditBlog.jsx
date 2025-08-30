@@ -16,7 +16,7 @@ import { FaPen } from "react-icons/fa";
 
 const EditBlog = () => {
     const { slug } = useParams()
-    const [title, setTitle] = useState("")   
+    const [title, setTitle] = useState("")
     const [content, setContent] = useState(null)
     const [blogExists, setBlogExists] = useState(null)
     const [author, setAuthor] = useState(null)
@@ -62,7 +62,7 @@ const EditBlog = () => {
                 setLoading(true)
                 setBlogExists(null)
                 setTitle("")
-                setContent("")
+                setContent(null)
                 setAuthor(null)
 
                 const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, 
@@ -80,6 +80,7 @@ const EditBlog = () => {
                     setBlogExists(false) // Blog not found
                 } else {
                     setAlertState({ display: true, type: "error", message: error.response?.data?.message || "Something went wrong. Please try again." })
+                    setBlogExists(false)
                 }
 
             } finally {
@@ -142,44 +143,48 @@ const EditBlog = () => {
 
     // Track if preview tab is open and controllable
     useEffect(() => {
+        let previewTimeout;
+
         // Handle preview connectivity
         const handleStorageChange = (event) => {
-            if (event.key === "previewOpen") {
-                let result;
-                setTimeout(() => {
-                    if (previewWindowRef.current && !previewWindowRef.current.closed) {
-                        try {
-                            // Preview is navigated away within the same origin
-                            if (previewWindowRef.current.location.pathname.split("/").pop() !== localStorage.getItem("formSync")) {
-                                result = false
-                            } else {
-                                if (event.newValue === "true") {
-                                    result = true
-                                } else if (event.newValue === "false") {
-                                    return // Preview is just refreshed
-                                }
-                            }
+            if (event.key !== "previewOpen") return
 
-                        } catch (error) { // Preview is navigated away to an external domain
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(() => {
+                let result;
+                if (previewWindowRef.current && !previewWindowRef.current.closed) {
+                    try {
+                        // Preview is navigated away within the same origin
+                        if (previewWindowRef.current.location.pathname.split("/").pop() !== localStorage.getItem("formSync")) {
                             result = false
+                        } else {
+                            if (event.newValue === "true") {
+                                result = true
+                            } else if (event.newValue === "false") {
+                                return // Preview is just refreshed
+                            }
                         }
-                    } else {
-                        if (event.newValue === "false") { // Preview is manually closed
-                            result = false
-                        }
+
+                    // If preview is navigated away to an external domain, accessing pathname in windowRef will throw an error
+                    } catch (error) {
+                        result = false
                     }
-                    
-                    if (result) {
-                        setPreviewOpen(true)
-                    } else {
-                        setPreviewOpen(false)
-                        localStorage.removeItem("previewOpen")
-                        localStorage.removeItem("previewData")
-                        localStorage.removeItem("formSync")
-                        previewWindowRef.current = null
+                } else {
+                    if (event.newValue === "false") { // Preview is manually closed
+                        result = false
                     }
-                }, 50) // Ensure previewWindowRef.current.closed updates
-            }
+                }
+                
+                if (result) {
+                    setPreviewOpen(true)
+                } else {
+                    setPreviewOpen(false)
+                    localStorage.removeItem("previewOpen")
+                    localStorage.removeItem("previewData")
+                    localStorage.removeItem("formSync")
+                    previewWindowRef.current = null
+                }
+            }, 50) // Ensure previewWindowRef.current.closed updates
         }
 
         window.addEventListener("storage", handleStorageChange)
@@ -220,9 +225,9 @@ const EditBlog = () => {
         }
     }, [])
 
-    if (blogExists === null || author === null) return <LoadingScreen />
+    if (blogExists === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
-    if (user?.username !== author) return <Navigate to={`/blog/${slug}`} /> // Add check for author === null above to handle the case request hasn't finished yet, preventing premature redirection
+    if (author !== null && user?.username !== author) return <Navigate to={`/blog/${slug}`} />
 
     return(
         <div className="edit-blog">

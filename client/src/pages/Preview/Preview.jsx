@@ -1,5 +1,5 @@
 import "./Preview.css"
-import parser from "html-react-parser"
+import parse from "html-react-parser"
 import { useState, useEffect } from "react"
 import { useLocation, useParams } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
@@ -27,7 +27,7 @@ const Preview = () => {
 
         // Check if preview is open and controllable by CreateBlog/EditBlog
         const validatePreview = () => {
-            // If a user navigates away regardless of whether they return or not
+            // If a user navigates away with only slug changed (e.g. from /preview/123 to /preview/456)
             if (sessionStorage.getItem("previousPath") && (sessionStorage.getItem("previousPath") !== sessionStorage.getItem("previewSync"))) {
                 setSessionValid(false)
                 localStorage.setItem("previewOpen", "false") // Notify CreateBlog/EditBlog
@@ -98,16 +98,16 @@ const Preview = () => {
         return () => window.removeEventListener("storage", handleStorageChange)
     }, [sessionValid])
 
-    // Clean up localStorage by notifying CreateBlog/EditBlog
+    // Notify CreateBlog/EditBlog to clean up localStorage when preview tab is closed
     useEffect(() => {
-        const handleBeforeUnload = () => {
-            if (sessionValid) {
+        const handleUnload = () => {
+            if (sessionValid) { // Skip if invalid to prevent stale preview tab from notifying while valid tab is in sync
                 localStorage.setItem("previewOpen", "false")
             }
         }
 
-        window.addEventListener("beforeunload", handleBeforeUnload)
-        return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+        window.addEventListener("unload", handleUnload)
+        return () => window.removeEventListener("unload", handleUnload)
     }, [sessionValid])
 
     // Show PopupAlert when sessionValid is false
@@ -132,7 +132,7 @@ const Preview = () => {
                                     Enter Your Title
                                 </h1>
                             :   <h1 className="title">
-                                    {previewData.title.trim().substring(0, 60)}
+                                    {previewData.title.trim().substring(0, 70)}
                                 </h1>
                         }
                         <div className="goback-icon">
@@ -145,7 +145,7 @@ const Preview = () => {
                             ?   <p className="placeholder">
                                     Write your content...
                                 </p>
-                            :   parser(handleEmptyLine(previewData.content)) || 
+                            :   parse(handleEmptyLine(previewData.content)) || 
                                 <p className="placeholder">
                                     Write your content...
                                 </p>

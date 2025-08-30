@@ -275,7 +275,7 @@ exports.logout = async (req, res) => {
                 const normalBlogs = await Blogs.find({
                     _id: { $in: blogIds },
                     isDemo: false
-                }).select("_id").lean()  // Read only
+                }).select("_id").lean() // Read only
 
                 // Remove ref comment IDs from normal blogs
                 for (const blog of normalBlogs) {

@@ -1,16 +1,9 @@
-// Comments and replies (nested comments)
-    // Key fields
-        // user => The user who made the comment
-        // blog => The blog post the comment belongs to
-        // content => The comment text
-        // parentComment => If null, it’s a top-level comment. If it contains an ObjectId, it’s a reply to another comment
-
 const mongoose = require("mongoose")
 
 const commentSchema = mongoose.Schema({
-    user: {
+    author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Users", // Reference to Users model (collection)
+        ref: "Users", // Reference to Users model
         required: true
     },
     blog: {
@@ -25,7 +18,7 @@ const commentSchema = mongoose.Schema({
     parentComment: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comments", // Reference to another Comment for replies
-        default: null
+        default: null // If null, it’s a top-level comment; otherwise, it’s a reply to another comment
     },
     createdAt: {
         type: Date,

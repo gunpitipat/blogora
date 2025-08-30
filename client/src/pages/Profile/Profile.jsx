@@ -30,7 +30,7 @@ const Profile = () => {
             return response.data // User exists -> { email ?, username }
         
         } catch (error) {
-            // Ignore request cancellation errors to avoid unnecessary logs
+            // Ignore request cancellation errors
             if (axios.isCancel(error)) return null
 
             if (!error.response) {
@@ -39,7 +39,6 @@ const Profile = () => {
                 if (error.response.status === 500) {
                     setAlertState({ display: true, type: "error", message: error.response.data?.message || "Server error. Please try again later." })
                 } else if (error.response.status === 404) {
-
                     // Show session expiration modal if demo user got TTL-deleted and visits their profile
                     if (location.pathname === `/profile/${user?.username}`) {
                         setSessionExpired(true)
@@ -85,7 +84,7 @@ const Profile = () => {
             setUserData({ email: null, username: null })
             setUserBlogs([])
 
-            // Promise.allSettled() never rejects. It returns an array. catch block in fetchData() will never run
+            // Promise.allSettled() never rejects. It returns an array. catch block in fetchData() will never run.
             // The rejected promise inside will store the error in reason instead of throwing it
             try {
                 const [userDataResult, userBlogsResult] = await Promise.allSettled([ // Run both API requests concurrently, ensuring run to completion, even if one fails
@@ -126,8 +125,8 @@ const Profile = () => {
     if (profileExists === false) return <NotFound />
     if (profileExists && userData.username) {
         const hasNoBlogs = userBlogs.length === 0
-        const isOwnProfile = user?.username === userData.username
         const hasOneBlog = userBlogs.length === 1
+        const isOwnProfile = user?.username === userData.username
 
         return (
             <div className={`profile ${hasNoBlogs ? "no-blog" : ""}`}>
@@ -136,9 +135,11 @@ const Profile = () => {
                         <h2 className="username">
                             {userData.username}
                         </h2>
-                        <p className="email">
-                           {userData.email} 
-                        </p>
+                        { isOwnProfile &&
+                            <p className="email">
+                                {userData.email}
+                            </p>
+                        }
                     </header>
                     <main className={hasOneBlog ? "single-blog" : ""}>
                         { hasNoBlogs ? (

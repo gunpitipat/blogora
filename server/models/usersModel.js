@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
     username_lowercase: {
         type: String,
         required: true,
-        unique: true, // User freely sets their username with capital letters but prevent case-sensitive duplicates at the same time
+        unique: true, // User can freely set their username using any casing but no two usernames can be the same ignoring case
         lowercase: true
     },
     password: { // unique: false
@@ -35,6 +35,6 @@ const userSchema = mongoose.Schema({
 // TTL index to auto-delete demo users (docs with expiresAt) when expiresAt is reached
 userSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 
-module.exports = mongoose.model("Users",userSchema)
+module.exports = mongoose.model("Users", userSchema)
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

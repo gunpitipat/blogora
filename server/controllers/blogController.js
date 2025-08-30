@@ -65,7 +65,7 @@ exports.createBlog = async (req,res) => {
 // Get all blogs
 exports.getAllBlogs = async (req,res) => {
     try {
-        const filter = req.blogFilter
+        const filter = req.demoFilter
         const blogs = await Blogs.find(filter)
             .sort({ isPinned: -1, createdAt: -1 }) // Newest first
             .populate({ path: "author", select: "username" })
@@ -81,7 +81,7 @@ exports.getAllBlogs = async (req,res) => {
 // Get single blog
 exports.getBlog = async (req,res) => {
     try {
-        const filter = req.blogFilter 
+        const filter = req.demoFilter
         const blog = await Blogs.findOne(filter).populate({ path: "author", select: "username" })
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" })

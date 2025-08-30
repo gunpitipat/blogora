@@ -1,5 +1,5 @@
 import "./BlogContent.css"
-import parser from "html-react-parser"
+import parse, { domToReact } from "html-react-parser"
 import { memo, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../contexts/AuthContext";
@@ -45,7 +45,7 @@ const BlogContent = memo(({
 
     // Close blog setting tab and modal when clicking outside
     useEffect(() => {
-        const handleClickOutSide = (e) => {
+        const handleClickOutside = (e) => {
             if (!showOptions) return // Exit early if setting tab is not open
 
             if (showModal) {
@@ -60,13 +60,43 @@ const BlogContent = memo(({
             }
         }
 
-        document.addEventListener("click", handleClickOutSide)
-        return () => document.removeEventListener("click", handleClickOutSide)
+        document.addEventListener("click", handleClickOutside)
+        return () => document.removeEventListener("click", handleClickOutside)
     }, [showOptions, showModal])
 
     const parsedContent = useMemo(() => {
+        // Preserve intentional empty lines
         const formattedHtml = handleEmptyLine(content)
-        return parser(formattedHtml)
+        // Replace internal <a> with <Link>, ensuring proper go-back behavior
+        const options = {
+            replace: (node) => {
+                if (node.name === "a" && node.attribs?.href) {
+                    const url = new URL(node.attribs.href, window.location.origin)
+
+                    // Internal links
+                    if (url.origin === window.location.origin) {
+                        const to = url.pathname + url.search + url.hash
+                        return (
+                            <Link to={to}>
+                                {domToReact(node.children, options)}
+                            </Link>
+                        )
+                    }
+                    // External links
+                    return (
+                        <a
+                            href={node.attribs.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {domToReact(node.children, options)}
+                        </a>
+                    )
+                }
+            }
+        }
+
+        return parse(formattedHtml, options)
     }, [content])
 
     return (

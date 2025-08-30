@@ -4,7 +4,7 @@ const profileMiddleware = (req, res, next) => {
     try {
         if (req.cookies.token) {
             const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET)
-            req.userId = decoded.userId // Attach userId for username synchronization check in profile
+            req.userId = decoded.userId // Attach userId for username sync check in profile
         }
         next()
         

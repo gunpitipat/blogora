@@ -20,28 +20,38 @@ const ContentEditor = memo(({
     const [extendTextarea, setExtendTextarea] = useState(false)
     const isSmallScreen = useMediaQuery("(max-width: 768px)")
 
-    // Perform scrolling after extendTextarea set to true
+    // Perform scrolling after extending textarea
     useEffect(() => {
-        if (extendTextarea) {
-            const contentElement = document.getElementById("content-editor")
-            const editorElement = document.getElementById("text-editor")
-                
-            if (contentElement && editorElement) {
-                const handleTransitionEnd = () => {    
-                    const targetScrollY = getTotalOffsetTop(contentElement) - (isSmallScreen ? 0 : 80) - (isSmallScreen ? 20 : 16) // - fixed navbar height - spacing
-                    window.scrollTo({
-                        top: targetScrollY,
-                        behavior: "smooth"
-                    })
-                    setTimeout(() => {
-                        editorElement.focus() // Auto-focus text editor after extending
-                    }, 150)
-                }
+        if (!extendTextarea) return
 
-                // Textarea (text editor) has height-transition duration of 150ms
-                editorElement.addEventListener("transitionend", handleTransitionEnd)
-                return () => editorElement.removeEventListener("transitionend", handleTransitionEnd);
-            }
+        const contentElement = document.getElementById("content-editor")
+        const editorElement = document.getElementById("tiptap")
+
+        if (!contentElement || !editorElement) return
+
+        let timeout
+        const handleTransitionEnd = () => {    
+            const targetScrollY = getTotalOffsetTop(contentElement) - (isSmallScreen ? 0 : 80) - (isSmallScreen ? 20 : 16) // - fixed navbar height - spacing
+            window.scrollTo({
+                top: targetScrollY,
+                behavior: "smooth"
+            })
+
+            clearTimeout(timeout)
+            timeout = setTimeout(() => {
+                editorElement.focus() // Auto-focus text editor after extending
+            }, 150)
+
+            // Ensure scrolling runs once per toggle; prevent future accidental scrolls when TipTap updates DOM
+            editorElement.removeEventListener("transitionend", handleTransitionEnd)
+        }
+
+        // Textarea (text editor) has height-transition duration of 150ms
+        editorElement.addEventListener("transitionend", handleTransitionEnd)
+
+        return () => {
+            clearTimeout(timeout)
+            editorElement.removeEventListener("transitionend", handleTransitionEnd)
         }
     }, [extendTextarea, isSmallScreen])
 

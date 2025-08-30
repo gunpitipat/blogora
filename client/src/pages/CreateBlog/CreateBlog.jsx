@@ -15,7 +15,7 @@ import { FaPen } from "react-icons/fa";
 
 const CreateBlog = () => {
     const [title, setTitle] = useState("")
-    const [content, setContent] = useState(null)
+    const [content, setContent] = useState(null) // null for initializing TipTap
 
     const initialLabels = useMemo(() => ({ titleLabel: false, contentLabel: false }), [])
     const [labels, setLabels] = useState(initialLabels)
@@ -112,6 +112,7 @@ const CreateBlog = () => {
         return () => window.removeEventListener("beforeunload", handleBeforeUnload)
     }, [isUnsaved])
 
+    // Warn the user before navigating away if they have unsaved changes
     useEffect(() => {
         if (blocker.state === "blocked") {
             setPendingNavigation(blocker) // Store blocker object to call its methods later
@@ -207,44 +208,48 @@ const CreateBlog = () => {
 
     // Track if preview tab is open and controllable
     useEffect(() => {
+        let previewTimeout;
+
         // Handle preview connectivity
         const handleStorageChange = (event) => {
-            if (event.key === "previewOpen") {
+            if (event.key !== "previewOpen") return
+            
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(() => {
                 let result;
-                setTimeout(() => {
-                    if (previewWindowRef.current && !previewWindowRef.current.closed) {
-                        try {
-                            // Preview is navigated away within the same origin
-                            if (previewWindowRef.current.location.pathname.split("/").pop() !== localStorage.getItem("formSync")) {
-                                result = false
-                            } else {
-                                if (event.newValue === "true") {
-                                    result = true
-                                } else if (event.newValue === "false") {
-                                    return // Preview is just refreshed
-                                }
+                if (previewWindowRef.current && !previewWindowRef.current.closed) {
+                    try {
+                        // Preview is navigated away within the same origin
+                        if (previewWindowRef.current.location.pathname.split("/").pop() !== localStorage.getItem("formSync")) {
+                            result = false
+                        } else {
+                            if (event.newValue === "true") {
+                                result = true
+                            } else if (event.newValue === "false") {
+                                return // Preview is just refreshed
                             }
-                        
-                        } catch (error) { // Preview is navigated away to an external domain
-                            result = false
                         }
-                    } else {
-                        if (event.newValue === "false") { // Preview is manually closed
-                            result = false
-                        }
-                    }
                     
-                    if (result) {
-                        setPreviewOpen(true)
-                    } else {
-                        setPreviewOpen(false)
-                        localStorage.removeItem("previewOpen")
-                        localStorage.removeItem("previewData")
-                        localStorage.removeItem("formSync")
-                        previewWindowRef.current = null
+                    // If preview is navigated away to an external domain, accessing pathname in windowRef will throw an error
+                    } catch (error) {
+                        result = false
                     }
-                }, 50) // Ensure previewWindowRef.current.closed updates
-            }
+                } else {
+                    if (event.newValue === "false") { // Preview is manually closed
+                        result = false
+                    }
+                }
+                
+                if (result) {
+                    setPreviewOpen(true)
+                } else {
+                    setPreviewOpen(false)
+                    localStorage.removeItem("previewOpen")
+                    localStorage.removeItem("previewData")
+                    localStorage.removeItem("formSync")
+                    previewWindowRef.current = null
+                }
+            }, 50) // Ensure previewWindowRef.current.closed updates
         }
 
         window.addEventListener("storage", handleStorageChange)

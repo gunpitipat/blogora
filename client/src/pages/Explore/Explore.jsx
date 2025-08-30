@@ -17,7 +17,7 @@ function Explore() {
   const [showTooltip, setShowTooltip] = useState(false)
   const [searchInput, setSearchInput] = useState("")
   const [isLoading, setIsLoading] = useState(true)
-  const hasRestoredScroll = useRef(false)
+  const hasRestoredScroll = useRef(false) // Prevent overwriting new scroll before restoring the previous one
 
   const { isAuthenticated, user } = useAuthContext()
   const { setAlertState } = useAlertContext()
@@ -60,7 +60,7 @@ function Explore() {
 
   const closeTooltip = () => {
     setShowTooltip(false)
-    sessionStorage.setItem("tooltip_shown", "true") // Set a flag to ensure it will only be shown once per each session
+    sessionStorage.setItem("tooltip_shown", "true") // Set a flag to ensure it shows only once per each session
   }
 
   // Save scroll position
@@ -71,7 +71,7 @@ function Explore() {
       }
     }, 100)
 
-    if (blogs.length > 0) { // Prevent overwriting new scroll position before restoring the previous one properly
+    if (blogs.length > 0) {
       window.addEventListener("scroll", saveScroll)
     }
 
@@ -86,12 +86,11 @@ function Explore() {
     let timeout
     if (location.pathname === "/explore" && blogs.length > 0 && !hasRestoredScroll.current) {
       const storedScroll = sessionStorage.getItem("/explore-scrollY") || 0
-      if (storedScroll) {
-        timeout = setTimeout(() => {
-          window.scrollTo(0, parseFloat(storedScroll))
-        }, 0) // Ensure DOM layout updated
-      }
       hasRestoredScroll.current = true
+
+      timeout = setTimeout(() => {
+        window.scrollTo(0, parseFloat(storedScroll))
+      }, 0) // Ensure DOM layout updated
     }
     return () => clearTimeout(timeout)
   }, [blogs, location.pathname])

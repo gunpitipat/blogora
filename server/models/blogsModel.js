@@ -9,7 +9,7 @@ const blogSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    author:{
+    author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users", // Reference to Users model
         required: true
@@ -25,7 +25,7 @@ const blogSchema = mongoose.Schema({
     },
     comments: [{ // Referenced documents: an array of ObjectIds
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comments" // Reference to the Comment model
+        ref: "Comments" // Reference to Comments model
     }],
     isDemo: {
         type: Boolean,

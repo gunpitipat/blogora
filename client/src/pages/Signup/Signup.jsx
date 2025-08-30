@@ -7,21 +7,21 @@ import { useLoadingContext } from "../../contexts/LoadingContext"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
-    const [signupInfo, setSignupInfo] = useState({
+    const [signupInputs, setSignupInputs] = useState({
         email: "",
         username: "",
         password: "",
         cfpassword: ""
     })
-    const { email, username, password, cfpassword } = signupInfo
+    const { email, username, password, cfpassword } = signupInputs
 
-    let initialInfoStatus = {
+    let initialInputStatus = {
         email: { type: "", message: "" },
         username: { type: "", message: "" },
         password: { type: "", message: "" },
         cfpassword: { type: "", message: "" }
     }
-    const [infoStatus, setInfoStatus] = useState(initialInfoStatus)
+    const [inputStatus, setInputStatus] = useState(initialInputStatus)
     const [showPassword, setShowPassword] = useState(false)
     const [showcfPassword, setShowcfPassword] = useState(false)
 
@@ -31,7 +31,7 @@ const Signup = () => {
 
     // Set input values to state
     const inputValues = inputName => event => {
-        setSignupInfo({ ...signupInfo, [inputName]: event.target.value })
+        setSignupInputs({ ...signupInputs, [inputName]: event.target.value })
     }
 
     // Submit data
@@ -40,10 +40,10 @@ const Signup = () => {
         setLoading(true)
         try {
             const response = await axios.post(`${process.env.REACT_APP_API}/signup`, { email, username, password, cfpassword })
-            setSignupInfo({ email: "", username: "", password: "", cfpassword: "" })
+            setSignupInputs({ email: "", username: "", password: "", cfpassword: "" })
+            setInputStatus(initialInputStatus)
             setLoading(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
-            setInfoStatus(initialInfoStatus)
             navigate("/login")            
             
         } catch (err) {
@@ -55,8 +55,8 @@ const Signup = () => {
             } else {
                 const { success, error } = err.response.data
             
-                setInfoStatus(prevState => {
-                    let updatedStatus = { ...prevState } // Create a new object instead of directly modifying initialInfoStatus variable
+                setInputStatus(prevState => {
+                    let updatedStatus = { ...prevState } // Create a new object instead of directly modifying initialInputStatus variable
     
                     if (success && success.length > 0) {
                         success.forEach(element => {
@@ -85,7 +85,7 @@ const Signup = () => {
                     Sign Up
                 </h2>
                 <form onSubmit={handleFormSubmit}>
-                    <div className={`form-group ${infoStatus.email.type}`}>
+                    <div className={`form-group ${inputStatus.email.type}`}>
                         <label>Email</label>
                         <input 
                             type="email" 
@@ -95,12 +95,14 @@ const Signup = () => {
                             autoComplete="email"
                             inputMode="email"
                         />
-                        <small>
-                            {infoStatus.email.type === "error" ? infoStatus.email.message : null}
-                        </small>
+                        { inputStatus.email.type === "error" &&
+                            <small>
+                                {inputStatus.email.message}
+                            </small>
+                        }
                     </div>
 
-                    <div className={`form-group ${infoStatus.username.type}`}>
+                    <div className={`form-group ${inputStatus.username.type}`}>
                         <label>Username</label>
                         <input 
                             type="text" 
@@ -110,12 +112,14 @@ const Signup = () => {
                             autoComplete="username"
                             inputMode="text"
                         />
-                        <small>
-                            {infoStatus.username.type === "error" ? infoStatus.username.message : null}
-                        </small>
+                        { inputStatus.username.type === "error" &&
+                            <small>
+                                {inputStatus.username.message}
+                            </small>
+                        }
                     </div>
 
-                    <div className={`form-group ${infoStatus.password.type}`}>
+                    <div className={`form-group ${inputStatus.password.type}`}>
                         <label>Password</label>
                         <div className="password-frame">
                             <input 
@@ -129,12 +133,14 @@ const Signup = () => {
                                 {showPassword ? <FaEye /> : <FaEyeSlash />}
                             </span>
                         </div>
-                        <small>
-                            {infoStatus.password.type === "error" ? infoStatus.password.message : null}
-                        </small>
+                        { inputStatus.password.type === "error" &&
+                            <small>
+                                {inputStatus.password.message}
+                            </small>
+                        }
                     </div>
 
-                    <div className={`form-group ${infoStatus.cfpassword.type}`}>
+                    <div className={`form-group ${inputStatus.cfpassword.type}`}>
                         <label>Confirm Password</label>
                         <div className="password-frame">
                             <input 
@@ -148,9 +154,11 @@ const Signup = () => {
                                 {showcfPassword ? <FaEye /> : <FaEyeSlash />}
                             </span>
                         </div>
-                        <small>
-                            {infoStatus.cfpassword.type === "error" ? infoStatus.cfpassword.message : null}
-                        </small>
+                        { inputStatus.cfpassword.type === "error" &&
+                            <small>
+                                {inputStatus.cfpassword.message}
+                            </small>                        
+                        }
                     </div>
 
                     <button type="submit" className="signup-btn">

@@ -8,6 +8,8 @@
     position: relative;
 }
 .blog-content .title {
+    font-size: 1.8rem;
+    font-weight: 800;
     color: var(--accent-color);
     transition: opacity 0.14s ease-in-out;
     overflow-wrap: anywhere; /* Break long titles when needed */
@@ -110,8 +112,15 @@
 }
 .tiptap-result h1 {
     font-size: 1.5rem;
+    font-weight: 700;
     margin: 1rem 0;
     color: var(--accent-color);
+}
+.tiptap-result a {
+    text-decoration: underline;
+    text-underline-offset: 1.5px;
+    color: var(--link-text-color);
+    cursor: pointer;
 }
 .tiptap-result ol, 
 .tiptap-result ul {
@@ -179,17 +188,11 @@
     }
 }
 @media (max-width: 672px) {
-    .blog-content .title {
-        font-size: 1.9rem;
-    }
     .blog-content .blog-setting .options {
         right: calc(100%);
     }    
 }
 @media (max-width: 560px) {
-    .blog-content .title {
-        font-size: 1.8rem;
-    }
     .blog-content .blog-setting {
         transform: translateX(calc(-100% - 12px));
     }    
@@ -197,6 +200,9 @@
 @media (max-width: 480px) {
     .blog-content .title {
         font-size: 1.7rem;
+    }
+    .tiptap-result h1 {
+        font-size: 1.4rem;
     }
 }
 

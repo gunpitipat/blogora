@@ -40,6 +40,12 @@
     margin-bottom: 0.75rem;
     font-size: 1.5rem;
   }
+  /* Link styles */
+  a {
+    text-decoration: underline;
+    text-underline-offset: 1.5px;
+    color: var(--link-text-color);
+  }
 }
 .text-editor {
   border: 1px solid var(--neutral-color-heavy);
@@ -56,6 +62,20 @@
   width: 100% ;
   transition: height 150ms ease-out;
   overflow: scroll;
+  position: relative;
+}
+/* Block interactions when link panel is open */
+.tiptap.disabled>* { /* Dim editor content */
+  opacity: 0.5;
+  transition: opacity 100ms ease-out;
+}
+.link-input-overlay { /* Block menu buttons and extend toggle */
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
 }
 .menu-bar {
   display: flex;
@@ -81,9 +101,6 @@
   color: var(--accent-color);
   opacity: 0.8;
   position: relative;
-}
-.menu-bar .paragraph-btn svg {
-  transform: scale(1.2);
 }
 .menu-bar button:hover {
   opacity: 0.9;
@@ -115,6 +132,79 @@
   background-color: rgba(138, 129, 124, 0.25);
   border-radius: 0.25rem;
 }
+/* Link input */
+.link-container {
+  position: relative;
+  z-index: 3; /* Higher than .link-input-overlay */
+}
+.link-input-panel {
+  position: absolute;
+  top: calc(100% + 1rem);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0.75rem 0.5rem;
+  width: fit-content;
+  border: 1px solid var(--neutral-color-heavy);
+  border-radius: 0.25rem;
+  color: var(--accent-color);
+  font-size: 1rem;
+  background: rgba(250, 250, 250, 0.85);
+  backdrop-filter: blur(8px);  
+  -webkit-backdrop-filter: blur(8px); /* for Safari */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 100ms ease-out;
+}
+.link-input-panel.show {
+  pointer-events: all;
+  opacity: 1;
+}
+.link-input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.link-input-field label {
+  color: rgba(70, 63, 58, 0.85);
+  font-weight: 500;
+}
+.link-input-field label span {
+  opacity: 0.75;
+  font-weight: 400;
+}
+.link-input-field input {
+  font-size: 1rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--neutral-color-heavy);
+  border-radius: 0.25rem;
+  outline: none;
+  background: linear-gradient(to bottom, #fff, var(--neutral-color-light));
+  width: 300px;
+}
+.link-url-field {
+  text-decoration: underline;
+  text-underline-offset: 1.5px;
+  color: var(--link-text-color);
+}
+.link-input-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+.link-input-actions span {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.link-input-actions span:hover {
+  opacity: 1;
+}
 
 @media (max-width: 768px) {
   .menu-bar {
@@ -123,6 +213,7 @@
     grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
     grid-template-rows: auto;
     place-items: center;
+    position: relative; /* Reference for .link-input-panel positioning */
   }
   .menu-bar .button-group {
     gap: 0;
@@ -142,6 +233,14 @@
     width: 90%;
     height: 80%;
   }
+  .link-container {
+    position: static;
+  }
+  .link-input-panel {
+    top: calc(44px + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 @media (max-width: 570px) {
   .menu-bar {
@@ -155,6 +254,14 @@
     background-color: rgba(170, 170, 170, 0.5);
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+  .link-input-panel {
+    top: calc(89px + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .link-input-field input {
+    width: clamp(208px, 60vw, 280px);
   }
 }
 @media (max-width: 340px) {

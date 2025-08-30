@@ -48,6 +48,6 @@ app.use((err, req, res, next) => {
 })
 
 const port = process.env.PORT || 8080
-app.listen(port,() => console.log(`Server listening on port ${port}`))
+app.listen(port, () => console.log(`Server listening on port ${port}`))
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

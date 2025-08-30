@@ -1,9 +1,7 @@
-import { useRef } from "react"
 import { useMediaQuery } from "../../hooks/useMediaQuery"
 import { motion, useScroll, useTransform } from "framer-motion"
 
 const BubbleChat = ({ className, children, onClick = () => {} }) => {
-    const ref = useRef()
     const isSmallScreen = useMediaQuery("(max-width: 768px)")
     const { scrollY } = useScroll()
 
@@ -12,7 +10,6 @@ const BubbleChat = ({ className, children, onClick = () => {} }) => {
 
     return (
         <motion.div 
-            ref={ref} 
             className={`bubble-chat ${className ?? ""}`} 
             style={{ y }} 
             onClick={onClick}

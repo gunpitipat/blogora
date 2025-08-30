@@ -43,8 +43,8 @@ const formatPlainTextContent = (htmlContent) => {
 const formatPlainTextSubtitle = (subtitle) => {
     // Strip formatting tags
     const stripped = subtitle
-        .replace(/<(strong|em|s|u)(\s[^>]*)?>/gi, "")   // Remove opening tags like <strong>, <em>, <s>, <u class="...">
-        .replace(/<\/(strong|em|s|u)>/gi, "")           // Remove closing tags
+        .replace(/<(strong|em|s|u|a)(\s[^>]*)?>/gi, "")   // Remove opening tags like <strong>, <em>, <s>, <u class="...">
+        .replace(/<\/(strong|em|s|u|a)>/gi, "")           // Remove closing tags
         .replace(/<br\s*\/?>/gi, "\n")                  // Keep intentional line breaks
         .replace(/&nbsp;/g, " ")                        // Decode non-breaking spaces
         .replace(/[ \t\r]+/g, " ")                      // Collapse multiple spaces into one
@@ -88,7 +88,7 @@ export const extractSubsections = (htmlContent) => {
 }
 
 // BlogPage
-// Preserve intentional empty lines on BlogPage render
+// Preserve intentional empty lines on render
 export const handleEmptyLine = (htmlContent) => {
     if (!htmlContent) return htmlContent
 
@@ -108,7 +108,7 @@ export const cleanEditorContent = (htmlContent) => {
         // Downgrade empty headings
         .replace(/<h1>\s*<\/h1>/gi, "<p></p>")
         // Remove disallowed tags
-        .replace(/<\/?(?!p\b|h1\b|strong\b|em\b|u\b|s\b|ul\b|ol\b|li\b|br\b)[a-z0-9]+[^>]*>/gi, "")
+        .replace(/<\/?(?!p\b|h1\b|strong\b|em\b|u\b|s\b|ul\b|ol\b|li\b|br\b|a\b)[a-z0-9]+[^>]*>/gi, "")
 }
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

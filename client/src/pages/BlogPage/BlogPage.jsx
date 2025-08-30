@@ -132,9 +132,11 @@ const BlogPage = () => {
 
             try {
                 const commentsData = await getComments(signal)
-                if (commentsData && commentsData.length > 0) {
-                    setComments(commentsData)
+                if (!commentsData) return
+                
+                setComments(commentsData)
 
+                if (commentsData.length > 0) {
                     const initialShowReplyInput = commentsData.map(comment => {
                         return { id: comment._id, replyInput: false }
                     })
@@ -155,7 +157,7 @@ const BlogPage = () => {
                         })
                     }
                 }
-                
+                                
             } finally {
                 setCommentLoading(false)
             }
@@ -173,7 +175,7 @@ const BlogPage = () => {
 
     // Close comment setting button when clicking outside
     useEffect(() => {
-        const handleClickOutSide = (e) => {
+        const handleClickOutside = (e) => {
             if (!showCommentOption) return
 
             if (showCommentModal) {
@@ -188,8 +190,8 @@ const BlogPage = () => {
             }
         }
 
-        document.addEventListener("click", handleClickOutSide)
-        return () => document.removeEventListener("click", handleClickOutSide)
+        document.addEventListener("click", handleClickOutside)
+        return () => document.removeEventListener("click", handleClickOutside)
     }, [showCommentOption, showCommentModal])
 
     // Delete Blog

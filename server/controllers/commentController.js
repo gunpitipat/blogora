@@ -30,7 +30,7 @@ exports.createComment = async (req, res) => {
         }
 
         const comment = new Comments({
-            user: userId,
+            author: userId,
             blog: blog._id,
             content: content.trim(),
             parentComment: parentCommentId || null, // If req.body doesn't contain parentCommentId, set it null (top-level comment)
@@ -52,13 +52,13 @@ exports.createComment = async (req, res) => {
 exports.getComments = async (req, res) => {
     try {
         const { slug } = req.params
-        const commentFilter = req.commentFilter
+        const filter = req.demoFilter
 
         const blog = await Blogs.findOne({ slug }).select("_id")
         if (!blog) return res.status(404).json({ message: "Blog not found" })
 
-        const comments = await Comments.find({ blog: blog._id, ...commentFilter })
-        .populate({ path: "user", select: "username" }) // Populate user details
+        const comments = await Comments.find({ blog: blog._id, ...filter })
+        .populate({ path: "author", select: "username" }) // Populate user details
         .sort({ createdAt: 1 }) // Sort by oldest comment first
 
         res.status(200).json(comments)        
@@ -80,7 +80,7 @@ exports.deleteComment = async (req, res) => {
         if (!comment) return res.status(404).json({ message: "Comment not found" })
         
         const isAdmin = req.userRole === "admin"
-        const isCommentAuthor = comment.user.toString() === userId
+        const isCommentAuthor = comment.author.toString() === userId
         const isBlogAuthor = comment.blog.author.toString() === userId
 
         if (!isAdmin && !isCommentAuthor && !isBlogAuthor) {

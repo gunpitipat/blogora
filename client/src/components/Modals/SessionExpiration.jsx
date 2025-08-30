@@ -22,7 +22,7 @@ const SessionExpiration = () => {
         navigate("/login")
     }
 
-    // Save the user's last page, then restore it when they log back in
+    // Save the user's last page, then restore it when the same user logs back in
     useEffect(() => {
         if (sessionExpired) {
             sessionStorage.setItem("lastPage", window.location.pathname)

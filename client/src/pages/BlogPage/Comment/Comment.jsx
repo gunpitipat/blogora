@@ -43,7 +43,7 @@ const Comment = memo(({
     const { setAlertState } = useAlertContext()
 
     const canDeleteComment = !comment.isDeleted && (
-        user?.username === comment.user?.username ||
+        user?.username === comment.author?.username ||
         user?.role === "admin" ||
         user?.username === blogAuthor
     )
@@ -189,8 +189,8 @@ const Comment = memo(({
                 }
                 { !comment.isDeleted &&
                     <CommentFooter 
-                        author={comment.user?.username}
-                        isBlogAuthor={blogAuthor === comment.user?.username}
+                        author={comment.author?.username}
+                        isBlogAuthor={blogAuthor === comment.author?.username}
                         createdDate={comment.createdAt}
                         isOverflowing={isOverflowing}
                     />
@@ -228,7 +228,7 @@ const Comment = memo(({
                                 nestedStructure={nestedStructure}
                                 getAllRelatedReplies={getAllRelatedReplies}
                                 blogAuthor={blogAuthor}
-                                parentAuthor={comment.user?.username} // Reference to the parent comment's author
+                                parentAuthor={comment.author?.username} // Reference to the parent comment's author
                                 level={reply.level}
                                 onSendComment={onSendComment}
                                 // Comment Deletion and Modal

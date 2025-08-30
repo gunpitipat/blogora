@@ -97,7 +97,7 @@ const HeroSection = () => {
         setHideScrollHint(false) // React Router may not fully remount when re-entering, reusing the `true` value from last visit
     }, [])
 
-    // Animating elements
+    // Animate elements
     useGSAP(() => {
         gsap.from("#hero-headline", { opacity: 0, y: 5, ease: "power2.out" })
         gsap.from("#hero-subtitle", { opacity: 0, y: 5, duration: 1, delay: 0.2, ease: "power3.out" })

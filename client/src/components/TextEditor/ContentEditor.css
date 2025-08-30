@@ -10,7 +10,7 @@
     position: absolute;
     bottom: 0.25rem;
     right: 0.25rem;
-    z-index: 5;
+    z-index: 1;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -25,7 +25,7 @@
 }
 
 /* TipTap */
-.content-editor .textarea-container.extended #text-editor {
+.content-editor .textarea-container.extended .tiptap {
     height: calc(100vh - 200px);
     transition: height 150ms ease-out;
 }
