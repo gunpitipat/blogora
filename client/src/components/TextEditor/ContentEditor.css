@@ -8,8 +8,8 @@
 }
 .content-editor .extend-toggle {
     position: absolute;
-    bottom: 0.25rem;
-    right: 0.25rem;
+    bottom: 0.2rem;
+    right: 0.2rem;
     z-index: 1;
     cursor: pointer;
     display: flex;

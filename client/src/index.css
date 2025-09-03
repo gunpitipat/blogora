@@ -13,7 +13,7 @@
   --success-color-light: #d9e0d3;
   --error-color: #9e2a2b;
   --error-color-light: #f0e0e0;
-  --link-text-color: #77615c;
+  --link-text-color: #543A14; /* rgb(84, 58, 20) */
   /* Text Styles */
   --body: "Host Grotesk", sans-serif;
 }

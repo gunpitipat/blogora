@@ -9,7 +9,8 @@ const ScrollToTop = () => {
     const location = useLocation()
 
     useEffect(() => {
-        if (location.pathname !== "/explore") { // Allow scroll restoration on Explore
+        // Allow scroll restoration on Explore and Blog pages
+        if (location.pathname !== "/explore" && location.pathname.split("/")[1] !== "blog") {
             window.scrollTo(0, 0)
         }
     }, [location.pathname])

@@ -27,13 +27,14 @@ const formatPlainTextContent = (htmlContent) => {
     })
 
     const formatted = htmlContent
-        .replace(/<p>\s*<\/p>/gi, "\n") // Keep empty lines
-        .replace(/<br\s*\/?>/gi, "\n")  // Keep intentional line breaks
-        .replace(/&nbsp;/g, " ")        // Decode non-breaking spaces
-        .replace(/<\/?[^>]+>/g, " ")    // Remove remaining HTML tags
-        .replace(/[ \t\r]+/g, " ")      // Collapse multiple spaces into one
-        .replace(/ *\n */g, "\n")       // Trim spaces around \n (" \n ")
-        .replace(/\n{2,}/g, "\n")       // Collapse multiple line breaks into one
+        .replace(/<p>\s*<\/p>/gi, "\n")     // Keep empty lines
+        .replace(/<br\s*\/?>/gi, "\n")      // Keep intentional line breaks
+        .replace(/&nbsp;/g, " ")            // Decode non-breaking spaces
+        .replace(/<\/a>([.,!?])/gi, "$1")   // Prevent extra space before punctuation after stripping HTML tags
+        .replace(/<\/?[^>]+>/g, " ")        // Remove remaining HTML tags
+        .replace(/[ \t\r]+/g, " ")          // Collapse multiple spaces into one
+        .replace(/ *\n */g, "\n")           // Trim spaces around \n (" \n ")
+        .replace(/\n{2,}/g, "\n")           // Collapse multiple line breaks into one
         .trim()
 
     // Decode remaining HTML entities
@@ -45,11 +46,11 @@ const formatPlainTextSubtitle = (subtitle) => {
     const stripped = subtitle
         .replace(/<(strong|em|s|u|a)(\s[^>]*)?>/gi, "")   // Remove opening tags like <strong>, <em>, <s>, <u class="...">
         .replace(/<\/(strong|em|s|u|a)>/gi, "")           // Remove closing tags
-        .replace(/<br\s*\/?>/gi, "\n")                  // Keep intentional line breaks
-        .replace(/&nbsp;/g, " ")                        // Decode non-breaking spaces
-        .replace(/[ \t\r]+/g, " ")                      // Collapse multiple spaces into one
-        .replace(/ *\n */g, "\n")                       // Trim spaces around \n (" \n ")
-        .replace(/\n{2,}/g, "\n")                       // Collapse multiple line breaks into one
+        .replace(/<br\s*\/?>/gi, "\n")                    // Keep intentional line breaks
+        .replace(/&nbsp;/g, " ")                          // Decode non-breaking spaces
+        .replace(/[ \t\r]+/g, " ")                        // Collapse multiple spaces into one
+        .replace(/ *\n */g, "\n")                         // Trim spaces around \n (" \n ")
+        .replace(/\n{2,}/g, "\n")                         // Collapse multiple line breaks into one
         .trim()
 
     // Decode remaining HTML entities

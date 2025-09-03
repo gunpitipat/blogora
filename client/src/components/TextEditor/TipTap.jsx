@@ -281,6 +281,7 @@ const extensions = [
     },
     blockquote: false,
     codeBlock: false,
+    code: false, // Disable inline code formatting triggered by backticks
   }, {
     HTMLAttributes: {
       allowedTags: [ "p", "h1", "strong", "i", "a", "ul", "ol", "li" ], // Only tags for menubar features

@@ -347,7 +347,9 @@ exports.getProfileBlogs = async (req, res) => {
             return res.status(404).json({ message: "Profile not available" })
         }
 
-        const blogs = await Blogs.find({ author: user._id }).populate({ path: "author", select: "username" })
+        const blogs = await Blogs.find({ author: user._id })
+            .sort({ isPinned: -1, createdAt: -1 }) // Newest first
+            .populate({ path: "author", select: "username" })
         if (!blogs) return res.status(404).json({ message: "Blog not found" })
 
         res.status(200).json(blogs)

@@ -1,6 +1,6 @@
 import "./BlogPage.css"
 import axios from "axios"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useAlertContext } from "../../contexts/AlertContext"
 import { useLoadingContext } from "../../contexts/LoadingContext"
@@ -8,17 +8,17 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
 import BlogContent from "./Blog/BlogContent"
+import BackToTopButton from "../../components/Buttons/BackToTopButton"
 import AddComment from "./AddComment/AddComment"
 import Comment from "./Comment/Comment";
 import Footer from "../../components/Layout/Footer"
-import BackToTopButton from "../../components/Buttons/BackToTopButton"
 
 const BlogPage = () => {
     // Blog
     const { slug } = useParams()
     const [blog, setBlog] = useState(null)
     const [blogExists, setBlogExists] = useState(null)
-    
+
     // Comment
     const [showCommentInput, setShowCommentInput] = useState(false)
     const [comments ,setComments] = useState([])
@@ -33,6 +33,8 @@ const BlogPage = () => {
     const { setLoading } = useLoadingContext()
     const { user } = useAuthContext()   
     const navigate = useNavigate()
+    const location = useLocation()
+    const pathname = location.pathname    
 
     // Retrieve a blog
     const getBlog = async (abortSignal) => {
@@ -373,6 +375,60 @@ const BlogPage = () => {
             }
         })
     }, [structuredComments, showReplyInput])
+
+    // Save scroll of the previous blog when navigating between blogs (for blog having internal links)
+    useEffect(() => {
+        const savedScroll = sessionStorage.getItem("/blog-scrollY")
+
+        return () => {
+            // First visit
+            if (!savedScroll) {
+                sessionStorage.setItem("/blog-scrollY", JSON.stringify({
+                    last: { blog: pathname.split("/")[2], scroll: window.scrollY }
+                }))
+                return
+            }
+
+            try {
+                const parsedScroll = JSON.parse(savedScroll)
+                if (parsedScroll && parsedScroll.last) {
+                    sessionStorage.setItem("/blog-scrollY", JSON.stringify({
+                        previous: { ...parsedScroll.last }, // To be restored
+                        last: { blog: pathname.split("/")[2], scroll: window.scrollY } // Last unmounted page
+                    }))
+                }
+
+            } catch (error) {
+                // In case of corrupted JSON, clean it up
+                sessionStorage.removeItem("/blog-scrollY")
+            }
+        }
+    }, [pathname])
+
+    // Restore scroll when coming back
+    useEffect(() => {
+        if (!blogExists || !blog) return
+
+        const savedScroll = sessionStorage.getItem("/blog-scrollY")
+        try {
+            const parsedScroll = JSON.parse(savedScroll)
+            const previous = parsedScroll.previous
+
+            if (previous.blog === pathname.split("/")[2]) {
+                window.scrollTo(0, parseFloat(previous.scroll) || 0)
+            }
+
+        } catch (error) {
+            sessionStorage.removeItem("/blog-scrollY")
+        }
+    }, [blogExists, blog, pathname])
+
+    // Remove saved scroll when BlogPage unmounts (path changes entirely)
+    useEffect(() => {
+        return () => {
+            sessionStorage.removeItem("/blog-scrollY")
+        }
+    }, [])
 
     if (blogExists === null) return <LoadingScreen />
     if (blogExists === false) return <NotFound />
