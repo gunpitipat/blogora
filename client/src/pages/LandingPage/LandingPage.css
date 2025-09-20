@@ -6,6 +6,9 @@
     display: flex;
     flex-direction: column;
     align-items: center; /* Vertically center sections when screen width is over 1512px */
+    /* Positioning context for Footer */
+    position: relative;
+    padding-bottom: 23px; /* Footer height */
 }
 .landing-page section {
     width: 100vw;

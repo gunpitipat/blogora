@@ -1,7 +1,5 @@
-import "./FeatureSection.css"
+import "./FeaturesSection.css"
 import { useEffect, useRef } from "react"
-import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { lazyLoadVideos } from "../../utils/lazyVideoLoader"
 import { debounce } from "lodash"
 import FeaturePanel from "./FeaturePanel"
 import featureVideo1 from "../../assets/videos/blogora_feature_1.mp4"
@@ -12,26 +10,21 @@ import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/all"
 gsap.registerPlugin(ScrollTrigger)
 
-const FeatureSection = () => {
+const FeaturesSection = ({ isMobile }) => {
     const containerRef = useRef(null)
     const wrapperRef = useRef(null)
-    const isSmallScreen = useMediaQuery("(max-width: 768px)")
-
-    useEffect(() => {
-        lazyLoadVideos()
-    }, [])
 
     useGSAP(() => {
-        gsap.from("#feature-headline", { opacity: 0, y: 10, duration: 0.75, ease: "power2.out", 
+        gsap.from("#features-headline", { opacity: 0, y: 10, duration: 0.75, ease: "power2.out", 
             scrollTrigger: {
-                trigger: "#feature-headline",
+                trigger: "#features-headline",
                 start: "top 80%",
                 toggleActions: "play none none none"
             }
         })
-        gsap.from("#feature-animate-in", { opacity: 0, x: 25, duration: 0.75, ease: "power2.out", 
+        gsap.from("#features-animate-in", { opacity: 0, x: 25, duration: 0.75, ease: "power2.out", 
             scrollTrigger: {
-                trigger: "#feature-animate-in",
+                trigger: "#features-animate-in",
                 start: "top 60%",
                 toggleActions: "play none none none"
             }
@@ -43,7 +36,7 @@ const FeatureSection = () => {
         const panels = gsap.utils.toArray(".feature-panel")
         const videos = gsap.utils.toArray(".feature-panel video")
         const scrollDots = gsap.utils.toArray(".scroll-dot")
-        const featureWrapper = wrapperRef.current
+        const featuresWrapper = wrapperRef.current
         const container = containerRef.current
 
         let currentIndex = -1 // Track current visible panel
@@ -73,12 +66,12 @@ const FeatureSection = () => {
         }
 
         const setupScroll = () => {
-            if (!featureWrapper || !container) return
+            if (!featuresWrapper || !container) return
 
-            const horizontalDistance = featureWrapper.scrollWidth - container.offsetWidth // Full content width - visible viewport width
+            const horizontalDistance = featuresWrapper.scrollWidth - container.offsetWidth // Full content width - visible viewport width
             container.style.marginBottom = horizontalDistance + "px" // Add vertical scroll space for GSAP to finish the full horizontal animation
 
-            gsap.to(".feature-wrapper", {
+            gsap.to(".features-wrapper", {
                 x: () => -1 * horizontalDistance,
                 ease: "none",
                 scrollTrigger: {
@@ -170,7 +163,7 @@ const FeatureSection = () => {
 
     // Hide navbar during horizontal scroll on laptop and desktop
     useEffect(() => {
-        if (isSmallScreen) return
+        if (isMobile) return
 
         const checkIfCentered = () => {
             const navbar = document.querySelector(".navbar")
@@ -197,12 +190,12 @@ const FeatureSection = () => {
             // Ensure navbar is visible again if navigating away during horizontal scroll section
             document.querySelector(".navbar")?.classList.remove("hide")
         }
-    }, [isSmallScreen])
+    }, [isMobile])
 
     return (
-        <section className="feature-section" id="feature-section">
-            <div className="container" id="feature-container" ref={containerRef}>
-                <h2 className="feature-headline" id="feature-headline">
+        <section className="features-section" id="features-section">
+            <div className="container" ref={containerRef}>
+                <h2 className="features-headline" id="features-headline">
                     What you can do{" "}
                     <span className="headline-sm-split"><br /></span>
                     with{" "}
@@ -211,8 +204,8 @@ const FeatureSection = () => {
                     </span>
                 </h2>
                 
-                <div id="feature-animate-in"> {/* For slide-in animation; separated from .feature-wrapper to avoid conflicting x-transitions with horizontal scroll */}
-                    <div className="feature-wrapper" ref={wrapperRef}>
+                <div id="features-animate-in"> {/* For slide-in animation; separated from .features-wrapper to avoid conflicting x-transitions with horizontal scroll */}
+                    <div className="features-wrapper" ref={wrapperRef}>
                         <FeaturePanel 
                             isFirst
                             dataSrc={featureVideo1}
@@ -242,6 +235,6 @@ const FeatureSection = () => {
     )
 }
 
-export default FeatureSection
+export default FeaturesSection
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.

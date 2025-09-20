@@ -1,0 +1,35 @@
+.try-demo-btn {
+    width: 102px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    border-radius: 0.25rem;
+    border: 1px solid var(--accent-color);
+    user-select: none;
+    background-color: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+}
+.try-demo-btn:hover {
+    font-weight: 500;
+    opacity: 1;
+}
+
+@media (min-width: 386px) {
+    .try-demo-btn {
+        width: 108px;
+    }
+}
+@media (min-width: 551px) {
+    .try-demo-btn {
+        width: 120px;
+    }
+}
+@media (min-width: 1427px) {
+    .try-demo-btn {
+        width: 130px;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

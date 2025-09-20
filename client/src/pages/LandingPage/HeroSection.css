@@ -47,21 +47,26 @@
     margin-bottom: 1.5rem;
 }
 .hero-section .hero-cta {
-    font-size: 1rem;    
+    width: 100%;
+}
+.hero-section .hero-cta button {
+    display: block;
+    width: 130px;
+    margin: 0 auto;
+    padding: 0.5rem; 
+    font-size: 1rem;
     cursor: pointer;
     outline: none;
     border-radius: 0.25rem;
     border: 1px solid var(--accent-color);
     background-color: var(--accent-color);
-    color: var(--neutral-color-light);
-    padding: 0.5rem;    
+    color: var(--neutral-color-light); 
     user-select: none;
-    width: 20%;
     opacity: 0.9;
 }
-.hero-section .hero-cta:hover {
+.hero-section .hero-cta button:hover {
     font-weight: 500;
-    opacity: 1 !important; /* Override GSAP properties */
+    opacity: 1;
 }
 .hero-section .hero-visual {
     flex: 1 2 50%;
@@ -112,7 +117,7 @@
 .hero-section .bubble-chat {
     z-index: 2;
     position: absolute;
-    font-size: 1.1rem; 
+    font-size: 1.1rem;
     cursor: pointer;
     outline: none;
     user-select: none;
@@ -138,15 +143,15 @@
 }
 .hero-section .bubble-chat.second {
     top: 5%;
-    right: -4%;
+    right: -8%;
 }
 .hero-section .bubble-chat.third {
     bottom: 5%;
-    left: -8%;
+    left: -9%;
 }
 .hero-section .bubble-chat.fourth {
     bottom: 5%;
-    right: -4%;
+    right: -5%;
 }
 .hero-section .bubble-chat a {
     text-decoration: none;
@@ -200,6 +205,9 @@
     .hero-section .hero-subtitle {
         max-width: 380px;
     }
+    .hero-section .hero-cta button {
+        width: 120px;
+    }
     .hero-section .blogora-globe {
         width: 334px;
     }
@@ -208,14 +216,23 @@
     .hero-section .hero-headline {
         font-size: 2.2rem;
     }
-    .hero-section .create-blog-btn {
-        width: 130px;
-    }
     .hero-section .blogora-globe {
         width: 309px;
     }
     .hero-section .bubble-chat {
         font-size: 1rem;
+    }
+    .hero-section .bubble-chat.first {
+        left: -12%;
+    }
+    .hero-section .bubble-chat.second {
+        right: -13%;
+    }
+    .hero-section .bubble-chat.third {
+        left: -13%;
+    }
+    .hero-section .bubble-chat.fourth {
+        right: -8%;
     }
 }
 @media (max-width: 1180px) {
@@ -272,19 +289,19 @@
     }
     .hero-section .bubble-chat.first {
         top: 10%;
-        left: -13%;
+        left: -15%;
     }
     .hero-section .bubble-chat.second {
         top: 10%;
-        right: -8%;
+        right: -15%;
     }
     .hero-section .bubble-chat.third {
         bottom: 10%;
-        left: -13%;
+        left: -16%;
     }
     .hero-section .bubble-chat.fourth {
         bottom: 10%;
-        right: -8%;
+        right: -12%;
     }
     .hero-section .scroll-hint {
         bottom: 0.5rem;
@@ -303,28 +320,25 @@
     }
     .hero-section .bubble-chat.first {
         top: 5%;
-        left: -17%;
+        left: -14%;
     }
     .hero-section .bubble-chat.second {
         top: 5%;
-        right: -9%;
+        right: -14%;
     }
     .hero-section .bubble-chat.third {
         bottom: 5%;
-        left: -19%;
+        left: -15%;
     }
     .hero-section .bubble-chat.fourth {
         bottom: 5%;
-        right: -11%;
+        right: -10%;
     }
 }
 @media (max-width: 768px) {
     .hero-section .container {
         padding-inline: 0;
         overflow: hidden;
-    }
-    .hero-section .try-demo-btn {
-        width: 120px;
     }
     .hero-section .bubble-chat {
         font-size: 1rem;
@@ -339,19 +353,19 @@
     }
     .hero-section .bubble-chat.first {
         top: 2%;
-        left: -15%;
+        left: -16%;
     }
     .hero-section .bubble-chat.second {
         top: 2%;
-        right: -8%;
+        right: -18%;
     }
     .hero-section .bubble-chat.third {
         bottom: 2%;
-        left: -17%;
+        left: -18%;
     }
     .hero-section .bubble-chat.fourth {
         bottom: 2%;
-        right: -10%;
+        right: -12%;
     }    
 }
 @media (max-width: 620px) {
@@ -381,7 +395,10 @@
     .hero-section .hero-subtitle.logged-in {
         max-width: 270px;
     }
-    .hero-section .try-demo-btn {
+    .hero-section .hero-cta button {
+        margin: 0 0;
+    }
+    .hero-section .hero-cta .try-demo-btn {
         width: 108px;
     }
     .hero-section .hero-visual {
@@ -401,17 +418,17 @@
     .hero-section .bubble-chat.second {
         top: 31.4%;
         right: auto;
-        left: -25%;
+        left: -36%;
     }
     .hero-section .bubble-chat.third {
         top: 62.7%;
         bottom: auto;
-        left: -34%;
+        left: -35%;
     }
     .hero-section .bubble-chat.fourth {
         bottom: 0;
         right: auto;
-        left: -14%;
+        left: -11%;
     } 
 }
 @media (max-width: 440px) { 
@@ -423,14 +440,11 @@
         left: -15%;
     }
     .hero-section .bubble-chat.second {
-        left: -29%;
+        left: -38%;
     }
     .hero-section .bubble-chat.third {
         left: -34%;
     }
-    .hero-section .bubble-chat.fourth {
-        left: -14%;
-    } 
 }
 @media (max-width: 414px) {
     .hero-section .hero-content {
@@ -453,11 +467,8 @@
     .hero-section .subtitle-sm-hide {
         display: none;
     }
-    .hero-section .try-demo-btn {
+    .hero-section .hero-cta .try-demo-btn {
         width: 102px;
-    }
-    .hero-section .create-blog-btn {
-        width: 120px;
     }
 }
 @media (max-width: 370px) {
@@ -470,10 +481,16 @@
     .hero-section .headline-sm-split {
         display: none;
     }
+    .hero-section .bubble-chat.second {
+        left: -35%;
+    }
 }
-@media (max-width: 350px) {
+@media (max-width: 345px) {
+    .hero-section .bubble-chat.second {
+        left: -32%;
+    }
     .hero-section .bubble-chat.third {
-        left: -30%;
+        left: -32%;
     }
 }
 

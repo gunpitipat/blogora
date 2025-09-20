@@ -2,7 +2,7 @@ const FeaturePanel = ({
     isFirst = false, 
     dataSrc, 
     subtitle, 
-    bodyText 
+    bodyText
 }) => {
     return (
         <div className="feature-panel">

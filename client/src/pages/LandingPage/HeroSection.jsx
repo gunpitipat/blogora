@@ -1,14 +1,11 @@
 import "./HeroSection.css"
-import axios from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAlertContext } from "../../contexts/AlertContext";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useDemoContext } from "../../contexts/DemoContext"
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import blogora_globe from "../../assets/images/blogora_globe.png"
 import BubbleChat from "./BubbleChat";
+import TryDemoButton from "./TryDemoButton";
 import { FiArrowUpRight } from "react-icons/fi";
 import { FaAngleDown } from "react-icons/fa6";
 import gsap from "gsap"
@@ -16,82 +13,13 @@ import { useGSAP } from "@gsap/react"
 import { ScrollToPlugin, ScrollTrigger } from "gsap/all";
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
-const HeroSection = () => {
-    const [tryDemoLoading, setTryDemoLoading] = useState(false)
+const HeroSection = ({ isMobile, setTryDemoLoading }) => {
     const [hideScrollHint, setHideScrollHint] = useState(false)
-    const isMobile = useMediaQuery("(max-width: 550px)")
-
-    const { setAlertState } = useAlertContext()
-    const { setPrefillDemo, setShowDemoPopup } = useDemoContext()
+    const isSmallScreen = useMediaQuery("(max-width: 550px)")
     const { isAuthenticated, user } = useAuthContext()
     const navigate = useNavigate()
 
-    const TTL_MINUTES_BEFORE_LOGIN = 15
-    const LOGIN_BUFFER_MINUTES = 3
     const isLoggedIn = isAuthenticated && user?.username
-    
-    // Cleanup demoCrendentials in localStorage
-    useEffect(() => {
-        try {
-            const demoCredentials = JSON.parse(localStorage.getItem("demoCredentials"))
-            if (!demoCredentials) return
-
-            // If a user clicked 'Try Demo' and never logs in
-            if (Date.now() - demoCredentials.createdAt > (TTL_MINUTES_BEFORE_LOGIN - LOGIN_BUFFER_MINUTES) * 60 * 1000) {
-                localStorage.removeItem("demoCredentials")
-            }
-        
-        } catch (error) {
-            // In case of corrupted JSON, clean it up
-            localStorage.removeItem("demoCredentials")
-        }
-    }, [])
-
-    const handleTryDemo = async () => {
-        setTryDemoLoading(true)
-        try {
-            let demoCredentials = null
-            let reuseCredentials = false
-
-            try {
-                demoCredentials = JSON.parse(localStorage.getItem("demoCredentials"))
-                reuseCredentials = demoCredentials && 
-                    Date.now() - demoCredentials.createdAt <= (TTL_MINUTES_BEFORE_LOGIN - LOGIN_BUFFER_MINUTES) * 60 * 1000
-            
-            } catch {
-                localStorage.removeItem("demoCredentials") // In case of corrupted JSON
-            }
-            
-            const response = await axios.post(`${process.env.REACT_APP_API}/demo/signup`,
-                reuseCredentials 
-                    ? { savedUsername: demoCredentials.username, savedPassword: demoCredentials.password }
-                    : {}
-            )
-
-            const isSameUser = reuseCredentials && demoCredentials.username === response.data.username
-
-            localStorage.setItem("demoCredentials", JSON.stringify({
-                username: response.data.username,
-                password: response.data.password,
-                createdAt: isSameUser ? demoCredentials.createdAt : Date.now() // Timestamp to check for reuse
-            }))
-
-            setTryDemoLoading(false)
-            setPrefillDemo(true)
-            setShowDemoPopup(true)
-            navigate("/login")
-        
-        } catch (error) {
-            if (!error.response) {
-                setAlertState({ display: true, type: "error", message: "Network error. Please try again." })
-            } else {
-                setAlertState({ display: true, type: "error", message: error.response.data?.message || "Something went wrong. Please try again." })
-            }
-        
-        } finally {
-            setTryDemoLoading(false)
-        }
-    }
 
     useEffect(() => {
         setHideScrollHint(false) // React Router may not fully remount when re-entering, reusing the `true` value from last visit
@@ -106,7 +34,7 @@ const HeroSection = () => {
         gsap.from("#orbit", { opacity: 0, duration: 0.5, ease: "power3.out" })
         gsap.from("#scroll-hint", { opacity: 0, duration: 1.75, delay: 1, ease: "power4.in" })
         ScrollTrigger.create({
-            trigger: "#feature-headline",
+            trigger: "#features-headline",
             start: "top 80%",
             onEnter: () => setHideScrollHint(true)
         })
@@ -116,9 +44,9 @@ const HeroSection = () => {
         // In shifted stacked layout (mobile), 1 -> 2 -> 3 -> 4 with repositioning to left curve
         const bubbleAnimations = [
             { selector: ".bubble-chat.first", x: 50, y: 50, delay: 0.3 },
-            { selector: ".bubble-chat.second", x: isMobile ? 50 : -50, y: 50, delay: 0.45 },
-            { selector: ".bubble-chat.third", x: 50, y: -50, delay: isMobile ? 0.6 : 0.75 }, 
-            { selector: ".bubble-chat.fourth", x: isMobile ? 50 : -50, y: -50, delay: isMobile ? 0.75 : 0.6 }
+            { selector: ".bubble-chat.second", x: isSmallScreen ? 50 : -50, y: 50, delay: 0.45 },
+            { selector: ".bubble-chat.third", x: 50, y: -50, delay: isSmallScreen ? 0.6 : 0.75 }, 
+            { selector: ".bubble-chat.fourth", x: isSmallScreen ? 50 : -50, y: -50, delay: isSmallScreen ? 0.75 : 0.6 }
         ]
 
         bubbleAnimations.forEach(({ selector, x, y, delay }) => {
@@ -134,17 +62,16 @@ const HeroSection = () => {
         })
     }, [])
 
-    const scrollToFeature = () => {
+    const scrollToFeatures = () => {
         gsap.to(window, {
             duration: 1,
-            scrollTo: "#feature-section",
+            scrollTo: "#features-section",
             ease: "power2.out"
         })
     }
 
     return (
         <section className="hero-section">
-            { tryDemoLoading && <LoadingScreen /> }
             <div className="container">
                 <div className="hero-content">
                     <h1 className="hero-headline" id="hero-headline">
@@ -178,14 +105,14 @@ const HeroSection = () => {
                                 </span>
                         }
                     </p>
-                    { isLoggedIn
-                        ?   <button className="hero-cta create-blog-btn" onClick={() => navigate("/create")}>
-                                Create Blog
-                            </button>
-                        :   <button className="hero-cta try-demo-btn" onClick={handleTryDemo}>
-                                Try Demo
-                            </button>  
-                    }
+                    <div className="hero-cta">
+                        { isLoggedIn
+                            ?   <button onClick={() => navigate("/create")}>
+                                    Create Blog
+                                </button>
+                            :   <TryDemoButton setTryDemoLoading={setTryDemoLoading} /> 
+                        }
+                    </div>
                 </div>
 
                 <div className="hero-visual">
@@ -194,26 +121,44 @@ const HeroSection = () => {
                             className="blogora-globe" id="blogora-globe" 
                         />
                         <div className="orbit" id="orbit">
-                            <BubbleChat className="first" onClick={scrollToFeature}>
+                            <BubbleChat 
+                                className="first" 
+                                isMobile={isMobile} 
+                                onClick={scrollToFeatures}
+                            >
                                 Learn the features
                             </BubbleChat>
 
-                            <BubbleChat className="second">
-                                See quick tips
-                            </BubbleChat>
-
-                            <BubbleChat className="third link">
+                            <BubbleChat 
+                                className="second link" 
+                                isMobile={isMobile}
+                            >
                                 <a href="/blog/how-blogora-works" target="_blank" rel="noopener noreferrer">
                                     How Blogora works
                                     <span className="new-tab-icon">
                                         <FiArrowUpRight />
                                     </span>
-                                </a>
+                                </a>                                
                             </BubbleChat>
 
-                            <BubbleChat className="fourth link">
+                            <BubbleChat 
+                                className="third link" 
+                                isMobile={isMobile}
+                            >
+                                <a href="/blog/behind-the-features-how-blogora-was-built" target="_blank" rel="noopener noreferrer">
+                                    Behind the features
+                                    <span className="new-tab-icon">
+                                        <FiArrowUpRight />
+                                    </span>
+                                </a>                                
+                            </BubbleChat>
+
+                            <BubbleChat 
+                                className="fourth link" 
+                                isMobile={isMobile}
+                            >
                                 <a href="https://github.com/gunpitipat/blogora" target="_blank" rel="noopener noreferrer">
-                                    View on Github
+                                    View on GitHub
                                     <span className="new-tab-icon">
                                         <FiArrowUpRight />
                                     </span>

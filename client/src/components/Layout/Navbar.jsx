@@ -22,7 +22,7 @@ const Navbar = () => {
     const handleLogoClick = () => {
         setIsOpen(false)
         if (location.pathname === "/") {
-            window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top if already on landing page
+            window.scrollTo({ top: 0 }); // Scroll to top if already on landing page
         }
     }
 

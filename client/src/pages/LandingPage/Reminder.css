@@ -1,0 +1,104 @@
+.reminder .container {
+    width: 100%;
+    height: 100%;
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    overflow: hidden;
+}
+.reminder .reminder-visual {
+    position: relative;
+    --img-height: clamp(200px, 50vw, 300px);
+    --icon-height: 44px;
+    --parallax-y: 24px;
+}
+.reminder .reminder-visual img {
+    object-fit: contain;
+    display: block;
+    aspect-ratio: 1 / 1;
+    height: var(--img-height);
+}
+.reminder .bubble-icon {
+    position: absolute;
+    color: var(--secondary-color);
+    font-size: var(--icon-height);
+    opacity: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.reminder .bubble-icon.left {
+    top: calc(var(--img-height)/2 - var(--icon-height)/2 + var(--parallax-y));
+    left: -18%;
+}
+.reminder .bubble-icon.right {
+    bottom: calc(var(--img-height)/2 - var(--icon-height)/2 + var(--parallax-y));
+    right: -15%;
+}
+.reminder .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+}
+.reminder .content-wrapper p {
+    font-size: 1rem;
+    color: var(--neutral-color-dark);
+    text-align: center;
+}
+.reminder .explore-btn {
+    width: 102px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    border-radius: 0.25rem;
+    border: 1px solid var(--accent-color);
+    user-select: none;
+    background-color: var(--accent-color);
+    color: var(--neutral-color-light);
+    opacity: 0.9;
+}
+.reminder .explore-btn:hover {
+    font-weight: 500;
+    opacity: 1;
+}
+
+@media (min-width: 551px) {
+    .reminder .container {
+        gap: 0rem;
+    }
+    .reminder .reminder-visual {
+        --icon-height: 55px;
+    }
+    .reminder .content-sm-split {
+        display: none;
+    }
+}
+@media (min-width: 768px) {
+    .reminder .reminder-visual {
+        --icon-height: 60px;
+    }
+}
+@media (min-width: 1200px) {
+    .reminder .container {
+        flex-direction: row;
+        justify-content: center;
+        gap: 7rem;
+        position: relative;
+    }
+    .reminder .container::before {
+        content: "";
+        height: 40%;
+        width: 100%;
+        position: absolute;
+        top: 60%;
+        background: linear-gradient(to bottom, var(--neutral-color-light), rgba(188, 184, 177, 0.8));
+        z-index: -1;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */
