@@ -23,7 +23,6 @@
     "framer-motion": "^12.12.2",
     "gsap": "^3.13.0",
     "html-react-parser": "^5.2.2",
-    "html-to-react": "^1.7.0",
     "lodash": "^4.17.21",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
