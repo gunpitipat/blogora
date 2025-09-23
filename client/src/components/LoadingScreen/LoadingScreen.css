@@ -1,16 +1,17 @@
+/* Spinner */
 .loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(244,243,238,0.3);
+    background: rgba(244, 243, 238, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1003;
 }
-.loading-overlay .spinner {
+.loading-spinner {
     width: 3rem;
     height: 3rem;
     border: 0.4rem solid var(--accent-color);
@@ -21,6 +22,46 @@
 @keyframes spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+/* Shimmer */
+.loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+.loading-wrapper p {
+    font-size: 1.2rem;
+    color: var(--accent-color);
+}
+.loading-bar {
+    position: relative;
+    width: 180px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(188, 184, 177, 0.4);
+    overflow: hidden;
+}
+.loading-bar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    border-radius: 100%;
+    background: linear-gradient(to right, transparent, var(--primary-color), transparent);
+    animation: slow-shimmer 2.5s 0.3s linear infinite;
+}
+@keyframes slow-shimmer {
+    0% {
+        left: -50%;
+    }
+    60%, 100% {
+        left: 100%;
     }
 }
 

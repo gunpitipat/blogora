@@ -1,0 +1,48 @@
+.server-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+.server-error h2 {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+.server-error p {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--neutral-color-dark);
+    margin: 0 1rem 0.25rem;
+    max-width: 340px;
+}
+.server-error .retry-btn {
+    width: 102px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    border-radius: 0.25rem;
+    border: 1px solid var(--accent-color);
+    user-select: none;
+    background-color: var(--neutral-color-light);
+    color: var(--accent-color);
+    opacity: 0.8;
+}
+.server-error .retry-btn:hover {
+    font-weight: 500;
+    opacity: 1;
+}
+
+@media (min-width: 551px) {
+    .server-error p {
+        max-width: none;
+    }
+}
+
+/* © 2025 Pitipat Pattamawilai. All Rights Reserved. */

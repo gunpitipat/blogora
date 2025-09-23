@@ -34,6 +34,11 @@ app.use("/api", blogRoutes)
 app.use("/api", userRoutes)
 app.use("/api", commentRoutes)
 
+// Health check route (used to wake up the server on free hosting plans)
+app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "ok" })
+})
+
 // Handle undefined routes (404)
 app.use((req, res, next) => {
     res.status(404).json({ message: "Route not found" })

@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import AppProviders from './AppProviders'
 import LandingPage from './pages/LandingPage/LandingPage'
 import Explore from './pages/Explore/Explore'
 import BlogPage from './pages/BlogPage/BlogPage'
@@ -10,11 +11,6 @@ import Login from './pages/Login/Login'
 import Signup from "./pages/Signup/Signup"
 import NotFound from './pages/NotFound/NotFound'
 import ProtectedRoute from './utils/ProtectedRoute'
-import Layout from './components/Layout/Layout'
-import { AlertProvider } from './contexts/AlertContext'
-import { AuthProvider } from './contexts/AuthContext'
-import { DemoProvider } from './contexts/DemoContext'
-import { LoadingProvider } from './contexts/LoadingContext'
 
 const router = createBrowserRouter([
     {
@@ -43,20 +39,6 @@ const router = createBrowserRouter([
         ]
     }
 ])
-
-function AppProviders() {
-    return (
-        <LoadingProvider>
-            <AlertProvider>
-                <AuthProvider>
-                    <DemoProvider>
-                        <Layout />
-                    </DemoProvider>
-                </AuthProvider>
-            </AlertProvider>
-        </LoadingProvider>
-    )
-}
 
 const Router = () => <RouterProvider router={router} />
 
