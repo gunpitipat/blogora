@@ -11,6 +11,7 @@ import ServerError from './pages/ServerError/ServerError'
 const AppProviders = () => {
     const [isChecking, setIsChecking] = useState(true)
     const [isHealthy, setIsHealthy] = useState(false)
+    const [loadingStage, setLoadingStage] = useState(0)
 
     // Wait for server waking up on free hosting plans
     useEffect(() => {
@@ -20,7 +21,17 @@ const AppProviders = () => {
             .finally(() => setIsChecking(false))
     }, [])
 
-    if (isChecking) return <LoadingScreen type="shimmer" />
+    useEffect(() => {
+        const timer10 = setTimeout(() => setLoadingStage(1), 10000)
+        const timer20 = setTimeout(() => setLoadingStage(2), 20000)
+
+        return () => {
+            clearTimeout(timer10)
+            clearTimeout(timer20)
+        }
+    }, [])
+
+    if (isChecking) return <LoadingScreen type="shimmer" stage={loadingStage} />
     if (!isHealthy) return <ServerError />
 
     return (
