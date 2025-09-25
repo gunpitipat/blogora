@@ -1,5 +1,5 @@
 import "./Signup.css"
-import axios from "axios"
+import api from "../../utils/api"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAlertContext } from "../../contexts/AlertContext"
@@ -39,7 +39,7 @@ const Signup = () => {
         e.preventDefault()
         setLoading(true)
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API}/signup`, { email, username, password, cfpassword })
+            const response = await api.post("/signup", { email, username, password, cfpassword })
             setSignupInputs({ email: "", username: "", password: "", cfpassword: "" })
             setInputStatus(initialInputStatus)
             setLoading(false)

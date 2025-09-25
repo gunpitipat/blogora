@@ -1,4 +1,5 @@
 import "./Profile.css"
+import api from "../../utils/api"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams, Link, useLocation } from "react-router-dom"
@@ -23,8 +24,7 @@ const Profile = () => {
     // Get personal user data
     const getUserData = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}`, {
-                withCredentials: true,
+            const response = await api.get(`/profile/${usernameParam}`, { 
                 signal: abortSignal // Pass abortController signal to link the request with abortController
             })
             return response.data // User exists -> { email ?, username }
@@ -55,10 +55,7 @@ const Profile = () => {
     // Get all user's blogs
     const getUserBlogs = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/profile/${usernameParam}/blogs`, { 
-                withCredentials: true,
-                signal: abortSignal 
-            })
+            const response = await api.get(`/profile/${usernameParam}/blogs`, { signal: abortSignal })
             return response.data // [ blog documents ]
 
         } catch (error) {

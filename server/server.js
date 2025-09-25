@@ -19,8 +19,18 @@ mongoose.connect(process.env.DATABASE,{
 .catch((error) => console.error(error))
 
 // Middleware
+const allowedOrigins = [
+    process.env.FRONTEND_DOMAIN,
+    "http://localhost:3000"
+]
 app.use(cors({
-    origin: process.env.FRONTEND_DOMAIN, // Allow frontend domain
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
     credentials: true, // Allow cookies to be sent
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]

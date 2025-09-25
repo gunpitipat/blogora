@@ -1,4 +1,5 @@
 import "./BlogPage.css"
+import api from "../../utils/api"
 import axios from "axios"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { useState, useEffect, useCallback, useMemo } from "react"
@@ -39,10 +40,7 @@ const BlogPage = () => {
     // Retrieve a blog
     const getBlog = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, { 
-                withCredentials: true,
-                signal: abortSignal
-            })
+            const response = await api.get(`/blog/${slug}`, { signal: abortSignal })
             return response.data
 
         } catch (error) {
@@ -105,10 +103,7 @@ const BlogPage = () => {
     // Retrieve comments
     const getComments = async (abortSignal) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}/comments`, { 
-                withCredentials: true, 
-                signal: abortSignal 
-            })
+            const response = await api.get(`/blog/${slug}/comments`, { signal: abortSignal })
             return response.data
 
         } catch (error) {
@@ -200,9 +195,7 @@ const BlogPage = () => {
     const deleteBlog = async (slug, onCleanup = () => {}) => {
         setLoading(true)
         try {
-            const response = await axios.delete(`${process.env.REACT_APP_API}/blog/${slug}`, { 
-                withCredentials: true 
-            })
+            const response = await api.delete(`/blog/${slug}`)
             setLoading(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
             navigate(`/profile/${user.username}`)
@@ -244,13 +237,10 @@ const BlogPage = () => {
     const onSendComment = useCallback(async (commentContent, parentCommentId = null) => {
         setCommentLoading(true)
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API}/blog/${slug}/comment`, 
-                { 
-                    content: commentContent,
-                    parentCommentId: parentCommentId || null
-                },
-                { withCredentials: true }
-            )
+            const response = await api.post(`/blog/${slug}/comment`, { 
+                content: commentContent,
+                parentCommentId: parentCommentId || null
+            })
             setAlertState({ display: true, type: "success", message: response.data.message })
             setCommentTrigger(prev => !prev) // Toggle trigger to refresh comment
 

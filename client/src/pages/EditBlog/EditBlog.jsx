@@ -1,4 +1,5 @@
 import "./EditBlog.css"
+import api from "../../utils/api"
 import axios from "axios"
 import { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { Navigate, useParams } from "react-router-dom"
@@ -65,8 +66,7 @@ const EditBlog = () => {
                 setContent(null)
                 setAuthor(null)
 
-                const response = await axios.get(`${process.env.REACT_APP_API}/blog/${slug}`, 
-                    { withCredentials: true, signal: controller.signal })
+                const response = await api.get(`/blog/${slug}`, { signal: controller.signal })
 
                 const { title: titleData, content: contentData, author: authorId } = response.data
                 setTitle(titleData)
@@ -100,7 +100,7 @@ const EditBlog = () => {
         setLoading(true)
         try {
             const cleanedContent = cleanEditorContent(content)
-            const response = await axios.put(`${process.env.REACT_APP_API}/blog/${slug}`,{ title, content: cleanedContent }, { withCredentials: true })
+            const response = await api.put(`/blog/${slug}`,{ title, content: cleanedContent })
             setLoading(false)
             setAlertState({ display: true, type: "success", message: response.data.message })
             window.history.back() // Go back to BlogPage

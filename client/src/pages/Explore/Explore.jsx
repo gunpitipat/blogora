@@ -1,5 +1,5 @@
 import "./Explore.css"
-import axios from "axios"
+import api from "../../utils/api";
 import { useState, useEffect, useMemo, useRef } from "react"
 import { useLocation } from "react-router-dom";
 import { useAlertContext } from "../../contexts/AlertContext";
@@ -28,9 +28,7 @@ function Explore() {
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API}/blogs`, {
-        withCredentials: true
-      })
+      const response = await api.get("/blogs")
       setBlogs(response.data)
     
     } catch (error) {

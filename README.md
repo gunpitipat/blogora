@@ -4,7 +4,7 @@ A full-stack web app where users can create blogs, explore community posts, and 
 
 ## Live Demo
 
-[Open Blogora ↗](#)
+[Open Blogora ↗](https://blogora-demo.vercel.app)
 
 ## Preview
 
@@ -49,4 +49,4 @@ Blogora is built with the MERN stack and additional tools for authentication, te
 
 ## Read More
 
-For detailed explanations, see the [technical blog ↗](#) inside Blogora.
+For detailed explanations, see the [technical blog ↗](https://blogora-demo.vercel.app/blog/behind-the-features-how-blogora-was-built) inside Blogora.

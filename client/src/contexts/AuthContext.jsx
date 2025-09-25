@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../utils/api"
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlertContext } from "../contexts/AlertContext";
@@ -21,9 +21,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = useCallback(async () => {
         setLoading(true)
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/check-auth`, {
-                withCredentials: true, // Sends cookies with request
-            })
+            const response = await api.get("/check-auth")
             setIsAuthenticated(response.data.isAuthenticated)
             setUser({ username: response.data.username, role: response.data.role })
 
@@ -44,7 +42,7 @@ export const AuthProvider = ({ children }) => {
 
     // Axios interceptor to redirect on session expiration
     useEffect(() => {
-        const responseInterceptor = axios.interceptors.response.use(
+        const responseInterceptor = api.interceptors.response.use(
             (response) => response, // Pass successful response through
             (error) => {
                 if (error.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -57,7 +55,7 @@ export const AuthProvider = ({ children }) => {
             }
         )
 
-        return () => axios.interceptors.response.eject(responseInterceptor) // Cleanup on unmount
+        return () => api.interceptors.response.eject(responseInterceptor) // Cleanup on unmount
         // eslint-disable-next-line
     }, [isAuthenticated])
 
@@ -66,7 +64,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(true)
         try {
             loggingOutRef.current = true // Prevent session expiration modal from appearing
-            const response = await axios.post(`${process.env.REACT_APP_API}/logout`, {}, { withCredentials: true })
+            const response = await api.post("/logout", {})
             localStorage.removeItem("isLoggedIn")
             await checkAuth()
             loggingOutRef.current = false

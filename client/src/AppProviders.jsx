@@ -1,4 +1,4 @@
-import axios from 'axios'
+import api from "./utils/api"
 import { useEffect, useState } from 'react'
 import { LoadingProvider } from './contexts/LoadingContext'
 import { AlertProvider } from './contexts/AlertContext'
@@ -15,7 +15,7 @@ const AppProviders = () => {
 
     // Wait for server waking up on free hosting plans
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_API}/health`)
+        api.get("/health")
             .then(() => setIsHealthy(true))
             .catch(() => setIsHealthy(false))
             .finally(() => setIsChecking(false))

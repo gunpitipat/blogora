@@ -1,5 +1,5 @@
 import "./Login.css"
-import axios from "axios"
+import api from "../../utils/api"
 import clsx from "clsx"
 import { useEffect, useState } from "react"
 import { Link, useNavigate, Navigate } from "react-router-dom"
@@ -62,10 +62,7 @@ const Login = () => {
         e.preventDefault()
         setLoading(true)
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API}/login`,
-                { username, password },
-                { withCredentials: true } // Send request with credentials to ensure cookie can be sent back from backend and stored by browser
-            )
+            const response = await api.post("/login", { username, password })
             await checkAuth() // Ensures token cookie is actually set and valid before updating the state
             setUsername("")
             setPassword("")

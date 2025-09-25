@@ -1,5 +1,5 @@
 import "./CreateBlog.css"
-import axios from "axios"
+import api from "../../utils/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate, useBlocker } from "react-router-dom";
 import { useAlertContext } from "../../contexts/AlertContext";
@@ -159,7 +159,7 @@ const CreateBlog = () => {
         setForceNavigate(true)
         try {
             const cleanedContent = cleanEditorContent(content)
-            const response = await axios.post(`${process.env.REACT_APP_API}/create`, { title, content: cleanedContent }, { withCredentials: true })
+            const response = await api.post("/create", { title, content: cleanedContent })
             setTitle("")
             setContent("")
             setSubmit(true)

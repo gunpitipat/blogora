@@ -1,5 +1,5 @@
 import "./Comment.css"
-import axios from "axios";
+import api from "../../../utils/api";
 import clsx from "clsx"
 import { useState, useEffect, useRef, memo, useMemo } from "react"
 import { useAuthContext } from "../../../contexts/AuthContext";
@@ -79,9 +79,7 @@ const Comment = memo(({
     const deleteComment = async (commentId) => {
         setCommentLoading(true)
         try {
-            const response = await axios.delete(`${process.env.REACT_APP_API}/blog/comment/${commentId}`,
-                { withCredentials: true }
-            )
+            const response = await api.delete(`/blog/comment/${commentId}`)
             setCommentTrigger(prev => !prev)
             setAlertState({ display: true, type: "success", message: response.data.message })
         

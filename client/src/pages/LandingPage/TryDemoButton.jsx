@@ -1,5 +1,5 @@
 import "./TryDemoButton.css"
-import axios from "axios"
+import api from "../../utils/api";
 import { useNavigate } from "react-router-dom"
 import { useAlertContext } from "../../contexts/AlertContext";
 import { useDemoContext } from "../../contexts/DemoContext"
@@ -25,7 +25,7 @@ const TryDemoButton = ({ setTryDemoLoading }) => {
                 localStorage.removeItem("demoCredentials") // In case of corrupted JSON
             }
             
-            const response = await axios.post(`${process.env.REACT_APP_API}/demo/signup`,
+            const response = await api.post("/demo/signup",
                 reuseCredentials 
                     ? { savedUsername: demoCredentials.username, savedPassword: demoCredentials.password }
                     : {}
