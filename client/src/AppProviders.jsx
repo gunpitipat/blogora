@@ -1,4 +1,3 @@
-import api from "./utils/api"
 import { useEffect, useState } from 'react'
 import { LoadingProvider } from './contexts/LoadingContext'
 import { AlertProvider } from './contexts/AlertContext'
@@ -15,19 +14,57 @@ const AppProviders = () => {
 
     // Wait for server waking up on free hosting plans
     useEffect(() => {
-        api.get("/health")
-            .then(() => setIsHealthy(true))
-            .catch(() => setIsHealthy(false))
-            .finally(() => setIsChecking(false))
+        let timeout
+        let retries = 0
+        const maxRetries = 12 // 120s = 2min limit
+        const delay = 10000 // 10s
+        const controller = new AbortController()
+
+        const wakeServer = async () => {
+            try {
+                // Ping backend directly without Vercel rewriting
+                // to prevent Vercel from responding 502 if Render takes too long to wake server.
+                await fetch("https://blogora-wnay.onrender.com/api/health", {
+                    signal: controller.signal
+                })
+
+                // NOTE: Use this if testing frontend and backend on localhost
+                // await fetch("http://localhost:5500/api/health")
+                
+                setIsHealthy(true)
+                setIsChecking(false)
+                clearTimeout(timeout)
+            
+            } catch (err) {
+                if (err.name === "AbortError") return
+
+                retries++
+                if (retries < maxRetries) {
+                    timeout = setTimeout(wakeServer, delay)
+                } else {
+                    setIsHealthy(false)
+                    setIsChecking(false)
+                }
+            }
+        }
+
+        wakeServer()
+
+        return () => {
+            clearTimeout(timeout)
+            controller.abort()
+        }
     }, [])
 
     useEffect(() => {
         const timer10 = setTimeout(() => setLoadingStage(1), 10000)
         const timer20 = setTimeout(() => setLoadingStage(2), 20000)
+        const timer40 = setTimeout(() => setLoadingStage(3), 40000)
 
         return () => {
             clearTimeout(timer10)
             clearTimeout(timer20)
+            clearTimeout(timer40)
         }
     }, [])
 

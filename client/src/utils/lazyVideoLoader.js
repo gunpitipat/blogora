@@ -1,5 +1,5 @@
 export const lazyLoadVideos = () => {
-    const videos = document.querySelectorAll('video[data-src]')
+    const videos = document.querySelectorAll("video[data-src]")
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -15,6 +15,7 @@ export const lazyLoadVideos = () => {
         })
     }, {
         threshold: 0,
+        rootMargin: "200px 0px"
     })
 
     videos.forEach(video => observer.observe(video))

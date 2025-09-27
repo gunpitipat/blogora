@@ -9,6 +9,7 @@
     gap: 3rem;
     position: relative;
     overflow: hidden; /* Prevent overflowing pseudo elements from breaking horizontal scroll unexpectedly */
+    overflow-anchor: none; /* Prevent browser scroll anchoring (fixes jump near bottom on mobile layout) */
 }
 /* Subtle radial gradient background */
 .quicktips-section .container::before,
@@ -74,6 +75,7 @@
         var(--neutral-color-light);
     position: relative;
     opacity: 0.3;
+    will-change: transform, opacity;
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 /* Top-right corner */
@@ -96,8 +98,8 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    width: calc(var(--cut-gap) - 1px);;
-    height: calc(var(--cut-gap) - 1px);;
+    width: calc(var(--cut-gap) - var(--border-thickness));
+    height: calc(var(--cut-gap) - var(--border-thickness));
     border-bottom-left-radius: 0.75rem;
     border: var(--border-thickness) solid var(--border-color);
     border-top: none;

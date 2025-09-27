@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import blogora_globe from "../../assets/images/blogora_globe.png"
 import BubbleChat from "./BubbleChat";
 import TryDemoButton from "./TryDemoButton";
 import { FiArrowUpRight } from "react-icons/fi";
@@ -117,8 +116,10 @@ const HeroSection = ({ isMobile, setTryDemoLoading }) => {
 
                 <div className="hero-visual">
                     <div className="globe-container">
-                        <img src={blogora_globe} alt="blogora_globe" 
-                            className="blogora-globe" id="blogora-globe" 
+                        <img src={`${process.env.PUBLIC_URL}/assets/images/blogora_globe.png`}
+                            alt="blogora_globe" 
+                            className="blogora-globe" 
+                            id="blogora-globe" 
                         />
                         <div className="orbit" id="orbit">
                             <BubbleChat 

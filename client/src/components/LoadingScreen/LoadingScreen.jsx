@@ -16,8 +16,14 @@ const LoadingScreen = ({ type = "spinner", stage = 0 }) => {
                     )}>
                         This may take longer on free hosting. Please wait...
                     </p>
-                    <p className={`loading-message second ${stage === 2 ? "active" : ""}`}>
+                    <p className={clsx("loading-message second",
+                        stage === 2 && "active",
+                        stage > 2 && "hidden"
+                    )}>
                         Almost there, thank you for your patience!
+                    </p>
+                    <p className={`loading-message third ${stage === 3 ? "active" : ""}`}>
+                        This is taking longer than usual, still trying to connect.
                     </p>
                 </div>
             </div>

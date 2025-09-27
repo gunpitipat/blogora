@@ -10,7 +10,7 @@ const FeaturePanel = ({
                 <video
                     autoPlay={isFirst}
                     muted loop playsInline
-                    preload="none" data-src={dataSrc} // For lazy loading
+                    preload="metadata" data-src={dataSrc} // For lazy loading
                 >
                     <source type="video/mp4" />
                     Your browser does not support the video tag.

@@ -52,6 +52,9 @@
 .loading-message.first {
     max-width: 290px;
 }
+.loading-message.third {
+    max-width: 235px;
+}
 .loading-message.active {
     transform: translateY(0);
     opacity: 0.7;
@@ -90,7 +93,8 @@
 }
 
 @media (min-width: 425px) {
-    .loading-message.first {
+    .loading-message.first,
+    .loading-message.third {
         max-width: none;
     }
 }

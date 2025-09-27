@@ -2,9 +2,6 @@ import  "./QuickTipsSection.css"
 import { useEffect, useRef, useState } from "react"
 import { useMediaQuery } from "../../hooks/useMediaQuery"
 import QuickTipCard from "./QuickTipCard"
-import quickTipVideo1 from "../../assets/videos/blogora_quicktip_1.mp4"
-import quickTipVideo2 from "../../assets/videos/blogora_quicktip_2.mp4"
-import quickTipVideo3 from "../../assets/videos/blogora_quicktip_3.mp4"
 import { FaSearch, FaLink } from "react-icons/fa";
 import { FaArrowPointer } from "react-icons/fa6";
 import { LuUserRound } from "react-icons/lu";
@@ -142,13 +139,17 @@ const QuickTipsSection = () => {
             const sectionRect = section.getBoundingClientRect()
             let closestDistance = Infinity
 
-            if (sectionRect.top > window.innerHeight || sectionRect.bottom < 0) return
-
+            if (
+                sectionRect.top > window.innerHeight || 
+                sectionRect.bottom < window.innerHeight / 2 ||
+                window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5
+            ) return
+            
             cards.forEach((card, i) => {
                 const cardRect = card.getBoundingClientRect()
                 const cardCenter = cardRect.top + cardRect.height / 2
                 const distance = Math.abs(cardCenter - viewportCenter)
-                
+
                 if (distance < closestDistance) {
                     closestDistance = distance
                     closestIndex = i
@@ -179,7 +180,7 @@ const QuickTipsSection = () => {
                 </h2>
                 <div className="quicktips-cards" id="quicktips-cards">
                     <QuickTipCard 
-                        dataSrc={quickTipVideo1}
+                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_quicktip_1.mp4`}
                         content={
                             <p>
                                 To quickly <span>find blogs</span> that match your interests, use the search bar and type keywords in the title, content, or even an author's name.
@@ -191,7 +192,7 @@ const QuickTipsSection = () => {
                         pendingHideRef={pendingHideRef}
                     />
                     <QuickTipCard
-                        dataSrc={quickTipVideo2}
+                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_quicktip_2.mp4`}
                         content={
                             <p>
                                 Click an author's name to <span>visit</span> their <span>profile</span> and explore all the blogs they've published in one place.
@@ -209,7 +210,7 @@ const QuickTipsSection = () => {
                         }
                     </QuickTipCard>
                     <QuickTipCard
-                        dataSrc={quickTipVideo3}
+                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_quicktip_3.mp4`}
                         content={
                             <p>
                                 Use the link toggle tool with or without text selection to <span>insert, remove,</span> or <span>customize links</span> with optional display text.

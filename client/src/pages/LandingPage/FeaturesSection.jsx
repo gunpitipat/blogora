@@ -2,9 +2,6 @@ import "./FeaturesSection.css"
 import { useEffect, useRef } from "react"
 import { debounce } from "lodash"
 import FeaturePanel from "./FeaturePanel"
-import featureVideo1 from "../../assets/videos/blogora_feature_1.mp4"
-import featureVideo2 from "../../assets/videos/blogora_feature_2.mp4"
-import featureVideo3 from "../../assets/videos/blogora_feature_3.mp4"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/all"
@@ -208,17 +205,17 @@ const FeaturesSection = ({ isMobile }) => {
                     <div className="features-wrapper" ref={wrapperRef}>
                         <FeaturePanel 
                             isFirst
-                            dataSrc={featureVideo1}
+                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_feature_1.mp4`}
                             subtitle={`Create Your Blog`}
                             bodyText={`Compose your thoughts and format your content with a rich text editor designed to help you express ideas freely whether by making your blog more structured, adding your style, or keeping it simple.`}
                         />
                         <FeaturePanel
-                            dataSrc={featureVideo2}
+                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_feature_2.mp4`}
                             subtitle={`Live Preview`}
                             bodyText={`See exactly how your blog will look when published. With real-time updates, your edits are instantly reflected as you write, making it easy to fine-tune layout and content.`}
                         />
                         <FeaturePanel
-                            dataSrc={featureVideo3}
+                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_feature_3.mp4`}
                             subtitle={`Join the Conversation`}
                             bodyText={`Engage with others by commenting on blogs or replying to someone else. Whether you're sharing thoughts, asking questions, or continuing a discussion, it's a simple way to connect and exchange your ideas.`}
                         />
