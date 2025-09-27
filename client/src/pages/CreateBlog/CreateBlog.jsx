@@ -202,6 +202,7 @@ const CreateBlog = () => {
         // Close the preview if window reference is valid and the tab is still open
         } else {
             previewWindowRef.current.close()
+            setPreviewOpen(false)
         }
         // eslint-disable-next-line 
     }, [title, content])
@@ -290,7 +291,9 @@ const CreateBlog = () => {
         }
     }, [])
 
-    return(
+    if (content === null) return null
+    
+    return (
         <div className="create-blog">
             <h2 className="headline">
                 Create Your Blog

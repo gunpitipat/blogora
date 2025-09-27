@@ -47,9 +47,10 @@
     background-color: var(--neutral-color-light);
 }
 .features-section .feature-visual video {
-    display: block;
-    height: 100%;
+    aspect-ratio: 16 / 9;
     width: 100%;
+    display: block;
+    object-fit: cover;
     pointer-events: none;
 }
 .features-section .feature-content {
@@ -178,7 +179,6 @@
         display: none;
     }
     .features-section .feature-visual video {
-        width: fit-content;
         border-radius: 0.25rem;
         border-width: 1px;
     }
@@ -206,7 +206,7 @@
         min-width: 80vw;
     }
     .features-section .feature-visual video {
-        height: 340px;
+        width: 603px;
     }
 }
 @media (min-width: 1440px) {
@@ -232,7 +232,7 @@
         min-width: 1400px;
     }
     .features-section .feature-visual video {
-        height: 400px;
+        width: 709px;
     }
     .features-section .feature-content .feature-subtitle {
         font-size: 1.8rem;

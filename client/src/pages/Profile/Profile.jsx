@@ -2,13 +2,12 @@ import "./Profile.css"
 import api from "../../utils/api"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useParams, Link, useLocation } from "react-router-dom"
+import { useParams, useLocation } from "react-router-dom"
 import { useAuthContext } from "../../contexts/AuthContext"
 import { useAlertContext } from "../../contexts/AlertContext"
 import { useLoadingContext } from "../../contexts/LoadingContext"
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
-import BlogSnippet from "../../components/BlogSnippet/BlogSnippet"
+import ProfileContent from "./ProfileContent"
 
 const Profile = () => {
     const { username: usernameParam } = useParams()
@@ -76,39 +75,33 @@ const Profile = () => {
         const { signal } = controller
 
         const fetchData = async () => {
-            setLoading(true)
             setProfileExists(null)
             setUserData({ email: null, username: null })
             setUserBlogs([])
 
-            // Promise.allSettled() never rejects. It returns an array. catch block in fetchData() will never run.
-            // The rejected promise inside will store the error in reason instead of throwing it
-            try {
-                const [userDataResult, userBlogsResult] = await Promise.allSettled([ // Run both API requests concurrently, ensuring run to completion, even if one fails
-                    getUserData(signal), 
-                    getUserBlogs(signal)
-                ]) 
+            // Promise.allSettled() never rejects or throws errors. It returns an array.
+            // The rejected promise inside will store the error in reason instead of throwing it.
+            const [userDataResult, userBlogsResult] = await Promise.allSettled([ // Run both API requests concurrently, ensuring run to completion, even if one fails
+                getUserData(signal), 
+                getUserBlogs(signal)
+            ]) 
 
-                // Check if getUserData resolves successfully
-                if (userDataResult.status === "fulfilled" && userDataResult.value) { // Ensure userDataResult.value exists before accessing its properties
-                    setUserData({ email: userDataResult.value?.email || null, username: userDataResult.value?.username })
-                    setProfileExists(true)
-                } else if (userDataResult.status === "rejected") {
-                    // Verify it's an Axios error before checking its status code (404)
-                    if (axios.isAxiosError(userDataResult.reason) && userDataResult.reason.response?.status === 404) {
-                        setProfileExists(false) // Only set to false when getUserData fails with a 404
-                    } else {
-                    // Prevent users from getting stuck in LoadingScreen in case of network / server error
-                        setProfileExists(true) // Show a blank page with alert message
-                    }
+            // Check if getUserData resolves successfully
+            if (userDataResult.status === "fulfilled" && userDataResult.value) { // Ensure userDataResult.value exists before accessing its properties
+                setUserData({ email: userDataResult.value?.email || null, username: userDataResult.value?.username })
+                setProfileExists(true)
+            } else if (userDataResult.status === "rejected") {
+                // Verify it's an Axios error before checking its status code (404)
+                if (axios.isAxiosError(userDataResult.reason) && userDataResult.reason.response?.status === 404) {
+                    setProfileExists(false) // Only set to false when getUserData fails with a 404
+                } else {
+                // Prevent users from getting stuck in LoadingScreen in case of network / server error
+                    setProfileExists(true) // Show a blank page with alert message
                 }
+            }
 
-                if (userBlogsResult.status === "fulfilled" && userBlogsResult.value) {
-                    setUserBlogs(userBlogsResult.value)
-                }
-                
-            } finally {
-                setLoading(false)
+            if (userBlogsResult.status === "fulfilled" && userBlogsResult.value) {
+                setUserBlogs(userBlogsResult.value)
             }
         }
 
@@ -118,63 +111,24 @@ const Profile = () => {
         // eslint-disable-next-line
     }, [usernameParam])
 
-    if (profileExists === null) return <LoadingScreen />
-    if (profileExists === false) return <NotFound />
-    if (profileExists && userData.username) {
-        const hasNoBlogs = userBlogs.length === 0
-        const hasOneBlog = userBlogs.length === 1
-        const isOwnProfile = user?.username === userData.username
+    useEffect(() => {
+        setLoading(profileExists === null)
+        // eslint-disable-next-line
+    }, [profileExists])
 
-        return (
-            <div className={`profile ${hasNoBlogs ? "no-blog" : ""}`}>
-                <div className="container">
-                    <header>
-                        <h2 className="username">
-                            {userData.username}
-                        </h2>
-                        { isOwnProfile &&
-                            <p className="email">
-                                {userData.email}
-                            </p>
-                        }
-                    </header>
-                    <main className={hasOneBlog ? "single-blog" : ""}>
-                        { hasNoBlogs ? (
-                            <div className="profile-card">
-                                { isOwnProfile ? (
-                                    <>
-                                        <p>You do not have any blogs.</p>
-                                        <Link to="/create">
-                                            <h4>Create Your Blog</h4>
-                                        </Link>
-                                    </>
-                                ) : (
-                                    <>
-                                        <p>No blogs here yet!</p>
-                                        <Link to="/explore">
-                                            <h4>Explore other blogs instead?</h4>
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        ) : (
-                            userBlogs.map((blog, index) => (
-                                <Link to={`/blog/${blog.slug}`}
-                                    key={index} 
-                                    className="profile-card link" 
-                                >
-                                    <BlogSnippet 
-                                        blog={blog} 
-                                        disableInnerLink 
-                                    />
-                                </Link>
-                            ))
-                        )}
-                    </main>
-                </div>
-            </div>
-        )
-    }
+    return (
+        <>
+            { profileExists === false && <NotFound /> }
+
+            { profileExists && userData.username && 
+                <ProfileContent 
+                    userData={userData}
+                    userBlogs={userBlogs}
+                    isOwnProfile={user?.username === userData.username}
+                />
+            }
+        </>
+    )
 }
 
 export default Profile

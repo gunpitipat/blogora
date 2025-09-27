@@ -2,6 +2,7 @@ import { useRef } from "react"
 
 const QuickTipCard = ({ 
     children,
+    poster,
     dataSrc, 
     content, 
     icon, 
@@ -49,6 +50,7 @@ const QuickTipCard = ({
                 <div className="card-visual">
                     <video
                         ref={videoRef}
+                        poster={poster}
                         muted loop playsInline
                         preload="metadata" data-src={dataSrc} // For lazy loading
                     >

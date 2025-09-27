@@ -3,12 +3,12 @@ import { useRef } from "react";
 import { useNavigate } from "react-router-dom"
 import { useAuthContext } from "../../contexts/AuthContext";
 import { motion, useScroll, useTransform } from "framer-motion"
-import blogora_user from "../../assets/images/blogora_user.png"
+import blogora_user from "../../assets/images/blogora-user.png"
 import TryDemoButton from "./TryDemoButton";
 import { GoCommentDiscussion } from "react-icons/go";
 import { TbMessageUser } from "react-icons/tb";
 
-const Reminder = ({ setTryDemoLoading }) => {
+const Reminder = () => {
     const visualRef = useRef(null)
     const { scrollYProgress } = useScroll({
         target: visualRef,
@@ -25,7 +25,7 @@ const Reminder = ({ setTryDemoLoading }) => {
         <section className="reminder">
             <div className="container">
                 <div className="reminder-visual" ref={visualRef}>
-                    <img src={blogora_user} alt="blogora_user" />
+                    <img src={blogora_user} alt="blogora-user" />
 
                     <motion.div className="bubble-icon left" style={{ y: leftY }}>
                         <GoCommentDiscussion />
@@ -50,7 +50,7 @@ const Reminder = ({ setTryDemoLoading }) => {
                                     <span className="content-sm-split"><br /></span>
                                     without signing up.
                                 </p>
-                                <TryDemoButton setTryDemoLoading={setTryDemoLoading} />
+                                <TryDemoButton />
                             </div>
                     }
                 </div>

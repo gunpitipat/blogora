@@ -8,7 +8,7 @@ A full-stack web app where users can create blogs, explore community posts, and 
 
 ## Preview
 
-![Blogora landing page preview](./client/src/assets/images/blogora_preview.gif)
+![Blogora landing page preview](./client/src/assets/images/blogora-preview.gif)
 
 ## Features
 - **Demo Mode** — Try Blogora with a temporary account, allowing visitors to explore all features without signing up.

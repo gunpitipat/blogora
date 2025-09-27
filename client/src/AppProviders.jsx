@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LoadingProvider } from './contexts/LoadingContext'
 import { AlertProvider } from './contexts/AlertContext'
 import { AuthProvider } from './contexts/AuthContext'
@@ -11,16 +11,28 @@ const AppProviders = () => {
     const [isChecking, setIsChecking] = useState(true)
     const [isHealthy, setIsHealthy] = useState(false)
     const [loadingStage, setLoadingStage] = useState(0)
+    const controllerRef = useRef(null) // Holds the latest AbortController to cancel pending request on remount
+    const activeGenRef = useRef(null) // Track the current effect generation to stop stale retry loop after remount
 
     // Wait for server waking up on free hosting plans
     useEffect(() => {
-        let timeout
+        let timerAbort
+        let timerRetry
         let retries = 0
-        const maxRetries = 12 // 120s = 2min limit
-        const delay = 10000 // 10s
-        const controller = new AbortController()
+        const maxRetries = 5
+        const retryDelay = 5000 // 5s
+        
+        const gen = Date.now()
+        activeGenRef.current = gen
 
         const wakeServer = async () => {
+            if (gen !== activeGenRef.current) return
+            controllerRef.current?.abort() // Abort any stale pending request if any
+            const controller = new AbortController()
+            controllerRef.current = controller
+
+            timerAbort = setTimeout(() => {
+                controller.abort()}, 12000) // 12s
             try {
                 // Ping backend directly without Vercel rewriting
                 // to prevent Vercel from responding 502 if Render takes too long to wake server.
@@ -33,14 +45,15 @@ const AppProviders = () => {
                 
                 setIsHealthy(true)
                 setIsChecking(false)
-                clearTimeout(timeout)
+                clearTimeout(timerAbort)
+                clearTimeout(timerRetry)
             
             } catch (err) {
-                if (err.name === "AbortError") return
-
+                clearTimeout(timerAbort)
                 retries++
                 if (retries < maxRetries) {
-                    timeout = setTimeout(wakeServer, delay)
+                    if (gen !== activeGenRef.current) return
+                    timerRetry = setTimeout(wakeServer, retryDelay)
                 } else {
                     setIsHealthy(false)
                     setIsChecking(false)
@@ -51,8 +64,9 @@ const AppProviders = () => {
         wakeServer()
 
         return () => {
-            clearTimeout(timeout)
-            controller.abort()
+            clearTimeout(timerAbort)
+            clearTimeout(timerRetry)
+            controllerRef.current?.abort()
         }
     }, [])
 
@@ -68,7 +82,12 @@ const AppProviders = () => {
         }
     }, [])
 
-    if (isChecking) return <LoadingScreen type="shimmer" stage={loadingStage} />
+    if (isChecking) return <LoadingScreen 
+                                isLoading={true}
+                                type="shimmer" 
+                                stage={loadingStage} 
+                            />
+                            
     if (!isHealthy) return <ServerError />
 
     return (

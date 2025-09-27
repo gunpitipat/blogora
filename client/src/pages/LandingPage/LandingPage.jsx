@@ -1,5 +1,5 @@
 import "./LandingPage.css"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { lazyLoadVideos } from "../../utils/lazyVideoLoader"
 import { TTL_MINUTES_BEFORE_LOGIN, LOGIN_BUFFER_MINUTES } from "../../utils/demoConstants";
@@ -8,10 +8,8 @@ import FeaturesSection from "./FeaturesSection";
 import QuickTipsSection from "./QuickTipsSection";
 import Reminder from "./Reminder"
 import Footer from "../../components/Layout/Footer"
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 
 const LandingPage = () => {
-    const [tryDemoLoading, setTryDemoLoading] = useState(false)
     const isMobile = useMediaQuery("(max-width: 768px)")
 
     useEffect(() => {
@@ -37,14 +35,10 @@ const LandingPage = () => {
 
     return (
         <div className="landing-page">
-            { tryDemoLoading && <LoadingScreen /> }
-            <HeroSection 
-                isMobile={isMobile} 
-                setTryDemoLoading={setTryDemoLoading} 
-            />
+            <HeroSection isMobile={isMobile} />
             <FeaturesSection isMobile={isMobile} />
             <QuickTipsSection />
-            <Reminder setTryDemoLoading={setTryDemoLoading} />
+            <Reminder />
             <Footer />
         </div>
     )

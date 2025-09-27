@@ -16,7 +16,7 @@ const QuickTipsSection = () => {
     const isDesktop = useMediaQuery("(min-width: 1200px)")
 
     useGSAP(() => {
-        gsap.from("#quicktips-headline", { opacity: 0, y: 10, duration: 0.75, ease: "power2.out", 
+        gsap.from("#quicktips-headline", { opacity: 0, y: 15, duration: 0.8, ease: "power2.out", 
             scrollTrigger: {
                 trigger: "#quicktips-headline",
                 start: "top 80%",
@@ -180,7 +180,8 @@ const QuickTipsSection = () => {
                 </h2>
                 <div className="quicktips-cards" id="quicktips-cards">
                     <QuickTipCard 
-                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_quicktip_1.mp4`}
+                        poster={`${process.env.PUBLIC_URL}/assets/images/blogora-quicktip-1-poster.jpg`}
+                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora-quicktip-1.mp4`}
                         content={
                             <p>
                                 To quickly <span>find blogs</span> that match your interests, use the search bar and type keywords in the title, content, or even an author's name.
@@ -192,7 +193,8 @@ const QuickTipsSection = () => {
                         pendingHideRef={pendingHideRef}
                     />
                     <QuickTipCard
-                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_quicktip_2.mp4`}
+                        poster={`${process.env.PUBLIC_URL}/assets/images/blogora-quicktip-2-poster.jpg`}
+                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora-quicktip-2.mp4`}
                         content={
                             <p>
                                 Click an author's name to <span>visit</span> their <span>profile</span> and explore all the blogs they've published in one place.
@@ -210,7 +212,8 @@ const QuickTipsSection = () => {
                         }
                     </QuickTipCard>
                     <QuickTipCard
-                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_quicktip_3.mp4`}
+                        poster={`${process.env.PUBLIC_URL}/assets/images/blogora-quicktip-3-poster.jpg`}
+                        dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora-quicktip-3.mp4`}
                         content={
                             <p>
                                 Use the link toggle tool with or without text selection to <span>insert, remove,</span> or <span>customize links</span> with optional display text.

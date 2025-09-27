@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom"
+import { useAuthContext } from "../../contexts/AuthContext"
 import { useLoadingContext } from "../../contexts/LoadingContext"
 import Alert from "../Alert/Alert"
 import LoadingScreen from "../LoadingScreen/LoadingScreen"
@@ -8,12 +9,15 @@ import SessionExpiration from "../Modals/SessionExpiration"
 
 const Layout = () => {
     const { loading } = useLoadingContext()
+    const { isAuthChecked } = useAuthContext()
+    
+    if (!isAuthChecked) return null
     
     return (
         <div>
             <ScrollToTop />
             <Navbar />
-            { loading && <LoadingScreen /> }
+            <LoadingScreen isLoading={loading} />
             <SessionExpiration /> {/* Session expiration modal */}
             <Outlet /> {/* Render nested routes */}
             <Alert />

@@ -6,7 +6,6 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import { useAlertContext } from "../../contexts/AlertContext"
 import { useLoadingContext } from "../../contexts/LoadingContext"
 import { useAuthContext } from "../../contexts/AuthContext";
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
 import BlogContent from "./Blog/BlogContent"
 import BackToTopButton from "../../components/Buttons/BackToTopButton"
@@ -26,7 +25,7 @@ const BlogPage = () => {
     const [showReplyInput, setShowReplyInput] = useState([])
     const [viewReply, setViewReply] = useState([])
     const [commentTrigger, setCommentTrigger] = useState(false)
-    const [commentLoading, setCommentLoading] = useState(false) // Isolate comment loading state to avoid flickering with blog loading
+    const [commentLoading, setCommentLoading] = useState(false)
     const [showCommentOption, setShowCommentOption] = useState(null) // Track which comment's setting button is open
     const [showCommentModal, setShowCommentModal] = useState(null)
 
@@ -70,7 +69,6 @@ const BlogPage = () => {
         const { signal } = controller
 
         const fetchBlog = async () => {
-            setLoading(true)
             setBlogExists(null) // Reset old value before making a new request to prevent flickering when navigating between valid/invalid slugs
             setBlog(null) // Reset blog data to prevent old content from showing
             
@@ -89,9 +87,6 @@ const BlogPage = () => {
                     // Prevent users from getting stuck in LoadingScreen in case of network / server error
                     setBlogExists(true) // Show a blank page with alert message
                 } 
-
-            } finally {
-                setLoading(false);
             }
         }
 
@@ -420,60 +415,66 @@ const BlogPage = () => {
         }
     }, [])
 
-    if (blogExists === null) return <LoadingScreen />
-    if (blogExists === false) return <NotFound />
-    if (blogExists && blog) {
-        return (
-            <div className="blog-page">
-                <BlogContent 
-                    title={blog.title}
-                    content={blog.content}
-                    author={blog.author?.username}
-                    createdDate={blog.createdAt}
-                    slug={blog.slug}
-                    onDelete={deleteBlog}
-                />
-                <AddComment 
-                    showCommentInput={showCommentInput}
-                    toggleCommentInput={toggleCommentInput}
-                    onSend={onSendComment}
-                />
-                <section className={`comments ${memoizedComments.length === 0 ? "no-children" : ""}`}>                    
-                    {memoizedComments.map(comment => (
-                        <Comment 
-                            key={comment._id} 
-                            // Comment and Reply
-                            comment={comment}
-                            replies={comment.replies}
-                            // Reply Input
-                            toggleReplyInput={toggleReplyInput} 
-                            isReplyInputOpen={comment.replyInput}
-                            showReplyInput={showReplyInput} // For adding reply-input state to each reply when creating `memoizedReplies`
-                            // View/Hide Reply
-                            viewReply={viewReply}
-                            setViewReply={setViewReply}
-                            nestedStructure={nestedComments}
-                            getAllRelatedReplies={getAllRelatedReplies} 
-                            blogAuthor={blog.author?.username} // Show author icon next to username if commenter is the blog author
-                            level={comment.level} // Style based on comment nesting level
-                            onSendComment={onSendComment} // Create Reply
-                            // Comment Deletion and Modal
-                            showCommentOption={showCommentOption}
-                            setShowCommentOption={setShowCommentOption}
-                            toggleCommentOption={toggleCommentOption}
-                            showCommentModal={showCommentModal}
-                            setShowCommentModal={setShowCommentModal}
-                            setCommentTrigger={setCommentTrigger}
-                            setCommentLoading={setCommentLoading}
-                        />
-                    ))}
-                </section>
-                { commentLoading && <LoadingScreen /> }
-                <BackToTopButton />
-                <Footer />
-            </div>
-        )
-    }
+    useEffect(() => {
+        setLoading(blogExists === null || commentLoading)
+        // eslint-disable-next-line
+    }, [blogExists, commentLoading])
+
+    return (
+        <>
+            { blogExists === false && <NotFound /> }
+
+            { blogExists && blog && 
+                <div className="blog-page">
+                    <BlogContent 
+                        title={blog.title}
+                        content={blog.content}
+                        author={blog.author?.username}
+                        createdDate={blog.createdAt}
+                        slug={blog.slug}
+                        onDelete={deleteBlog}
+                    />
+                    <AddComment 
+                        showCommentInput={showCommentInput}
+                        toggleCommentInput={toggleCommentInput}
+                        onSend={onSendComment}
+                    />
+                    <section className={`comments ${memoizedComments.length === 0 ? "no-children" : ""}`}>                    
+                        {memoizedComments.map(comment => (
+                            <Comment 
+                                key={comment._id} 
+                                // Comment and Reply
+                                comment={comment}
+                                replies={comment.replies}
+                                // Reply Input
+                                toggleReplyInput={toggleReplyInput} 
+                                isReplyInputOpen={comment.replyInput}
+                                showReplyInput={showReplyInput} // For adding reply-input state to each reply when creating `memoizedReplies`
+                                // View/Hide Reply
+                                viewReply={viewReply}
+                                setViewReply={setViewReply}
+                                nestedStructure={nestedComments}
+                                getAllRelatedReplies={getAllRelatedReplies} 
+                                blogAuthor={blog.author?.username} // Show author icon next to username if commenter is the blog author
+                                level={comment.level} // Style based on comment nesting level
+                                onSendComment={onSendComment} // Create Reply
+                                // Comment Deletion and Modal
+                                showCommentOption={showCommentOption}
+                                setShowCommentOption={setShowCommentOption}
+                                toggleCommentOption={toggleCommentOption}
+                                showCommentModal={showCommentModal}
+                                setShowCommentModal={setShowCommentModal}
+                                setCommentTrigger={setCommentTrigger}
+                                setCommentLoading={setCommentLoading}
+                            />
+                        ))}
+                    </section>
+                    <BackToTopButton />
+                    <Footer />
+                </div>
+            }
+        </>
+    )
 }
 
 export default BlogPage

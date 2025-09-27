@@ -1,10 +1,14 @@
 import "./LoadingScreen.css"
 import clsx from "clsx"
 
-const LoadingScreen = ({ type = "spinner", stage = 0 }) => {
+const LoadingScreen = ({ 
+    isLoading,
+    type = "spinner", 
+    stage = 0 
+}) => {
     if (type === "shimmer") {
         return (
-            <div className="loading-overlay">
+            <div className={`loading-overlay ${isLoading ? "active" : ""}`}>
                 <div className="loading-wrapper">
                     <p className="loading-headline">
                         Server waking up...
@@ -31,7 +35,7 @@ const LoadingScreen = ({ type = "spinner", stage = 0 }) => {
     }
 
     return (
-        <div className="loading-overlay">
+        <div className={`loading-overlay ${isLoading ? "active" : ""}`}>
             <div className="loading-spinner" />
         </div>
     )

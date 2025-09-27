@@ -9,7 +9,8 @@ const AuthContext = createContext()
 export const useAuthContext = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null) // Initially null -> shows loading screen in protected routes
+    const [isAuthChecked, setIsAuthChecked] = useState(false) // Flag to indicate whether initial auth check has completed before showing UI
+    const [isAuthenticated, setIsAuthenticated] = useState(null)
     const [user, setUser] = useState(null)
     const [sessionExpired, setSessionExpired] = useState(false)
     const loggingOutRef = useRef(false)
@@ -19,7 +20,6 @@ export const AuthProvider = ({ children }) => {
     const { setAlertState } = useAlertContext()
 
     const checkAuth = useCallback(async () => {
-        setLoading(true)
         try {
             const response = await api.get("/check-auth")
             setIsAuthenticated(response.data.isAuthenticated)
@@ -28,15 +28,16 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             setIsAuthenticated(false)
             setUser(null)
-
-        } finally {
-            setLoading(false)
         }
         // eslint-disable-next-line
     }, [])
     
+    // Check if the session is still valid once the app loads or is refreshed
     useEffect(() => {
-        checkAuth() // Checking if the session is still valid once the app loads or is refreshed
+        (async () => {
+            await checkAuth()
+            setIsAuthChecked(true)
+        })()
         // eslint-disable-next-line
     }, [])
 
@@ -111,8 +112,18 @@ export const AuthProvider = ({ children }) => {
         // eslint-disable-next-line
     }, [isAuthenticated])
 
-    return ( // When using user.username as a condition for rendering UI, use optional chaining (user?.username) to prevent errors where user might be null or undefined initially
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, checkAuth, sessionExpired, setSessionExpired, logout }}>
+    return ( // NOTE: When using user.username as a condition for rendering UI, use optional chaining (user?.username) to prevent errors where user might be null or undefined initially
+        <AuthContext.Provider value={{ 
+            isAuthChecked,
+            isAuthenticated, 
+            setIsAuthenticated, 
+            user, 
+            setUser, 
+            checkAuth, 
+            sessionExpired, 
+            setSessionExpired, 
+            logout 
+        }}>
             {children}
         </AuthContext.Provider>
     ) 

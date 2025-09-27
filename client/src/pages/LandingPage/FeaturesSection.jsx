@@ -12,11 +12,24 @@ const FeaturesSection = ({ isMobile }) => {
     const wrapperRef = useRef(null)
 
     useGSAP(() => {
-        gsap.from("#features-headline", { opacity: 0, y: 10, duration: 0.75, ease: "power2.out", 
+        gsap.from("#features-headline", { opacity: 0, y: 15, duration: 0.8, ease: "power2.out", 
             scrollTrigger: {
                 trigger: "#features-headline",
                 start: "top 80%",
-                toggleActions: "play none none none"
+                toggleActions: "play none none none",
+                onEnter: () => {
+                    // Preload video 2 & 3
+                    const videos = document.querySelectorAll(".feature-panel video")
+                    videos.forEach((video, i) => {
+                        if (i === 1 || i === 2) {
+                            const src = video.dataset.src
+                            if (src && !video.src) {
+                                video.src = src
+                                video.load()
+                            }
+                        }
+                    })
+                }
             }
         })
         gsap.from("#features-animate-in", { opacity: 0, x: 25, duration: 0.75, ease: "power2.out", 
@@ -205,17 +218,20 @@ const FeaturesSection = ({ isMobile }) => {
                     <div className="features-wrapper" ref={wrapperRef}>
                         <FeaturePanel 
                             isFirst
-                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_feature_1.mp4`}
+                            poster={`${process.env.PUBLIC_URL}/assets/images/blogora-feature-1-poster.jpg`}
+                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora-feature-1.mp4`}
                             subtitle={`Create Your Blog`}
                             bodyText={`Compose your thoughts and format your content with a rich text editor designed to help you express ideas freely whether by making your blog more structured, adding your style, or keeping it simple.`}
                         />
                         <FeaturePanel
-                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_feature_2.mp4`}
+                            poster={`${process.env.PUBLIC_URL}/assets/images/blogora-feature-2-poster.jpg`}
+                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora-feature-2.mp4`}
                             subtitle={`Live Preview`}
                             bodyText={`See exactly how your blog will look when published. With real-time updates, your edits are instantly reflected as you write, making it easy to fine-tune layout and content.`}
                         />
                         <FeaturePanel
-                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora_feature_3.mp4`}
+                            poster={`${process.env.PUBLIC_URL}/assets/images/blogora-feature-3-poster.jpg`}
+                            dataSrc={`${process.env.PUBLIC_URL}/assets/videos/blogora-feature-3.mp4`}
                             subtitle={`Join the Conversation`}
                             bodyText={`Engage with others by commenting on blogs or replying to someone else. Whether you're sharing thoughts, asking questions, or continuing a discussion, it's a simple way to connect and exchange your ideas.`}
                         />

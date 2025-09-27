@@ -3,9 +3,9 @@ import parse from "html-react-parser"
 import { useState, useEffect } from "react"
 import { useLocation, useParams } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { useLoadingContext } from "../../contexts/LoadingContext";
 import { formatDayMonth } from "../../utils/formatDateUtils";
 import { handleEmptyLine } from "../../utils/contentUtils";
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
 import NotFound from "../NotFound/NotFound";
 import PopupAlert from "../../components/Popups/PopupAlert";
 import Footer from "../../components/Layout/Footer";
@@ -20,6 +20,7 @@ const Preview = () => {
 
     const location = useLocation()
     const { user } = useAuthContext()
+    const { setLoading } = useLoadingContext()
 
     // Validate and set a flag when preview opens
     useEffect(() => {        
@@ -116,7 +117,11 @@ const Preview = () => {
         if (sessionValid === false) setShowPopupAlert(true)
     }, [sessionValid])
 
-    if (sessionValid === null) return <LoadingScreen />
+    useEffect(() => {
+        setLoading(sessionValid === null)
+        // eslint-disable-next-line
+    }, [sessionValid])
+
     if (sessionValid === false && !sessionStorage.getItem("previewData")) {
         return <NotFound /> // When a user directly accesses /preview/random-slug
     }

@@ -12,7 +12,7 @@ import { useGSAP } from "@gsap/react"
 import { ScrollToPlugin, ScrollTrigger } from "gsap/all";
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
-const HeroSection = ({ isMobile, setTryDemoLoading }) => {
+const HeroSection = ({ isMobile }) => {
     const [hideScrollHint, setHideScrollHint] = useState(false)
     const isSmallScreen = useMediaQuery("(max-width: 550px)")
     const { isAuthenticated, user } = useAuthContext()
@@ -26,10 +26,10 @@ const HeroSection = ({ isMobile, setTryDemoLoading }) => {
 
     // Animate elements
     useGSAP(() => {
-        gsap.from("#hero-headline", { opacity: 0, y: 5, ease: "power2.out" })
-        gsap.from("#hero-subtitle", { opacity: 0, y: 5, duration: 1, delay: 0.2, ease: "power3.out" })
-        gsap.from(".hero-cta", { opacity: 0, y: 8, ease: "power2.out" })
-        // gsap.from("#blogora-globe", { scale: 0.97, duration: 1, ease: "power3.out" })
+        gsap.from("#hero-headline", { opacity: 0, y: 15, duration: 0.8, ease: "power2.out" })
+        gsap.from("#hero-subtitle", { opacity: 0, y: 15, duration: 1, delay: 0.2, ease: "power3.out" })
+        gsap.from(".hero-cta", { opacity: 0, y: 20, duration: 0.8, ease: "power2.out" })
+        gsap.from("#blogora-globe", { scale: 0.98, duration: 1.25, ease: "back.out(1)" })
         gsap.from("#orbit", { opacity: 0, duration: 0.5, ease: "power3.out" })
         gsap.from("#scroll-hint", { opacity: 0, duration: 1.75, delay: 1, ease: "power4.in" })
         ScrollTrigger.create({
@@ -56,7 +56,7 @@ const HeroSection = ({ isMobile, setTryDemoLoading }) => {
                 scale: 0.75,
                 duration: 0.5,
                 delay,
-                ease: "back.out(1.1)"
+                ease: "back.out(1)"
             })
         })
     }, [])
@@ -109,15 +109,15 @@ const HeroSection = ({ isMobile, setTryDemoLoading }) => {
                             ?   <button onClick={() => navigate("/create")}>
                                     Create Blog
                                 </button>
-                            :   <TryDemoButton setTryDemoLoading={setTryDemoLoading} /> 
+                            :   <TryDemoButton /> 
                         }
                     </div>
                 </div>
 
                 <div className="hero-visual">
                     <div className="globe-container">
-                        <img src={`${process.env.PUBLIC_URL}/assets/images/blogora_globe.png`}
-                            alt="blogora_globe" 
+                        <img src={`${process.env.PUBLIC_URL}/assets/images/blogora-globe.png`}
+                            alt="blogora-globe" 
                             className="blogora-globe" 
                             id="blogora-globe" 
                         />

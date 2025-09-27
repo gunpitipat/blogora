@@ -3,15 +3,17 @@ import api from "../../utils/api";
 import { useNavigate } from "react-router-dom"
 import { useAlertContext } from "../../contexts/AlertContext";
 import { useDemoContext } from "../../contexts/DemoContext"
+import { useLoadingContext } from "../../contexts/LoadingContext";
 import { TTL_MINUTES_BEFORE_LOGIN, LOGIN_BUFFER_MINUTES } from "../../utils/demoConstants";
 
-const TryDemoButton = ({ setTryDemoLoading }) => {
+const TryDemoButton = () => {
     const { setAlertState } = useAlertContext()
     const { setPrefillDemo, setShowDemoPopup } = useDemoContext()
+    const { setLoading } = useLoadingContext()
     const navigate = useNavigate()
 
     const handleTryDemo = async () => {
-        setTryDemoLoading(true)
+        setLoading(true)
         try {
             let demoCredentials = null
             let reuseCredentials = false
@@ -39,7 +41,7 @@ const TryDemoButton = ({ setTryDemoLoading }) => {
                 createdAt: isSameUser ? demoCredentials.createdAt : Date.now() // Timestamp to check for reuse
             }))
 
-            setTryDemoLoading(false)
+            setLoading(false)
             setPrefillDemo(true)
             setShowDemoPopup(true)
             navigate("/login")
@@ -52,7 +54,7 @@ const TryDemoButton = ({ setTryDemoLoading }) => {
             }
         
         } finally {
-            setTryDemoLoading(false)
+            setLoading(false)
         }
     }
 

@@ -1,5 +1,6 @@
 const FeaturePanel = ({ 
     isFirst = false, 
+    poster,
     dataSrc, 
     subtitle, 
     bodyText
@@ -8,6 +9,7 @@ const FeaturePanel = ({
         <div className="feature-panel">
             <div className="feature-visual">
                 <video
+                    poster={poster}
                     autoPlay={isFirst}
                     muted loop playsInline
                     preload="metadata" data-src={dataSrc} // For lazy loading

@@ -8,7 +8,6 @@ import { useAuthContext } from "../../contexts/AuthContext"
 import { useLoadingContext } from "../../contexts/LoadingContext" 
 import { cleanEditorContent } from "../../utils/contentUtils"
 import { debounce } from "lodash"
-import LoadingScreen from "../../components/LoadingScreen/LoadingScreen"
 import NotFound from "../NotFound/NotFound"
 import ContentEditor from "../../components/TextEditor/ContentEditor";
 import BlogFormButtons from "../../components/BlogFormButtons/BlogFormButtons"
@@ -60,7 +59,6 @@ const EditBlog = () => {
 
         const fetchBlog = async () => {
             try {
-                setLoading(true)
                 setBlogExists(null)
                 setTitle("")
                 setContent(null)
@@ -82,9 +80,6 @@ const EditBlog = () => {
                     setAlertState({ display: true, type: "error", message: error.response?.data?.message || "Something went wrong. Please try again." })
                     setBlogExists(false)
                 }
-
-            } finally {
-                setLoading(false)
             }
         }
 
@@ -137,6 +132,7 @@ const EditBlog = () => {
         // Close the preview if window reference is valid and the tab is still open
         } else {
             previewWindowRef.current.close()
+            setPreviewOpen(false)
         }
         // eslint-disable-next-line 
     }, [title, content])
@@ -225,60 +221,74 @@ const EditBlog = () => {
         }
     }, [])
 
-    if (blogExists === null) return <LoadingScreen />
-    if (blogExists === false) return <NotFound />
-    if (author !== null && user?.username !== author) return <Navigate to={`/blog/${slug}`} />
+    useEffect(() => {
+        setLoading(blogExists === null)
+        // eslint-disable-next-line
+    }, [blogExists])
 
-    return(
-        <div className="edit-blog">
-            <h2 className="headline">
-                Edit Your Blog
-            </h2>
-            <form onSubmit={handleFormSubmit}>
-                <div className="title-editor">
-                    <label className={`form-label ${labels.titleLabel ? "active" : ""}`}>
-                        Title
-                        { labels.titleLabel && 
-                            <span className="pen-icon">
-                                <FaPen />
-                            </span>
-                        }
-                    </label>
-                    <input 
-                        type="text" 
-                        value={title} 
-                        onFocus={() => focusLabel("titleLabel")}
-                        onBlur={() => setLabels(initialLabels)}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                </div>
-                <ContentEditor 
-                    content={content}
-                    setContent={setContent}
-                    submit={submit} 
-                    setSubmit={setSubmit}
-                    isLabelActive={labels.contentLabel}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                />
-                <BlogFormButtons 
-                    firstBtnLabel="Discard"
-                    onFirstClick={handleDiscard}
-                    previewOpen={previewOpen}
-                    previewBlog={previewBlog}
-                    thirdBtnLabel="Update"  
-                />
-            </form>
+    return (
+        <>
+            { blogExists === false && <NotFound /> }
 
-            {/* If preview couldn't open */}
-            { showPopupAlert && 
-                <PopupAlert
-                    popupContent={`Please allow pop-ups for this site in your browser settings to use the preview feature.`}
-                    showPopupAlert={showPopupAlert}
-                    setShowPopupAlert={setShowPopupAlert}
-                />
-            } 
-        </div>
+            { author !== null && user?.username !== author &&
+                <Navigate to={`/blog/${slug}`} />
+            }
+   
+            {   blogExists && 
+                author === user?.username && 
+                content !== null &&
+                
+                    <div className="edit-blog">
+                        <h2 className="headline">
+                            Edit Your Blog
+                        </h2>
+                        <form onSubmit={handleFormSubmit}>
+                            <div className="title-editor">
+                                <label className={`form-label ${labels.titleLabel ? "active" : ""}`}>
+                                    Title
+                                    { labels.titleLabel && 
+                                        <span className="pen-icon">
+                                            <FaPen />
+                                        </span>
+                                    }
+                                </label>
+                                <input 
+                                    type="text" 
+                                    value={title} 
+                                    onFocus={() => focusLabel("titleLabel")}
+                                    onBlur={() => setLabels(initialLabels)}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
+                            </div>
+                            <ContentEditor 
+                                content={content}
+                                setContent={setContent}
+                                submit={submit} 
+                                setSubmit={setSubmit}
+                                isLabelActive={labels.contentLabel}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                            />
+                            <BlogFormButtons 
+                                firstBtnLabel="Discard"
+                                onFirstClick={handleDiscard}
+                                previewOpen={previewOpen}
+                                previewBlog={previewBlog}
+                                thirdBtnLabel="Update"  
+                            />
+                        </form>
+
+                        {/* If preview couldn't open */}
+                        { showPopupAlert && 
+                            <PopupAlert
+                                popupContent={`Please allow pop-ups for this site in your browser settings to use the preview feature.`}
+                                showPopupAlert={showPopupAlert}
+                                setShowPopupAlert={setShowPopupAlert}
+                            />
+                        } 
+                    </div>
+            }
+        </>
     )
 }
 
