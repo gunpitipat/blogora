@@ -15,7 +15,7 @@ export const lazyLoadVideos = () => {
         })
     }, {
         threshold: 0,
-        rootMargin: "200px 0px"
+        rootMargin: "300px 0px"
     })
 
     videos.forEach(video => observer.observe(video))

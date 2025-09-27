@@ -9,6 +9,7 @@
     /* Positioning context for Footer */
     position: relative;
     padding-bottom: 23px; /* Footer height */
+    overflow-anchor: none; /* Prevent browser scroll anchoring (fixes jump on mobile) */
 }
 .landing-page section {
     width: 100vw;
