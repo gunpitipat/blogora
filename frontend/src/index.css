@@ -16,6 +16,10 @@
   --link-text-color: #543A14; /* rgb(84, 58, 20) */
   /* Text Styles */
   --body: "Host Grotesk", sans-serif;
+  /* Layout */
+  --max-screen-width: 1512px;
+  --max-screen-height: 900px;
+  --navbar-height: 80px;
 }
 * {
   box-sizing: border-box;
@@ -24,7 +28,7 @@
   font-family: var(--body);
 }
 body {
-  padding-top: 80px; /* Navbar spacing */
+  padding-top: var(--navbar-height);
   background-color: var(--neutral-color-light);
   font-synthesis: none;
   text-rendering: optimizeLegibility;

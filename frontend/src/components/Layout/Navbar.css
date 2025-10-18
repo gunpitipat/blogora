@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 80px;
+    height: var(--navbar-height);
     background: var(--primary-color);
     display: flex;
     padding: 0 1rem;
@@ -139,7 +139,7 @@
     pointer-events: none;
 }
 
-/* Mobile */
+/* Sidebar on mobile */
 @media (max-width: 768px) {
     .menu-icon-overlay {
         width: calc(0.85rem + 23px + 0.85rem); /* 23px is an integer of icon width */
@@ -170,7 +170,8 @@
     .navbar {
         left: -220px; /* Initially hidden */
         width: 220px;
-        height: 100vh;
+        height: 100dvh;
+        padding-bottom: env(safe-area-inset-bottom, 0);
         display: flex;
         align-items: flex-start;
         transition: left 0.2s ease-in-out;

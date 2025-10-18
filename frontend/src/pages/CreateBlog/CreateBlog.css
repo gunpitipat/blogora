@@ -16,7 +16,7 @@
     gap: 1.25rem;
     padding-block: 1rem 0.5rem;
 }
-.create-blog form>* { /* .title-editor, .content-editor, .blog-form-btns */
+.create-blog form>* { /* .title-editor, .text-editor, .blog-form-btns */
     width: 100%;
 }
 .create-blog .title-editor {

@@ -30,7 +30,7 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere; /* Break long content or @username when needed */
     word-break: break-word; /* Fallback */
-    max-height: 108px;
+    line-height: 1.313;
     overflow: hidden;
     transition: max-height 200ms ease-in-out;
 }

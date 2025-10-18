@@ -9,7 +9,7 @@ import { useLoadingContext } from "@/contexts/LoadingContext"
 import { cleanEditorContent } from "@/utils/contentUtils"
 import { debounce } from "lodash"
 import NotFound from "../NotFound/NotFound"
-import ContentEditor from "@/components/TextEditor/ContentEditor"
+import TextEditor from "@/components/TextEditor/TextEditor"
 import BlogFormButtons from "@/components/BlogFormButtons/BlogFormButtons"
 import PopupAlert from "@/components/Popups/PopupAlert"
 import { FaPen } from "react-icons/fa"
@@ -128,6 +128,7 @@ const EditBlog = () => {
                 setAlertState({ display: true, type: "error", message: "Preview couldn't open." })
             } else {
                 previewWindowRef.current = previewWindow
+                setPreviewOpen(true)
             }
         // Close the preview if window reference is valid and the tab is still open
         } else {
@@ -233,59 +234,56 @@ const EditBlog = () => {
                 <Navigate to={`/blog/${slug}`} />
             }
    
-            {   blogExists && 
-                author === user?.username && 
-                content !== null &&
-                
-                    <div className="edit-blog">
-                        <h2 className="headline">
-                            Edit Your Blog
-                        </h2>
-                        <form onSubmit={handleFormSubmit}>
-                            <div className="title-editor">
-                                <label className={`form-label ${labels.titleLabel ? "active" : ""}`}>
-                                    Title
-                                    { labels.titleLabel && 
-                                        <span className="pen-icon">
-                                            <FaPen />
-                                        </span>
-                                    }
-                                </label>
-                                <input 
-                                    type="text" 
-                                    value={title} 
-                                    onFocus={() => focusLabel("titleLabel")}
-                                    onBlur={() => setLabels(initialLabels)}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                />
-                            </div>
-                            <ContentEditor 
-                                content={content}
-                                setContent={setContent}
-                                submit={submit} 
-                                setSubmit={setSubmit}
-                                isLabelActive={labels.contentLabel}
-                                onFocus={handleFocus}
-                                onBlur={handleBlur}
+            { blogExists && author === user?.username && 
+                <div className="edit-blog">
+                    <h2 className="headline">
+                        Edit Your Blog
+                    </h2>
+                    <form onSubmit={handleFormSubmit}>
+                        <div className="title-editor">
+                            <label className={`form-label ${labels.titleLabel ? "active" : ""}`}>
+                                Title
+                                { labels.titleLabel && 
+                                    <span className="pen-icon">
+                                        <FaPen />
+                                    </span>
+                                }
+                            </label>
+                            <input 
+                                type="text" 
+                                value={title} 
+                                onFocus={() => focusLabel("titleLabel")}
+                                onBlur={() => setLabels(initialLabels)}
+                                onChange={(e) => setTitle(e.target.value)}
                             />
-                            <BlogFormButtons 
-                                firstBtnLabel="Discard"
-                                onFirstClick={handleDiscard}
-                                previewOpen={previewOpen}
-                                previewBlog={previewBlog}
-                                thirdBtnLabel="Update"  
-                            />
-                        </form>
+                        </div>
+                        <TextEditor 
+                            content={content}
+                            setContent={setContent}
+                            submit={submit} 
+                            setSubmit={setSubmit}
+                            isLabelActive={labels.contentLabel}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                        />
+                        <BlogFormButtons 
+                            firstBtnLabel="Discard"
+                            onFirstClick={handleDiscard}
+                            previewOpen={previewOpen}
+                            previewBlog={previewBlog}
+                            thirdBtnLabel="Update"  
+                        />
+                    </form>
 
-                        {/* If preview couldn't open */}
-                        { showPopupAlert && 
-                            <PopupAlert
-                                popupContent={`Please allow pop-ups for this site in your browser settings to use the preview feature.`}
-                                showPopupAlert={showPopupAlert}
-                                setShowPopupAlert={setShowPopupAlert}
-                            />
-                        } 
-                    </div>
+                    {/* If preview couldn't open */}
+                    { showPopupAlert && 
+                        <PopupAlert
+                            popupContent={`Please allow pop-ups for this site in your browser settings to use the preview feature.`}
+                            showPopupAlert={showPopupAlert}
+                            setShowPopupAlert={setShowPopupAlert}
+                        />
+                    } 
+                </div>
             }
         </>
     )

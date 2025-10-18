@@ -21,6 +21,7 @@
 .profile .email {
     color: var(--neutral-color-dark);
     opacity: 0.5;
+    text-decoration: none;
 }
 .profile main {
     width: clamp(300px, 70vw, 600px);

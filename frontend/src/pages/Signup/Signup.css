@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 80px);
+    min-height: calc(100dvh - var(--navbar-height));
 }
 .signup .container {
     display: flex;
@@ -113,7 +113,7 @@
 
 @media (max-width: 768px) {
     .signup {
-        min-height: 100vh;
+        min-height: 100dvh;
     }
 }
 @media (max-width: 608px) {
@@ -139,4 +139,3 @@
 }
 
 /* © 2025 Pitipat Pattamawilai. All Rights Reserved. */
-

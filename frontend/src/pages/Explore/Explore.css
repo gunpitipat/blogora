@@ -1,6 +1,6 @@
 .explore {
   padding: 2rem 8rem 6rem;
-  min-height: 100vh; /* Make copyright footer off screen on short content page */
+  min-height: 100dvh; /* Make copyright footer off screen on short content page */
   position: relative; /* Reference for copyright and back-to-top button positioning */
 }
 

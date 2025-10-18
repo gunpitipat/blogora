@@ -7,7 +7,7 @@ import { useAuthContext } from "@/contexts/AuthContext"
 import { useLoadingContext } from "@/contexts/LoadingContext"
 import { cleanEditorContent } from "@/utils/contentUtils"
 import { debounce } from "lodash"
-import ContentEditor from "@/components/TextEditor/ContentEditor"
+import TextEditor from "@/components/TextEditor/TextEditor"
 import BlogFormButtons from "@/components/BlogFormButtons/BlogFormButtons"
 import Modal from "@/components/Modals/Modal"
 import PopupAlert from "@/components/Popups/PopupAlert"
@@ -198,6 +198,7 @@ const CreateBlog = () => {
                 setAlertState({ display: true, type: "error", message: "Preview couldn't open." })
             } else {
                 previewWindowRef.current = previewWindow
+                setPreviewOpen(true)
             }
         // Close the preview if window reference is valid and the tab is still open
         } else {
@@ -289,8 +290,6 @@ const CreateBlog = () => {
             localStorage.removeItem("previewOpen")
         }
     }, [])
-
-    if (content === null) return null
     
     return (
         <div className="create-blog">
@@ -315,7 +314,7 @@ const CreateBlog = () => {
                         onChange={(e) => setTitle(e.target.value)}
                     />
                 </div>
-                <ContentEditor 
+                <TextEditor 
                     content={content}
                     setContent={setContent}
                     submit={submit} 

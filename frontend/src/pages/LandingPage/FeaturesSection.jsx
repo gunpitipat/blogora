@@ -43,11 +43,14 @@ const FeaturesSection = ({ isMobile }) => {
 
     // Horizontal scroll
     useGSAP(() => {
+        const featuresWrapper = wrapperRef.current
+        const container = containerRef.current
+
+        if (!featuresWrapper || !container) return
+
         const panels = gsap.utils.toArray(".feature-panel")
         const videos = gsap.utils.toArray(".feature-panel video")
         const scrollDots = gsap.utils.toArray(".scroll-dot")
-        const featuresWrapper = wrapperRef.current
-        const container = containerRef.current
 
         let currentIndex = -1 // Track current visible panel
         let videoTimeout // Slight delay before playing/pausing video
@@ -75,13 +78,21 @@ const FeaturesSection = ({ isMobile }) => {
             }, 300)
         }
 
-        const setupScroll = () => {
-            if (!featuresWrapper || !container) return
-
+        const setupScroll = () => { 
             const horizontalDistance = featuresWrapper.scrollWidth - container.offsetWidth // Full content width - visible viewport width
-            container.style.marginBottom = horizontalDistance + "px" // Add vertical scroll space for GSAP to finish the full horizontal animation
-
-            gsap.to(".features-wrapper", {
+            
+            // Add vertical scroll space for GSAP to finish the full horizontal translation
+            let spacer = container.nextElementSibling
+            if (!spacer || !spacer.classList.contains("features-spacer")) {
+                spacer = document.createElement("div")
+                spacer.className = "features-spacer"
+                spacer.style.width = "100%"
+                spacer.style.pointerEvents = "none"
+                container.insertAdjacentElement("afterend", spacer)
+            }
+            spacer.style.height = horizontalDistance + "px"
+            
+            gsap.to(featuresWrapper, {
                 x: () => -1 * horizontalDistance,
                 ease: "none",
                 scrollTrigger: {
@@ -90,6 +101,8 @@ const FeaturesSection = ({ isMobile }) => {
                     start: "center center",
                     end: () => "+=" + horizontalDistance,
                     pin: true,
+                    pinSpacing: false,
+                    invalidateOnRefresh: true,
                     scrub: 0.5,
                     snap: {
                         snapTo: (progress) => {
@@ -119,6 +132,7 @@ const FeaturesSection = ({ isMobile }) => {
                 trigger: container,
                 start: "center center",
                 end: () => "+=" + horizontalDistance,
+                invalidateOnRefresh: true,
                 onEnter: () => {
                     if (hasPausedAtStart) return
                     hasPausedAtStart = true
@@ -144,6 +158,9 @@ const FeaturesSection = ({ isMobile }) => {
         // Initial setup
         setupScroll()
 
+        // Responsiveness
+        let prevWidth = featuresWrapper.scrollWidth
+
         const handleResize = debounce(() => {
             // Kill stale triggers
             ScrollTrigger.getAll().forEach(trigger => {
@@ -151,14 +168,23 @@ const FeaturesSection = ({ isMobile }) => {
             })
             // Recreate triggers
             setupScroll() 
-            // Recalculate and update everything after layout changes
+            // Recalculate and update after layout changes
             requestAnimationFrame(() => ScrollTrigger.refresh())
         }, 300)
 
-        window.addEventListener("resize", handleResize)
+        const observer = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                const newWidth = entry.target.scrollWidth
+                if (newWidth !== prevWidth) {
+                    handleResize()
+                    prevWidth = newWidth
+                }
+            }
+        })
+        observer.observe(featuresWrapper)
 
         return () => {
-            window.removeEventListener("resize", handleResize)
+            observer.disconnect()
             handleResize.cancel?.() // In case debounce is still pending
             clearTimeout(videoTimeout)
             ScrollTrigger.getAll().forEach(trigger => {
@@ -168,6 +194,10 @@ const FeaturesSection = ({ isMobile }) => {
             // may not fully clean up GSAP's internal Observer, likely created due to snap, scrub, or pin behavior.
             // A leftover Observer can leak to other pages and cause auto-scroll issues.
             // To avoid this, I kill both triggers at once to ensure full cleanup.
+            
+            // Remove spacer element
+            const spacer = container.nextElementSibling
+            if (spacer && spacer.classList.contains("features-spacer")) spacer.remove()
         }
     }, [])
 

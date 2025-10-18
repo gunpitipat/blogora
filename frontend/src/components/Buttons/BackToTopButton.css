@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     position: fixed;
-    right: -2rem;
+    right: 2rem;
     bottom: -2rem;
     font-size: 1.4rem;
     padding: 0.75rem 0.25rem;
@@ -11,12 +11,13 @@
     color: var(--accent-color);
     border: 1px solid var(--neutral-color-heavy);
     border-radius: 17px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
     cursor: pointer;
+    z-index: 4; /* Higher than comment setting button */
     pointer-events: none;
     opacity: 0;
 }
 .back-to-top-btn.show {
-    right: 2rem;
     bottom: 2.5rem;
     pointer-events: all;
     opacity: 0.75;
@@ -24,20 +25,8 @@
 }
 
 @media (max-width: 768px) {
-    .back-to-top-btn.show {
-        right: 1.4rem;
-        bottom: 2.2rem;
-        padding-inline: 0.2rem;
-    }
-}
-@media (max-width: 560px) {
-    .back-to-top-btn.show {
-        right: 1rem;
-    }
-}
-@media (max-width: 490px) {
-    .back-to-top-btn.show {
-        right: 0.75rem;
+    .back-to-top-btn {
+        padding-block: 0.9rem;
     }
 }
 

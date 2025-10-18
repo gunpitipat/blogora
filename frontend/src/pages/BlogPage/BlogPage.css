@@ -1,6 +1,6 @@
 .blog-page {
     padding: 3rem 8rem 6rem;
-    min-height: calc(100vh - 80px + 40px); /* Make copyright footer off screen on short content pages */
+    min-height: calc(100dvh - var(--navbar-height) + 40px); /* Make copyright footer off screen on short content pages */
     position: relative; /* Reference for copyright and back-to-top button positioning */
 }
 
@@ -15,8 +15,7 @@
 @media (max-width: 768px) {
     .blog-page {
         padding: calc(3rem + 3px) 6rem 6rem; /* top -> menu icon spacing */
-        position: relative;
-        min-height: calc(100vh + 40px); /* Make copyright footer off screen on short content pages */
+        min-height: calc(100dvh + 40px);
     }
 }
 @media (max-width: 672px) {

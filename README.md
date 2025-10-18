@@ -11,6 +11,7 @@ A full-stack web app where users can create blogs, explore community posts, and 
 ![Blogora landing page preview](./frontend/src/assets/images/blogora-preview.gif)
 
 ## Features
+
 - **Demo Mode** — Try Blogora with a temporary account, allowing visitors to explore all features without signing up.
 
 - **Blog Management (CRUD)** — Users can write blogs with a rich text editor, save drafts, publish, update, and delete them.
@@ -46,6 +47,16 @@ Blogora is built with the MERN stack and additional tools for authentication, te
 - Cookie-parser
 - Node-cron
 - Slugify
+
+## Deployment
+
+**Frontend**: Vercel
+
+**Proxy**: Vercel Edge Function
+
+**Backend**: Render (primary) and Koyeb (fallback)
+
+Note: When the proxy routes to Koyeb, it usually means the Render free instance didn't wake up. Since Koyeb runs in Frankfurt, responses may have slightly higher latency during fallback.
 
 ## Read More
 

@@ -1,7 +1,8 @@
 /* Stacked layout (mobile-first) */
 .features-section {
-    height: auto; /* Allows dynamic height to respect .container's bottom margin for horizontal scroll */
-    overflow-x: hidden;
+    height: auto; /* Allows dynamic height to respect spacer element for horizontal scroll */
+    overflow: hidden;
+    overflow-anchor: none; /* Prevent browser scroll anchoring conflict with GSAP ScrollTrigger */
 }
 .features-section .container {
     width: 100%;

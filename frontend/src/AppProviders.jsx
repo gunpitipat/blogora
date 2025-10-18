@@ -48,8 +48,8 @@ const AppProviders = () => {
 
         let attempt = 1
         const maxAttempt = 2
-        const TIMEOUT_FIRST = 40000
-        const TIMEOUT_FINAL = 45000
+        const TIMEOUT_FIRST = 45000
+        const TIMEOUT_FINAL = 50000
 
         const gen = Date.now()
         activeGenRef.current = gen

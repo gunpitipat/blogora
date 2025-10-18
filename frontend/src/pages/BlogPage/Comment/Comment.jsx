@@ -4,6 +4,7 @@ import clsx from "clsx"
 import { useState, useEffect, useRef, memo, useMemo } from "react"
 import { useAuthContext } from "@/contexts/AuthContext"
 import { useAlertContext } from "@/contexts/AlertContext"
+import { getLineHeight } from "@/utils/layoutUtils"
 import CommentContent from "./CommentContent"
 import CommentSetting from "./CommentSetting"
 import CommentFooter from "./CommentFooter"
@@ -38,6 +39,8 @@ const Comment = memo(({
     const [isOverflowing, setIsOverflowing] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
     const contentRef = useRef(null)
+    const baseMaxHeightRef = useRef(84) // 84 is fallback for 4 line height
+    const isTransitioningRef = useRef(false)
 
     const { user } = useAuthContext()
     const { setAlertState } = useAlertContext()
@@ -98,35 +101,58 @@ const Comment = memo(({
         }
     }
 
-    // Expandable comment content with smooth transition
+    // Set base max height for comment content on mount
     useEffect(() => {
-        const checkOverflowing = () => {
-            if (contentRef.current) {
-                const BASE_MAX_HEIGHT = 108 // CSS default max-height
-                setIsOverflowing(contentRef.current.scrollHeight > BASE_MAX_HEIGHT)
-            } 
-        }
-
-        checkOverflowing()
-        window.addEventListener("resize", checkOverflowing)  // Recheck on resize as content may grow on narrower screens
-
-        return () => window.removeEventListener("resize", checkOverflowing)
-    }, [comment.content, isExpanded])
-
-    const toggleExpand = () => {
         const el = contentRef.current
         if (!el) return
 
-        const BASE_MAX_HEIGHT = 108
+        const MAX_LINES = 4
+        const lineHeight = getLineHeight(el)
+
+        baseMaxHeightRef.current =  Math.round(lineHeight * MAX_LINES) || baseMaxHeightRef.current
+        el.style.maxHeight = `${baseMaxHeightRef.current}px`
+    }, [comment.content])
+
+    // Expandable comment content with smooth transition
+    useEffect(() => {
+        const el = contentRef.current
+        if (!el) return
+
+        const checkOverflowing = () => {
+            setIsOverflowing(el.scrollHeight > baseMaxHeightRef.current)
+        }
+
+        checkOverflowing()
+
+        // Responsiveness
+        let prevWidth = Math.round(el.getBoundingClientRect().width)
+        const observer = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                const newWidth = Math.round(entry.contentRect.width)
+                if (prevWidth !== newWidth) {
+                    checkOverflowing()
+                    prevWidth = newWidth
+                }
+            }
+        })
+        observer.observe(el)
+
+        return () => observer.disconnect()
+    }, [comment.content])
+
+    const toggleExpand = () => {
+        const el = contentRef.current
+        if (!el || isTransitioningRef.current) return
 
         const handleTransitionEnd = () => {
             el.removeEventListener("transitionend", handleTransitionEnd)
-            if (!isExpanded) {
-                el.style.maxHeight = "none" // Allow dynamic resizing after expanding
-            }
+            isTransitioningRef.current = false
+            if (!isExpanded) el.style.maxHeight = "none" // Allow dynamic resizing after expanding
             setIsExpanded(prev => !prev)
         }
 
+        isTransitioningRef.current = true
+        
         // Expanding
         if (!isExpanded) {
             el.style.maxHeight = `${el.scrollHeight}px`
@@ -138,7 +164,7 @@ const Comment = memo(({
             el.style.maxHeight = `${el.scrollHeight}px`
             // Slight delay to let browser recognize height, ensuring transition works
             requestAnimationFrame(() => {
-                el.style.maxHeight = `${BASE_MAX_HEIGHT}px`
+                el.style.maxHeight = `${baseMaxHeightRef.current}px`
                 el.addEventListener("transitionend", handleTransitionEnd)
             })
         }

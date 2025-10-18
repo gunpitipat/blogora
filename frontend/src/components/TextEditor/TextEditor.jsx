@@ -1,4 +1,4 @@
-import "./ContentEditor.css"
+import "./TextEditor.css"
 import { memo, useEffect, useState } from "react"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
 import { getTotalOffsetTop } from "@/utils/layoutUtils"
@@ -7,8 +7,7 @@ import { FaPen } from "react-icons/fa"
 import { TfiArrowsCorner } from "react-icons/tfi"
 import { BsArrowsAngleContract } from "react-icons/bs"
 
-// Used by CreateBlog.jsx and EditBlog.jsx
-const ContentEditor = memo(({ 
+const TextEditor = memo(({ 
     content,
     setContent, 
     submit,
@@ -24,14 +23,14 @@ const ContentEditor = memo(({
     useEffect(() => {
         if (!extendTextarea) return
 
-        const contentElement = document.getElementById("content-editor")
-        const editorElement = document.getElementById("tiptap")
+        const editor = document.getElementById("text-editor")
+        const tiptap = document.getElementById("tiptap")
 
-        if (!contentElement || !editorElement) return
+        if (!editor || !tiptap) return
 
         let timeout
         const handleTransitionEnd = () => {    
-            const targetScrollY = getTotalOffsetTop(contentElement) - (isSmallScreen ? 0 : 80) - (isSmallScreen ? 20 : 16) // - fixed navbar height - spacing
+            const targetScrollY = getTotalOffsetTop(editor) - (isSmallScreen ? 0 : 80) - (isSmallScreen ? 20 : 16) // - fixed navbar height - spacing
             window.scrollTo({
                 top: targetScrollY,
                 behavior: "smooth"
@@ -39,24 +38,24 @@ const ContentEditor = memo(({
 
             clearTimeout(timeout)
             timeout = setTimeout(() => {
-                editorElement.focus() // Auto-focus text editor after extending
+                tiptap.focus() // Auto-focus text editor after extending
             }, 150)
 
             // Ensure scrolling runs once per toggle; prevent future accidental scrolls when TipTap updates DOM
-            editorElement.removeEventListener("transitionend", handleTransitionEnd)
+            tiptap.removeEventListener("transitionend", handleTransitionEnd)
         }
 
-        // Textarea (text editor) has height-transition duration of 150ms
-        editorElement.addEventListener("transitionend", handleTransitionEnd)
+        // .tiptap has height-transition duration of 150ms
+        tiptap.addEventListener("transitionend", handleTransitionEnd)
 
         return () => {
             clearTimeout(timeout)
-            editorElement.removeEventListener("transitionend", handleTransitionEnd)
+            tiptap.removeEventListener("transitionend", handleTransitionEnd)
         }
     }, [extendTextarea, isSmallScreen])
 
     return (
-        <div className="content-editor" id="content-editor">
+        <div className="text-editor" id="text-editor">
             <label className={`form-label ${isLabelActive ? "active" : ""}`}>
                 Content
                 { isLabelActive && 
@@ -66,17 +65,21 @@ const ContentEditor = memo(({
                 }
             </label>
             <div className={`textarea-container ${extendTextarea ? "extended" : ""}`}>
-                { content !== null && (
-                    <TipTap 
-                        content={content}
-                        setContent={setContent}
-                        submit={submit} 
-                        setSubmit={setSubmit}
-                        isLabelActive={isLabelActive}
-                        onFocus={onFocus}
-                        onBlur={onBlur}
-                    />
-                )}
+                { content === null
+                    ?   <div className="tiptap-wrapper">
+                            <div className="menu-bar-skeleton" />
+                            <div className="tiptap-skeleton" />
+                        </div>
+                    :   <TipTap 
+                            content={content}
+                            setContent={setContent}
+                            submit={submit} 
+                            setSubmit={setSubmit}
+                            isLabelActive={isLabelActive}
+                            onFocus={onFocus}
+                            onBlur={onBlur}
+                        />
+                }
                 <div className="extend-toggle" onClick={() => setExtendTextarea(!extendTextarea)}>
                     { !extendTextarea 
                         ? <TfiArrowsCorner /> 
@@ -88,6 +91,6 @@ const ContentEditor = memo(({
     )
 })
 
-export default ContentEditor
+export default TextEditor
 
 // © 2025 Pitipat Pattamawilai. All Rights Reserved.
