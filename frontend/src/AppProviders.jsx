@@ -46,6 +46,9 @@ const AppProviders = () => {
         let controller
         let timerAbort
 
+        let confirmController
+        let confirmTimeout
+
         let attempt = 1
         const maxAttempt = 2
         const TIMEOUT_FIRST = 45000
@@ -93,12 +96,29 @@ const AppProviders = () => {
                 }
                 
                 // Fallback to Koyeb
-                if (koyebResult.status === "fulfilled") {
-                    setIsHealthy(true)
-                    setIsChecking(false)
-                    saveBackend("koyeb")
-                    switchToKoyeb()
-                    return
+                if (koyebResult.status === "fulfilled" && renderResult.status === "rejected") {
+                    confirmController = new AbortController()
+                    confirmTimeout = setTimeout(() => confirmController.abort(), 3000)
+
+                    try {
+                        await api.get("/health", { signal: confirmController.signal })
+                        if (gen !== activeGenRef.current) return
+                        setIsHealthy(true)
+                        setIsChecking(false)
+                        saveBackend("render")
+                        return
+
+                    } catch {
+                        if (gen !== activeGenRef.current) return
+                        setIsHealthy(true)
+                        setIsChecking(false)
+                        saveBackend("koyeb")
+                        switchToKoyeb()
+                        return
+                    
+                    } finally {
+                        clearTimeout(confirmTimeout)
+                    }
                 }
 
                 // Retry if both failed
@@ -115,7 +135,9 @@ const AppProviders = () => {
 
         return () => {
             clearTimeout(timerAbort)
-            controller?.abort() // Cancel pending requests on remount    
+            controller?.abort() // Cancel pending requests on remount
+            clearTimeout(confirmTimeout)
+            confirmController?.abort()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
