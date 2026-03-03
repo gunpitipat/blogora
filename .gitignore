@@ -32,6 +32,7 @@ lerna-debug.log*
 # OS / IDE
 .DS_Store
 .vscode/*
+!.vscode/settings.json
 !.vscode/extensions.json
 .idea
 *.suo
@@ -39,3 +40,6 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript
+*.tsbuildinfo
