@@ -13,14 +13,6 @@ const theme = createTheme({
       light: '#bcb8b1',
       dark: '#69615c',
     },
-    success: {
-      main: '#3a5a40',
-      light: '#d9e0d3',
-    },
-    error: {
-      main: '#9e2a2b',
-      light: '#f0e0e0',
-    },
     linkAccent: {
       main: '#543A14',
     },
@@ -30,8 +22,8 @@ const theme = createTheme({
     },
     divider: '#aaaaaa',
     background: {
-      paper: '#f1f1f1',
       default: '#fafafa',
+      paper: '#f1f1f1',
     },
   },
   typography: {
