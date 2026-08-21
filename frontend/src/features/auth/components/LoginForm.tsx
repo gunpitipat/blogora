@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -21,8 +21,12 @@ import {
   type LoginCredentials,
   type LoginFormInput,
 } from '@/features/auth/schemas/login.schema';
+import { useAppDispatch } from '@/app/hooks';
+import { enqueueNotification } from '@/features/notifications/notificationsSlice';
 
 const LoginForm = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const loginMutation = useMutation<
     LoginResponse,
@@ -43,33 +47,54 @@ const LoginForm = () => {
     resolver: zodResolver(loginSchema),
   });
 
+  // Clears the outdated server error once the user edits the field
   const clearServerFeedback = (field: keyof LoginFormInput) => {
     if (errors[field]?.type === 'server') clearErrors(field);
-    // Remove isSuccess once login redirects and success feedback moves globally.
-    if (loginMutation.isError || loginMutation.isSuccess) {
+    if (loginMutation.isError) {
       loginMutation.reset();
     }
   };
 
   const handleLogin: SubmitHandler<LoginCredentials> = async (credentials) => {
     try {
-      await loginMutation.mutateAsync(credentials);
+      const response = await loginMutation.mutateAsync(credentials);
+      dispatch(
+        enqueueNotification({
+          message: response.message,
+          severity: 'success',
+        })
+      );
+      navigate('/', { replace: true });
     } catch (error) {
-      if (error instanceof LoginError && error.field) {
+      if (!(error instanceof LoginError)) {
+        dispatch(
+          enqueueNotification({
+            message: 'Something went wrong. Please try again.',
+            severity: 'error',
+          })
+        );
+        return;
+      }
+
+      if (error.field) {
         setError(
           error.field,
           { type: 'server', message: error.message },
           { shouldFocus: true }
         );
+        return;
       }
+
+      dispatch(
+        enqueueNotification({
+          message: error.message,
+          severity: 'error',
+        })
+      );
     }
   };
 
   const isPending = isSubmitting || loginMutation.isPending;
-  const requestError =
-    loginMutation.isError && !loginMutation.error.field
-      ? loginMutation.error.message
-      : null;
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(handleLogin)}>
@@ -135,11 +160,6 @@ const LoginForm = () => {
         >
           Log In
         </Button>
-
-        {requestError && <Alert severity="error">{requestError}</Alert>}
-        {loginMutation.isSuccess && (
-          <Alert severity="success">{loginMutation.data.message}</Alert>
-        )}
       </Stack>
     </Box>
   );

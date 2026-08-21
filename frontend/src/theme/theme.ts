@@ -13,8 +13,14 @@ const theme = createTheme({
       light: '#bcb8b1',
       dark: '#69615c',
     },
+    success: {
+      main: '#2f7a46',
+    },
+    error: {
+      main: '#9e2a2b',
+    },
     linkAccent: {
-      main: '#543A14',
+      main: '#543a14',
     },
     text: {
       primary: textPrimary,
@@ -30,6 +36,7 @@ const theme = createTheme({
     fontFamily: '"Manrope", sans-serif',
     fontSize: 16,
   },
+  spacing: 8,
   components: {
     MuiButtonBase: {
       defaultProps: {

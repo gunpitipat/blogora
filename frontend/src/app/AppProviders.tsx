@@ -3,6 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Provider } from 'react-redux';
 import { store } from '@/app/store';
+import NotificationStack from '@/features/notifications/components/NotificationStack';
 import theme from '@/theme/theme';
 
 const queryClient = new QueryClient({
@@ -20,6 +21,7 @@ const AppProviders = ({ children }: { children: React.ReactNode }) => {
         <CssBaseline />
         <QueryClientProvider client={queryClient}>
           {children}
+          <NotificationStack />
         </QueryClientProvider>
       </ThemeProvider>
     </Provider>
