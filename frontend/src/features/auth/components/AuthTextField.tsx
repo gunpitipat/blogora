@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 
 const AuthTextField = styled(TextField)(({ theme }) => ({
   '--auth-input-padding-y': '12px',
+  width: '100%',
 
   '& .MuiOutlinedInput-root': {
     backgroundColor: theme.palette.background.default,

@@ -2,26 +2,26 @@ import { Link as RouterLink } from 'react-router';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import AuthPageLayout from '@/features/auth/components/AuthPageLayout';
-import LoginForm from '@/features/auth/components/LoginForm';
+import SignupForm from '@/features/auth/components/SignupForm';
 
-const LoginPage = () => {
+const SignupPage = () => {
   return (
-    <AuthPageLayout title="Log In">
-      <LoginForm />
+    <AuthPageLayout title="Sign Up">
+      <SignupForm />
       <Typography color="text.secondary" textAlign="center" variant="body2">
-        Don&apos;t have an account?{' '}
+        Already have an account?{' '}
         <Link
           component={RouterLink}
           fontWeight={600}
           sx={{ whiteSpace: 'nowrap' }}
-          to="/signup"
+          to="/login"
           underline="hover"
         >
-          Sign Up
+          Log In
         </Link>
       </Typography>
     </AuthPageLayout>
   );
 };
 
-export default LoginPage;
+export default SignupPage;

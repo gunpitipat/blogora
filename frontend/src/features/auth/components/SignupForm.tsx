@@ -8,28 +8,29 @@ import Stack from '@mui/material/Stack';
 import AuthPasswordField from '@/features/auth/components/AuthPasswordField';
 import AuthTextField from '@/features/auth/components/AuthTextField';
 import {
-  login,
-  LoginError,
-  type LoginResponse,
-} from '@/features/auth/api/login.api';
+  signup,
+  SignupError,
+  type SignupResponse,
+} from '@/features/auth/api/signup.api';
 import {
-  loginSchema,
-  type LoginCredentials,
-  type LoginFormInput,
-} from '@/features/auth/schemas/login.schema';
+  signupSchema,
+  type SignupCredentials,
+  type SignupField,
+  type SignupFormInput,
+} from '@/features/auth/schemas/signup.schema';
 import { useAppDispatch } from '@/app/hooks';
 import { enqueueNotification } from '@/features/notifications/notificationsSlice';
 
-const LoginForm = () => {
+const SignupForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const loginMutation = useMutation<
-    LoginResponse,
-    LoginError,
-    LoginCredentials
+  const signupMutation = useMutation<
+    SignupResponse,
+    SignupError,
+    SignupCredentials
   >({
-    mutationKey: ['auth', 'login'],
-    mutationFn: login,
+    mutationKey: ['auth', 'signup'],
+    mutationFn: signup,
   });
   const {
     clearErrors,
@@ -37,29 +38,36 @@ const LoginForm = () => {
     handleSubmit,
     register,
     setError,
-  } = useForm<LoginFormInput, unknown, LoginCredentials>({
-    defaultValues: { username: '', password: '' },
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormInput, unknown, SignupCredentials>({
+    defaultValues: {
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+    },
+    resolver: zodResolver(signupSchema),
   });
 
   // Clears the outdated server error once the user edits the field
-  const clearServerFeedback = (field: keyof LoginFormInput) => {
+  const clearServerFeedback = (field: SignupField) => {
     if (errors[field]?.type === 'server') clearErrors(field);
-    if (loginMutation.isError) loginMutation.reset();
+    if (signupMutation.isError) signupMutation.reset();
   };
 
-  const handleLogin: SubmitHandler<LoginCredentials> = async (credentials) => {
+  const handleSignup: SubmitHandler<SignupCredentials> = async (
+    credentials
+  ) => {
     try {
-      const response = await loginMutation.mutateAsync(credentials);
+      const response = await signupMutation.mutateAsync(credentials);
       dispatch(
         enqueueNotification({
           message: response.message,
           severity: 'success',
         })
       );
-      navigate('/', { replace: true });
+      navigate('/login', { replace: true });
     } catch (error) {
-      if (!(error instanceof LoginError)) {
+      if (!(error instanceof SignupError)) {
         dispatch(
           enqueueNotification({
             message: 'Something went wrong. Please try again.',
@@ -69,12 +77,14 @@ const LoginForm = () => {
         return;
       }
 
-      if (error.field) {
-        setError(
-          error.field,
-          { type: 'server', message: error.message },
-          { shouldFocus: true }
-        );
+      if (error.fieldErrors.length > 0) {
+        error.fieldErrors.forEach(({ field, message }, index) => {
+          setError(
+            field,
+            { type: 'server', message },
+            { shouldFocus: index === 0 }
+          );
+        });
         return;
       }
 
@@ -87,14 +97,26 @@ const LoginForm = () => {
     }
   };
 
-  const isPending = isSubmitting || loginMutation.isPending;
+  const isPending = isSubmitting || signupMutation.isPending;
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit(handleLogin)}>
+    <Box component="form" noValidate onSubmit={handleSubmit(handleSignup)}>
       <Stack spacing={3}>
         <AuthTextField
-          autoComplete="username"
+          autoComplete="email"
           autoFocus
+          disabled={isPending}
+          error={Boolean(errors.email)}
+          helperText={errors.email?.message}
+          label="Email"
+          type="email"
+          {...register('email', {
+            onChange: () => clearServerFeedback('email'),
+          })}
+        />
+
+        <AuthTextField
+          autoComplete="username"
           disabled={isPending}
           error={Boolean(errors.username)}
           helperText={errors.username?.message}
@@ -105,13 +127,24 @@ const LoginForm = () => {
         />
 
         <AuthPasswordField
-          autoComplete="current-password"
+          autoComplete="new-password"
           disabled={isPending}
           error={Boolean(errors.password)}
           helperText={errors.password?.message}
           label="Password"
           {...register('password', {
             onChange: () => clearServerFeedback('password'),
+          })}
+        />
+
+        <AuthPasswordField
+          autoComplete="new-password"
+          disabled={isPending}
+          error={Boolean(errors.confirmPassword)}
+          helperText={errors.confirmPassword?.message}
+          label="Confirm Password"
+          {...register('confirmPassword', {
+            onChange: () => clearServerFeedback('confirmPassword'),
           })}
         />
 
@@ -122,11 +155,11 @@ const LoginForm = () => {
           type="submit"
           variant="contained"
         >
-          Log In
+          Sign Up
         </Button>
       </Stack>
     </Box>
   );
 };
 
-export default LoginForm;
+export default SignupForm;
