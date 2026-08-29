@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, NavLink } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import { alpha, useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -9,11 +10,13 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
+import useLogoutMutation from '@/features/auth/hooks/useLogoutMutation';
+import { sessionQueryOptions } from '@/features/auth/queries/session.query';
 import MobileDrawer from '@/layouts/navbar/MobileDrawer';
 import {
   NAVBAR_HEIGHT,
   PRIMARY_NAV_ITEMS,
-  AUTH_NAV_ITEMS,
+  GUEST_NAV_ITEMS,
 } from '@/layouts/navbar/navbar.constants';
 
 const desktopNavItemSx = {
@@ -48,6 +51,15 @@ const desktopNavItemSx = {
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
+  const sessionQuery = useQuery(sessionQueryOptions);
+  const logoutMutation = useLogoutMutation();
+
+  const isAuthenticated = sessionQuery.data?.isAuthenticated === true;
+
+  const handleLogout = () => {
+    setOpen(false);
+    logoutMutation.mutate();
+  };
 
   // Close mobile UI when crossing the theme's md breakpoint
   useEffect(() => {
@@ -141,16 +153,27 @@ const Navbar = () => {
                 ml: 'auto',
               }}
             >
-              {AUTH_NAV_ITEMS.map((item) => (
-                <Button
-                  key={item.path}
-                  component={NavLink}
-                  to={item.path}
-                  sx={desktopNavItemSx}
-                >
-                  {item.label}
-                </Button>
-              ))}
+              {!sessionQuery.isPending &&
+                (isAuthenticated ? (
+                  <Button
+                    disabled={logoutMutation.isPending}
+                    onClick={handleLogout}
+                    sx={desktopNavItemSx}
+                  >
+                    Log Out
+                  </Button>
+                ) : (
+                  GUEST_NAV_ITEMS.map((item) => (
+                    <Button
+                      key={item.path}
+                      component={NavLink}
+                      to={item.path}
+                      sx={desktopNavItemSx}
+                    >
+                      {item.label}
+                    </Button>
+                  ))
+                ))}
             </Box>
           </Toolbar>
         </Container>
@@ -159,7 +182,14 @@ const Navbar = () => {
       {/* Prevents fixed AppBar from covering page content */}
       <Toolbar sx={{ minHeight: `${NAVBAR_HEIGHT}px !important` }} />
 
-      <MobileDrawer open={open} onClose={() => setOpen(false)} />
+      <MobileDrawer
+        isAuthenticated={isAuthenticated}
+        isLoggingOut={logoutMutation.isPending}
+        isSessionPending={sessionQuery.isPending}
+        open={open}
+        onClose={() => setOpen(false)}
+        onLogout={handleLogout}
+      />
     </>
   );
 };

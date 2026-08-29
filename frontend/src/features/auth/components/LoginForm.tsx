@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -17,12 +17,14 @@ import {
   type LoginCredentials,
   type LoginFormInput,
 } from '@/features/auth/schemas/login.schema';
+import { sessionQueryOptions } from '@/features/auth/queries/session.query';
 import { useAppDispatch } from '@/app/hooks';
 import { enqueueNotification } from '@/features/notifications/notificationsSlice';
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const loginMutation = useMutation<
     LoginResponse,
     LoginError,
@@ -51,6 +53,9 @@ const LoginForm = () => {
   const handleLogin: SubmitHandler<LoginCredentials> = async (credentials) => {
     try {
       const response = await loginMutation.mutateAsync(credentials);
+      await queryClient.invalidateQueries({
+        queryKey: sessionQueryOptions.queryKey,
+      });
       dispatch(
         enqueueNotification({
           message: response.message,

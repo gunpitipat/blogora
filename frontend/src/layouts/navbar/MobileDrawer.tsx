@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router';
-import { alpha } from '@mui/material/styles';
+import { alpha, type Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -12,7 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {
   NAVBAR_HEIGHT,
   PRIMARY_NAV_ITEMS,
-  AUTH_NAV_ITEMS,
+  GUEST_NAV_ITEMS,
 } from '@/layouts/navbar/navbar.constants';
 
 // Main visual customization points for the mobile drawer
@@ -20,14 +20,38 @@ const DRAWER_WIDTH = 240;
 // Match MUI Container's default gutters so both hamburger and close buttons stay aligned
 const DRAWER_PADDING = { xs: 2, sm: 3 };
 
+const mobileNavItemSx = {
+  borderRadius: 1,
+  color: 'primary.main',
+  p: 1.5,
+  '&:hover': {
+    color: 'text.primary',
+  },
+  '&.active': {
+    bgcolor: (theme: Theme) => alpha(theme.palette.secondary.light, 0.5),
+    color: 'text.primary',
+  },
+} as const;
+
 type MobileDrawerProps = {
+  isAuthenticated: boolean;
+  isLoggingOut: boolean;
+  isSessionPending: boolean;
   open: boolean;
   onClose: () => void;
+  onLogout: () => void;
 };
 
-const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
+const MobileDrawer = ({
+  isAuthenticated,
+  isLoggingOut,
+  isSessionPending,
+  open,
+  onClose,
+  onLogout,
+}: MobileDrawerProps) => {
   const renderNavigationItems = (
-    items: typeof PRIMARY_NAV_ITEMS | typeof AUTH_NAV_ITEMS
+    items: typeof PRIMARY_NAV_ITEMS | typeof GUEST_NAV_ITEMS
   ) =>
     items.map((item) => (
       <ListItem key={item.path} disablePadding>
@@ -35,18 +59,7 @@ const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
           component={NavLink}
           to={item.path}
           onClick={onClose}
-          sx={{
-            borderRadius: 1,
-            color: 'primary.main',
-            p: 1.5,
-            '&:hover': {
-              color: 'text.primary',
-            },
-            '&.active': {
-              bgcolor: (theme) => alpha(theme.palette.secondary.light, 0.5),
-              color: 'text.primary',
-            },
-          }}
+          sx={mobileNavItemSx}
         >
           <Typography fontWeight={600} sx={{ ml: 1 }}>
             {item.label}
@@ -113,7 +126,24 @@ const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
 
         <Box sx={{ mt: 'auto' }}>
           <Divider sx={{ mb: 1 }} />
-          <List disablePadding>{renderNavigationItems(AUTH_NAV_ITEMS)}</List>
+          <List disablePadding>
+            {!isSessionPending &&
+              (isAuthenticated ? (
+                <ListItem disablePadding>
+                  <ListItemButton
+                    disabled={isLoggingOut}
+                    onClick={onLogout}
+                    sx={mobileNavItemSx}
+                  >
+                    <Typography fontWeight={600} sx={{ ml: 1 }}>
+                      Log Out
+                    </Typography>
+                  </ListItemButton>
+                </ListItem>
+              ) : (
+                renderNavigationItems(GUEST_NAV_ITEMS)
+              ))}
+          </List>
         </Box>
       </Box>
     </Drawer>
